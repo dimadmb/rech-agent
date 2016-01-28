@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+
+	{% for class in classes %}
+		<h3>{{class.title}}</h3>
+
+		{% for ship in class.ships %}
+			<p>{{ship.title}}</p>
+			{{dump(ship)}}
+		{% endfor %}
+
+	{% endfor %}
+
+{% endblock %}

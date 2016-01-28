@@ -1,3 +1,24 @@
+homepage:
+    path: "/"
+    defaults: { _controller: BaseBundle:Document:index }
+
+page:
+    path: "/{first}/{second}/{name}.html"
+    defaults: { _controller: BaseBundle:Document:page }
+
+page_small:
+    path: "/{first}.html"
+    defaults: { _controller: BaseBundle:Document:page }		
+
+classlist:
+    path: "/cruise/classlist"
+    defaults: { _controller: BaseBundle:Ship:classlist }
+
+showDocuments:
+    path: "/{first}/{second}/"
+    defaults: { _controller: BaseBundle:DocumentCategory:documents }	
+
+
 base:
     resource: "@BaseBundle/Controller/"
     type:     annotation

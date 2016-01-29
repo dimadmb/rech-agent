@@ -24,7 +24,7 @@ class DocumentController extends Controller
 		}
 		$doc = $repository->findOneByUrl($url);
 		if ($doc == null) {
-			throw new Exception\HttpException("Страница $url.html не найдена.", 404);
+			throw $this->createNotFoundException("Страница $url.html не найдена.");
 		}
 		if ($first == "index" && $second == null) {
 			return $this->render('BaseBundle:Document:index.html.twig', array("document" => $doc));

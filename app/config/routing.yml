@@ -14,6 +14,10 @@ classlist:
     path: "/cruise/classlist"
     defaults: { _controller: BaseBundle:Ship:classlist }
 
+alphabetlist:
+    path: "/cruise/alphabetlist"
+    defaults: { _controller: BaseBundle:Ship:alphabetlist }
+
 showDocuments:
     path: "/{first}/{second}/"
     defaults: { _controller: BaseBundle:DocumentCategory:documents }	

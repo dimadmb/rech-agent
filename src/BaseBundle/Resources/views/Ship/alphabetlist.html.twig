@@ -1,13 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
-
-			{% for class in classes %}
-				<div class="clearfix">
-				<h3>{{class.title}}</h3>
-
-				{% for ship in class.ships %}				
+<h1>Теплоходы по алфавиту</h1>
+<br>
+				{% for ship in ships %}				
 					<div class="col-xs-6 col-md-6 ">
 					<a href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}">{{ship.title}}</a><br>
 					<a href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}"><img src="{{ship.imgurl}} "></a>
@@ -18,10 +14,5 @@
 					{% endfor %}
 					</div>
 				{% endfor %}
-			</div>
-			{% endfor %}			
-
-
-
 
 {% endblock %}

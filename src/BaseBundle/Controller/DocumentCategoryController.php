@@ -23,8 +23,13 @@ class DocumentCategoryController extends Controller
 		$repository = $this->getDoctrine()->getRepository('BaseBundle:DocumentCategory');
 		$url = "/" . $first . "/" . $second . "/";
 		$category = $repository->findOneByBaseurl($url);
+		if ($category == null) {
+			throw $this->createNotFoundException("Страница $url.html не найдена.");
+		}		
 		$documents = $category->getDocuments();
-		
+		if ($documents == null) {
+			throw $this->createNotFoundException("Страница $url.html не найдена.");
+		}
 		//$bean = new \stdClass();
 		//$bean->category = $category;
 		//$bean->documents = $documents;

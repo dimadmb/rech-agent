@@ -45,7 +45,15 @@ class CruiseShipCabin
      */
     private $ship;
 
-
+	/**
+	 * @ORM\OneToMany(targetEntity="CruiseShipCabinCruisePrice", mappedBy="cabin")
+	 */
+	private $prices;
+	
+	
+	public function __construct() {
+		$this->prices = new Collections\ArrayCollection();
+	}
 
     /**
      * Get id
@@ -124,5 +132,38 @@ class CruiseShipCabin
     public function getShip()
     {
         return $this->ship;
+    }
+
+    /**
+     * Add prices
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinCruisePrice $prices
+     * @return CruiseShipCabin
+     */
+    public function addPrice(\BaseBundle\Entity\CruiseShipCabinCruisePrice $prices)
+    {
+        $this->prices[] = $prices;
+
+        return $this;
+    }
+
+    /**
+     * Remove prices
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinCruisePrice $prices
+     */
+    public function removePrice(\BaseBundle\Entity\CruiseShipCabinCruisePrice $prices)
+    {
+        $this->prices->removeElement($prices);
+    }
+
+    /**
+     * Get prices
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPrices()
+    {
+        return $this->prices;
     }
 }

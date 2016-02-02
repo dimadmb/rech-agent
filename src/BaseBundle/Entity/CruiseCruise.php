@@ -3,12 +3,13 @@
 namespace BaseBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;  //необязательно
 
 /**
  * CruiseCruise
  *
  * @ORM\Table(name="cruise_cruise", uniqueConstraints={@ORM\UniqueConstraint(name="cruise_cruise_ship_id_code_uniq", columns={"ship_id", "code"})}, indexes={@ORM\Index(name="cruise_cruise_specialOffer_idx", columns={"specialOffer"}), @ORM\Index(name="IDX_7D5C275BC256317D", columns={"ship_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="BaseBundle\Entity\Repository\CruiseCruiseRepository")
  */
 class CruiseCruise
 {
@@ -93,6 +94,19 @@ class CruiseCruise
      *   }
      * )
      */
+	 
+	/**
+	 * @ORM\OneToMany(targetEntity="CruiseShipCabinCruisePrice", mappedBy="cruise")
+	 */
+	private $prices;	 
+
+
+	/**
+     * @ORM\OneToMany(targetEntity="CruiseCruiseProgramItem", mappedBy="cruise")
+     */
+	private $programItems;	
+
+	
     private $category;
 
     /**
@@ -100,7 +114,8 @@ class CruiseCruise
      */
     public function __construct()
     {
-        $this->category = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->category = new ArrayCollection();
+		$this->programItems = new ArrayCollection();
     }
 
 
@@ -298,6 +313,17 @@ class CruiseCruise
         return $this->ship;
     }
 
+	public function getMinPrice() {
+		$res = 0;
+		foreach ($this->prices as $price) {
+			$pr = $price->getPrice();
+			if ($res == 0 || ($pr != 0 && $pr < $res)) {
+				$res = $pr;
+			}
+		}
+		return $res;
+	}	
+	
     /**
      * Add category
      *
@@ -329,5 +355,71 @@ class CruiseCruise
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * Add prices
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinCruisePrice $prices
+     * @return CruiseCruise
+     */
+    public function addPrice(\BaseBundle\Entity\CruiseShipCabinCruisePrice $prices)
+    {
+        $this->prices[] = $prices;
+
+        return $this;
+    }
+
+    /**
+     * Remove prices
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinCruisePrice $prices
+     */
+    public function removePrice(\BaseBundle\Entity\CruiseShipCabinCruisePrice $prices)
+    {
+        $this->prices->removeElement($prices);
+    }
+
+    /**
+     * Get prices
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPrices()
+    {
+        return $this->prices;
+    }
+
+    /**
+     * Add programItems
+     *
+     * @param \BaseBundle\Entity\CruiseCruiseProgramItem $programItems
+     * @return CruiseCruise
+     */
+    public function addProgramItem(\BaseBundle\Entity\CruiseCruiseProgramItem $programItems)
+    {
+        $this->programItems[] = $programItems;
+
+        return $this;
+    }
+
+    /**
+     * Remove programItems
+     *
+     * @param \BaseBundle\Entity\CruiseCruiseProgramItem $programItems
+     */
+    public function removeProgramItem(\BaseBundle\Entity\CruiseCruiseProgramItem $programItems)
+    {
+        $this->programItems->removeElement($programItems);
+    }
+
+    /**
+     * Get programItems
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getProgramItems()
+    {
+        return $this->programItems;
     }
 }

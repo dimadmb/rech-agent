@@ -57,7 +57,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="#">Поиск круиза</a>
+                        <a href="{{path('cruise')}}">Поиск круиза</a>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Спецпредложения<b class="caret"></b></a>
@@ -111,10 +111,10 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Карта круизов<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="/cruise/settlement/">Порты и причалы</a>
+                                <a href="{{path('showDocuments',{'first':'cruise','second':'settlement'} )}}">Порты и причалы</a>
                             </li>
                             <li>
-                                <a href="/cruise/river/">Реки и озёра</a>
+                                <a href="{{path('showDocuments',{'first':'cruise','second':'river'} )}}">Реки и озёра</a>
                             </li>
 
                         </ul>
@@ -142,6 +142,13 @@
 
 			<div class="col-sm-3">					
 				<h1>Сайдбар</h1>
+				<h1>Сайдбар h1</h1>
+				<h2>Сайдбар h2</h2>
+				<h3>Сайдбар h3</h3>
+				<h4>Сайдбар h4</h4>
+				<h5>Сайдбар h5</h5>
+				<h6>Сайдбар h6</h6>
+
 			</div>			
 			<div class="col-sm-9">					
 			{% block body %}

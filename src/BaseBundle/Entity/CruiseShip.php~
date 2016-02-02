@@ -126,7 +126,7 @@ class CruiseShip
     public function setProperties($properties)
     {
         $this->properties = $properties;
-
+		
         return $this;
     }
 
@@ -137,7 +137,8 @@ class CruiseShip
      */
     public function getProperties()
     {
-        return $this->properties;
+        //return $this->properties;
+		return json_decode($this->properties);
     }
 
     /**

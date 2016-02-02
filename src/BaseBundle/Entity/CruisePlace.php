@@ -55,7 +55,19 @@ class CruisePlace
      * @ORM\Column(name="pageable", type="boolean", nullable=false)
      */
     private $pageable;
+	
+	/**
+     * @ORM\OneToMany(targetEntity="CruiseCruiseProgramItem", mappedBy="place")
+     */
+	private $programItems;	
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+		$this->programItems = new ArrayCollection();
+    }
 
 
     /**

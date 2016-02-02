@@ -2,9 +2,29 @@ homepage:
     path: "/"
     defaults: { _controller: BaseBundle:Document:index }
 
+cruisedetails:
+    path: "/cruise/cruisedetails/{url}.html"
+    defaults: { _controller: BaseBundle:Cruise:details }	
+
+monthschedule:
+    path: "/cruise/monthschedule"
+    defaults: { _controller: BaseBundle:Cruise:schedule }
+
+month_cruises:
+    path: "/cruise/month/{month}.html"
+    defaults: { _controller: BaseBundle:Cruise:month }
+
 page:
     path: "/{first}/{second}/{name}.html"
     defaults: { _controller: BaseBundle:Document:page }
+
+search:
+    path: "/search"
+    defaults: { _controller:BaseBundle:Cruise:search }
+
+specialOffers:
+    path: "/specialoffers"
+    defaults: { _controller:BaseBundle:Cruise:specialOffers }
 
 page_small:
     path: "/{first}.html"

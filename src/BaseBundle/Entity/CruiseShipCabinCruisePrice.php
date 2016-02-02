@@ -31,7 +31,7 @@ class CruiseShipCabinCruisePrice
     /**
      * @var \CruiseShipCabin
      *
-     * @ORM\ManyToOne(targetEntity="CruiseShipCabin")
+     * @ORM\ManyToOne(targetEntity="CruiseShipCabin", inversedBy="prices" )
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="cabin_id", referencedColumnName="id")
      * })
@@ -41,7 +41,7 @@ class CruiseShipCabinCruisePrice
     /**
      * @var \CruiseCruise
      *
-     * @ORM\ManyToOne(targetEntity="CruiseCruise")
+     * @ORM\ManyToOne(targetEntity="CruiseCruise", inversedBy="prices")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="cruise_id", referencedColumnName="id")
      * })

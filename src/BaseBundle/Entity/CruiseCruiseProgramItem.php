@@ -52,7 +52,7 @@ class CruiseCruiseProgramItem
     /**
      * @var \CruiseCruise
      *
-     * @ORM\ManyToOne(targetEntity="CruiseCruise")
+     * @ORM\ManyToOne(targetEntity="CruiseCruise", inversedBy="programItems")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="cruise_id", referencedColumnName="id")
      * })
@@ -62,7 +62,7 @@ class CruiseCruiseProgramItem
     /**
      * @var \CruisePlace
      *
-     * @ORM\ManyToOne(targetEntity="CruisePlace")
+     * @ORM\ManyToOne(targetEntity="CruisePlace", inversedBy="programItems")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="place_id", referencedColumnName="id")
      * })

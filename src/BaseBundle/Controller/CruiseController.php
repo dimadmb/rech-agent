@@ -6,6 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use BaseBundle\Controller\Helper;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\Request;
+use BaseBundle\Entity\CruiseCruise;
 
 class CruiseController extends Controller
 {
@@ -69,7 +72,7 @@ class CruiseController extends Controller
 		$currentMonth = null;
 		$result = array();
 		foreach ($cruises as $cruise) {
-			$startDate = $cruise->getStartDate();
+			$startDate = $cruise->getStartdate();
 			$month = date("M Y", $startDate);
 			if ($month != $currentMonth) {
 				$group = new \stdClass();
@@ -143,24 +146,27 @@ class CruiseController extends Controller
 	}	
 	
     /**
-	 * @Template()
+	 * @Template("BaseBundle:Cruise:schedule.html.twig")
 	
 	 */		
 	public function searchAction() {
+		
+		$request =  Request::createFromGlobals();
+		
+		$form = $request->get('form');
 		$selected = $this->getSearchParameters();
-		$this->getUser()->setSearchParameters($selected);
-		$qb = $this->getRepository("Cruise")->createQueryBuilder("c");
+		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
 		$places = array();
 		foreach(explode("или", $selected->route) as $place) {
 			if (trim($place) == "") continue;
-			$places[] = Exx\FileUtils::translit($place);
+			//$places[] = Exx\FileUtils::translit($place);
 		}
-		$qb->where("c.startDate>=?1");
-		$qb->andWhere("c.endDate<=?2");
+		$qb->where("c.startdate>=?1");
+		$qb->andWhere("c.enddate<=?2");
 		
-		$from = strtotime($selected->dateFrom);
-		$to = strtotime($selected->dateTo);
+		$from = strtotime($form['startDate']);
+		$to = strtotime($form['endDate']);
 		$qb->setParameter(1, $from);
 		$qb->setParameter(2, $to);
 		
@@ -179,26 +185,64 @@ class CruiseController extends Controller
 			}
 			$qb->andWhere("($str)");
 		}
+		/*
 		if($selected->class != "-1") {
 			$qb->join("c.ship", "s");
 			$qb->andWhere("s.class=?4");
 			$qb->setParameter(4, $selected->class);
 		}
+		*/
 		
-		$qb->orderBy("c.startDate");
+		$qb->orderBy("c.startdate");
 
 		$qb->getQuery()->execute();
-		$result = $qb->getQuery()->setHint(ORM\Query::HINT_FORCE_PARTIAL_LOAD, true)->getResult();
-		$result = new Collections\ArrayCollection($result);
+		$result = $qb->getQuery()->getResult();
+		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
 		
+		return array('cruises_months' => $result);		
 		
-		$result = $this->getRequest();
-		return array('cruises' => $result);
 	}
+/*
+	 public function searchformAction(Request $request)
+	 {
+		 $search = new stdClass();
+	 }
+*/	
+	/**
+	*@Template()
+	*/
+	public function searchFormAction()
+	{
+		$request =  Request::createFromGlobals();
+		
+		$repository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
+		$minDate = $repository->findMinStartDate();
+		$maxDate = $repository->findMaxStartDate();
+		
+		
 
-
+		
+		$form_search = $this->createFormBuilder()
+            ->add('startDate', 'date',array('widget' => 'single_text', 'data'=> new \DateTime(date("Y-m-d",$minDate->getStartdate())) ))
+            ->add('endDate', 'date',array('widget' => 'single_text','data'=> new \DateTime(date("Y-m-d",$maxDate->getEnddate()))))
+			->add('ship','entity',array('class' => 'BaseBundle:CruiseShip','property' => 'title'))
+			->add('button', 'submit')
+            ->getForm();
+			
+			
+			
+	$data = 'новая форма';
 	
+		if ($request->getMethod() == 'POST') {  
+			$form_search->bind($request);
+			//$data = $form_search->getData();
+			
+		}
+		
+
+	return array('form_search' => $form_search->createView(),'test'=>$data );
+	}
 	
 	public static function month_ru($timestamp) {
 		setlocale(LC_TIME, "ru_RU.UTF-8");

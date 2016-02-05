@@ -70,4 +70,16 @@ class CruiseCruiseRepository extends EntityRepository
    		return $q->getResult();
 	}		
 	
+	public function findMinStartDate()
+	{
+        return $this->getEntityManager()
+            ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.startdate ASC ')->setMaxResults(1)
+            ->getSingleResult();		
+	}	
+	public function findMaxStartDate()
+	{
+        return $this->getEntityManager()
+            ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.enddate DESC ')->setMaxResults(1)
+            ->getSingleResult();		
+	}
 }

@@ -11,12 +11,10 @@
 
     <title>{% block title %}Дефолтный тайтл{% endblock %}</title>
 
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 	
+	 <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
+	 <link rel="stylesheet" href="{{ asset('css/bootstrap-theme.css') }}">
 	 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 	 <link rel="stylesheet" href="{{ asset('css/style_migrate.css') }}">
 
@@ -80,7 +78,7 @@
                                 <a href="{{path('classlist')}}">По комфортабельности</a>
                             </li>
                             <li>
-                                <a href="/cruise/alphabetlist">По алфавиту</a>
+                                <a href="{{path('alphabetlist')}}">По алфавиту</a>
                             </li>
                         </ul>
                     </li>
@@ -140,17 +138,12 @@
 	<div class="container">
 		<div class="row">
 
-			<div class="col-sm-3">					
-				<h1>Сайдбар</h1>
-				<h1>Сайдбар h1</h1>
-				<h2>Сайдбар h2</h2>
-				<h3>Сайдбар h3</h3>
-				<h4>Сайдбар h4</h4>
-				<h5>Сайдбар h5</h5>
-				<h6>Сайдбар h6</h6>
+			<div class="col-sm-12">					
+
+			{{ render(controller('BaseBundle:Cruise:searchForm')) }}
 
 			</div>			
-			<div class="col-sm-9">					
+			<div class="col-sm-12">					
 			{% block body %}
 				Block body
 			{% endblock %}	
@@ -297,12 +290,11 @@
     <!-- /.container -->
 	#}
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
 	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script src="{{ asset('js/bootstrap.js') }}"></script>
 
     <!-- Script to Activate the Carousel -->
     <script>

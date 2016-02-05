@@ -1,0 +1,35 @@
+
+<h3>Поиск круиза</h3>
+<form action="{{ path('search') }}" method="post" {{ form_enctype(form_search) }} >
+
+<div class="row">
+	<div class="col-sm-3">
+		{{ form_label(form_search.startDate, 'Дата отправления от') }}
+		{{ form_errors(form_search.startDate) }}
+		{{ form_widget(form_search.startDate) }}
+	</div>		
+	<div class="col-sm-3">
+		{{ form_label(form_search.endDate, 'Дата прибытия по') }}
+		{{ form_errors(form_search.endDate) }}
+		{{ form_widget(form_search.endDate) }}
+	</div>			
+	<div class="col-sm-3">
+		{{ form_label(form_search.ship, 'Теплоход') }}
+		{{ form_errors(form_search.ship) }}
+		{{ form_widget(form_search.ship) }}
+	</div>		
+	<div class="col-sm-3">
+		{{ form_label(form_search.button, 'Найти') }}
+
+		{{ form_widget(form_search.button) }}	
+		
+		
+	{{ form_rest(form_search) }}
+	</div>		
+
+</div>
+
+	
+
+</form>
+

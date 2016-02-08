@@ -154,14 +154,10 @@ class CruiseController extends Controller
 		$request =  Request::createFromGlobals();
 		
 		$form = $request->get('form');
-		$selected = $this->getSearchParameters();
+
 		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
-		$places = array();
-		foreach(explode("или", $selected->route) as $place) {
-			if (trim($place) == "") continue;
-			//$places[] = Exx\FileUtils::translit($place);
-		}
+
 		$qb->where("c.startdate>=?1");
 		$qb->andWhere("c.enddate<=?2");
 		
@@ -170,28 +166,13 @@ class CruiseController extends Controller
 		$qb->setParameter(1, $from);
 		$qb->setParameter(2, $to);
 		
-		if (sizeof($places) > 0) {
-			$qb->join("c.programItems", "pi");
-			$qb->join("pi.place", "pl");
-			
-			$str = "";
-			foreach ($places as $i=>$place) {
-				$param = "place" . $i;
-				$str .= "pl.url = :" . $param;
-				if ($i < sizeof($places)-1) {
-					$str .= " OR ";
-				}
-				$qb->setParameter($param, $place);
-			}
-			$qb->andWhere("($str)");
+		if($form['ship'] > 0 ){
+		
+		$qb->andWhere("c.ship = ?3");
+		$qb->setParameter(3, $form['ship']);	
 		}
-		/*
-		if($selected->class != "-1") {
-			$qb->join("c.ship", "s");
-			$qb->andWhere("s.class=?4");
-			$qb->setParameter(4, $selected->class);
-		}
-		*/
+		
+
 		
 		$qb->orderBy("c.startdate");
 
@@ -220,28 +201,35 @@ class CruiseController extends Controller
 		$minDate = $repository->findMinStartDate();
 		$maxDate = $repository->findMaxStartDate();
 		
-		
-
-		
 		$form_search = $this->createFormBuilder()
-            ->add('startDate', 'date',array('widget' => 'single_text', 'data'=> new \DateTime(date("Y-m-d",$minDate->getStartdate())) ))
+            ->add('startDate', 'date',array('widget' => 'single_text','data'=> new \DateTime(date("Y-m-d",$minDate->getStartdate())) ))
             ->add('endDate', 'date',array('widget' => 'single_text','data'=> new \DateTime(date("Y-m-d",$maxDate->getEnddate()))))
-			->add('ship','entity',array('class' => 'BaseBundle:CruiseShip','property' => 'title'))
+			->add('ship','entity',array('class' => 'BaseBundle:CruiseShip',
+			'choices' =>  $this->getActiveShip()
+			,'choice_label' => 'title','empty_value'=>'Все теплоходы','required' => false))
 			->add('button', 'submit')
             ->getForm();
-			
-			
-			
-	$data = 'новая форма';
-	
-		if ($request->getMethod() == 'POST') {  
-			$form_search->bind($request);
-			//$data = $form_search->getData();
-			
-		}
-		
 
-	return array('form_search' => $form_search->createView(),'test'=>$data );
+		if ($request->getMethod() == 'POST') {  
+			$form_search->handleRequest($request);
+		}
+	return array('form_search' => $form_search->createView() );
+	}
+
+	public function getActiveShip()
+	{
+		$em = $this->getDoctrine()->getManager();
+		$query = $em->createQuery(
+			'SELECT s 
+			FROM BaseBundle:CruiseShip s 
+			WHERE EXISTS
+				(SELECT c FROM BaseBundle:CruiseCruise c WHERE c.ship = s.id )
+			ORDER BY s.title
+			'
+		);
+		
+		return $query->getResult();
+
 	}
 	
 	public static function month_ru($timestamp) {

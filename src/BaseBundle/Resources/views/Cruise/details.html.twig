@@ -23,11 +23,22 @@
 		<th>Программа дня</th>
 	</tr>
 {% for item in cruise.programItems %}
+
+	
 	<tr>
 		<td>{{item.date | date("d.m.Y")}}</td>
-		<td><a href="{{path('page',{'first':'cruise','second':'settlement','name':item.place.url})}}">{{item.place.title}}</a></td>
+		<td>
+		{% if item.place != null %}
+			<a href="{{path('page',{'first':'cruise','second':'settlement','name':item.place.url})}}">{{item.place.title}}</a>
+		{% else %}
+			{{item.placetitle}}
+		{% endif %}	
+		</td>
 		<td>{{item.description}}</td>
 	</tr>
+	
+
+	
 {% endfor %}	
 </table>
 

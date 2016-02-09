@@ -114,7 +114,7 @@ class CruiseController extends Controller
 	{
 		$cruise = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrl(Helper\CruiseUrl::parse($url));
 		
-		//$data['cruise'] = $cruise; //Helper\PrepareCruiseRow::prepare($cruise, true);
+		//$data['cruise'] = Helper\PrepareCruiseRow::prepare($cruise, true);
 		//$data['programItems'] = $cruise->getProgramItems();
 		//$data['prices'] = $cruise->getPrices();
 		

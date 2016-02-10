@@ -72,6 +72,20 @@ class CruiseCruise
     private $specialoffer;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="burningCruise", type="boolean", nullable=false)
+     */
+    private $burningCruise;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="reductionPrice", type="boolean", nullable=false)
+     */
+    private $reductionPrice;
+
+    /**
      * @var \CruiseShip
      *
      * @ORM\ManyToOne(targetEntity="CruiseShip")
@@ -421,5 +435,51 @@ class CruiseCruise
     public function getProgramItems()
     {
         return $this->programItems;
+    }
+
+    /**
+     * Set burningCruise
+     *
+     * @param boolean $burningCruise
+     * @return CruiseCruise
+     */
+    public function setBurningCruise($burningCruise)
+    {
+        $this->burningCruise = $burningCruise;
+
+        return $this;
+    }
+
+    /**
+     * Get burningCruise
+     *
+     * @return boolean 
+     */
+    public function getBurningCruise()
+    {
+        return $this->burningCruise;
+    }
+
+    /**
+     * Set reductionPrice
+     *
+     * @param boolean $reductionPrice
+     * @return CruiseCruise
+     */
+    public function setReductionPrice($reductionPrice)
+    {
+        $this->reductionPrice = $reductionPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get reductionPrice
+     *
+     * @return boolean 
+     */
+    public function getReductionPrice()
+    {
+        return $this->reductionPrice;
     }
 }

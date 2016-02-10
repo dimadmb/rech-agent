@@ -22,10 +22,6 @@ search:
     path: "/search"
     defaults: { _controller:BaseBundle:Cruise:search }
 
-specialOffers:
-    path: "/specialoffers"
-    defaults: { _controller:BaseBundle:Cruise:specialOffers }
-
 page_small:
     path: "/{first}.html"
     defaults: { _controller: BaseBundle:Document:page }		

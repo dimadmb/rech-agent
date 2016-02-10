@@ -21,9 +21,10 @@ class CruiseCruiseRepository extends EntityRepository
 	}
 	
 	public function findForMonth($time) {
-		$str = "SELECT c
+		$str = "SELECT c, s, pr
 			FROM BaseBundle\Entity\CruiseCruise c
-
+			JOIN c.ship s 
+			LEFT JOIN c.prices pr
 			WHERE c.startdate >= ?1 AND c.startdate < ?2
 			ORDER BY c.startdate";
    		$q = $this->_em->createQuery($str);
@@ -32,6 +33,14 @@ class CruiseCruiseRepository extends EntityRepository
    		return $q->getResult();
 	}	
 
+	public function findAllOrdered() {
+		$q = "SELECT c, s, pr
+			FROM BaseBundle\Entity\CruiseCruise c 
+			JOIN c.ship s 
+			LEFT JOIN c.prices pr
+			ORDER BY c.startdate ASC, s.title ASC";
+   		return $this->_em->createQuery($q)->/*setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)->*/getResult();
+	}	
 	
 	public function findByUrl(\BaseBundle\Controller\Helper\CruiseUrl $url) {
 		$str = "SELECT c, s, pi, pr, cab, pl
@@ -49,14 +58,7 @@ class CruiseCruiseRepository extends EntityRepository
    		return $q->getSingleResult();
 	}
 	
-	public function findAllOrdered() {
-		$q = "SELECT c, s, pr
-			FROM BaseBundle\Entity\CruiseCruise c 
-			JOIN c.ship s 
-			LEFT JOIN c.prices pr
-			ORDER BY c.startdate ASC, s.title ASC";
-   		return $this->_em->createQuery($q)->/*setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)->*/getResult();
-	}	
+
 
 	public function findSpecial() {
 		$str = "SELECT c, s, pr
@@ -82,4 +84,18 @@ class CruiseCruiseRepository extends EntityRepository
             ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.enddate DESC ')->setMaxResults(1)
             ->getSingleResult();		
 	}
+	
+	public function findMinDays()
+	{
+        return $this->getEntityManager()
+            ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.daycount ASC ')->setMaxResults(1)
+            ->getSingleResult();		
+	}		
+	public function findMaxDays()
+	{
+        return $this->getEntityManager()
+            ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.daycount DESC ')->setMaxResults(1)
+            ->getSingleResult();		
+	}		
+	
 }

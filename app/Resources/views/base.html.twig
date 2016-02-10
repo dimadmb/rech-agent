@@ -15,6 +15,7 @@
 	
 	 <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
 	 <link rel="stylesheet" href="{{ asset('css/bootstrap-theme.css') }}">
+	 <link rel="stylesheet" href="{{ asset('css/bootstrap-slider.css') }}">
 	 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 	 <link rel="stylesheet" href="{{ asset('css/style_migrate.css') }}">
 
@@ -166,12 +167,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="{{ asset('js/bootstrap.js') }}"></script>
+	<script src="{{ asset('js/bootstrap-slider.js') }}"></script>
 
     <!-- Script to Activate the Carousel -->
     <script>
     $('.carousel').carousel({
         interval: 5000 //changes the speed
     })
+	$("#form_days").slider({});
+	
     </script>
 
 </body>

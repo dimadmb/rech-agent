@@ -9,6 +9,7 @@ use BaseBundle\Controller\Helper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 use BaseBundle\Entity\CruiseCruise;
+use BaseBundle\Entity\CruisePlace;
 
 class CruiseController extends Controller
 {
@@ -21,6 +22,7 @@ class CruiseController extends Controller
 		return array("months"=>$this->months());
 	}
 	
+	# выводит список ссылок на месяцы
 	private function months() {
 		$months = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findMonths();
 		$result = array();
@@ -46,7 +48,7 @@ class CruiseController extends Controller
     /**
 	 * @Template()     
 	 */	
-	
+	# выводит список круизов на конкретный месяц
 	public function monthAction($month) {
 		$cruises = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findForMonth($month);
 		$title = self::month_ru($month);
@@ -60,7 +62,8 @@ class CruiseController extends Controller
 
     /**
 	 * @Template()
-	 */		
+	 */	
+	# список всех круизов по месяцам
 	public function scheduleAction()
 	{
 		$cruises = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findAllOrdered();
@@ -83,26 +86,9 @@ class CruiseController extends Controller
 			$wrap = Helper\PrepareCruiseRow::prepare($cruise);
 			$group->row[] = $wrap;
 		}
-		return $result;
+		return /*$cruises;//*/$result;
 	}	
 
-
-
-	
-
-    /**
-	 * @Template("BaseBundle:Cruise:month.html.twig")
-	 */		
-	public function specialOffersAction()
-	{
-		$cruises = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findSpecial();
-		foreach ($cruises as $cruise) {
-			$wrap = Helper\PrepareCruiseRow::prepare($cruise);
-			$result[] = $wrap;
-			//$result[] = $cruises;
-		}		
-		return  array("cruises" => $result, "title" => "Специальные предложения");
-	}
 
 	 
 	 
@@ -124,26 +110,6 @@ class CruiseController extends Controller
 	}
 
 
-
-
-
-	
-	private function getSearchParameters() {
-		$query = $this->getRequest();
-		$selected = new \stdClass();
-		$selected->dateFrom = $query->get("datefrom", date("d-m-Y", time()));
-		$toTime = mktime(0,0,0,date("m", time()) + 1);
-		$selected->dateTo = $query->get("dateto", date("d-m-Y", $toTime));
-		$selected->class = $query->get("class", "");
-		$places = array();
-		$prepare = explode(" или ", $query->get("route", ""));
-		foreach($prepare as $i=>$place) {
-			if (trim($place) == "") continue;
-			$places[] = trim($place);
-		}
-		$selected->route = join(" или ", $places);
-		return $selected;
-	}	
 	
     /**
 	 * @Template("BaseBundle:Cruise:schedule.html.twig")
@@ -157,6 +123,9 @@ class CruiseController extends Controller
 
 		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
+		$qb->select('c','s','p');
+		$qb->innerJoin('c.ship','s');
+		$qb->leftJoin('c.prices','p');
 
 		$qb->where("c.startdate>=?1");
 		$qb->andWhere("c.enddate<=?2");
@@ -165,6 +134,8 @@ class CruiseController extends Controller
 		$to = strtotime($form['endDate']);
 		$qb->setParameter(1, $from);
 		$qb->setParameter(2, $to);
+
+
 		
 		if($form['ship'] > 0 ){
 		
@@ -172,7 +143,32 @@ class CruiseController extends Controller
 		$qb->setParameter(3, $form['ship']);	
 		}
 		
+		if(isset($form['specialoffer']))
+		{
+		$qb->andWhere("c.specialoffer = ?4");
+		$qb->setParameter(4, 1);			
+		}
 
+		if(isset($form['burningCruise']))
+		{
+		$qb->andWhere("c.burningCruise = ?5");
+		$qb->setParameter(5, 1);			
+		}	
+
+		if(isset($form['reductionPrice']))
+		{
+		$qb->andWhere("c.reductionPrice = ?6");
+		$qb->setParameter(6, 1);				
+		}
+
+		if(isset($form['days']))
+		{
+			list($mindays,$maxdays) = explode(',',$form['days']);
+		$qb->andWhere("c.daycount >= ?7");
+		$qb->andWhere("c.daycount <= ?8");
+		$qb->setParameter(7, $mindays);				
+		$qb->setParameter(8, $maxdays);				
+		}
 		
 		$qb->orderBy("c.startdate");
 
@@ -184,12 +180,7 @@ class CruiseController extends Controller
 		return array('cruises_months' => $result);		
 		
 	}
-/*
-	 public function searchformAction(Request $request)
-	 {
-		 $search = new stdClass();
-	 }
-*/	
+
 	/**
 	*@Template()
 	*/
@@ -201,12 +192,36 @@ class CruiseController extends Controller
 		$minDate = $repository->findMinStartDate();
 		$maxDate = $repository->findMaxStartDate();
 		
+		// понадобятся для фильтра по дням
+		$minDays = $repository->findMinDays()->getDaycount();
+		$maxDays = $repository->findMaxDays()->getDaycount();
+		
+		$form = $request->get('form');
+		
+		if(isset($form['days']))
+		{
+			$days = $form['days'];
+		} 
+		else
+		{
+			$days = $minDays.','.$maxDays;
+		}
+		
+		
 		$form_search = $this->createFormBuilder()
             ->add('startDate', 'date',array('widget' => 'single_text','data'=> new \DateTime(date("Y-m-d",$minDate->getStartdate())) ))
             ->add('endDate', 'date',array('widget' => 'single_text','data'=> new \DateTime(date("Y-m-d",$maxDate->getEnddate()))))
+			
+			->add('days','text',array('attr'=>array('data-slider-min'=>$minDays,'data-slider-max'=>$maxDays,'data-slider-value'=>'['.$days.']','id'=>'days-form' )))
+			
+			//->add('cityes','collection',array('class' => 'BaseBundle:CruisePlace'))
+			
 			->add('ship','entity',array('class' => 'BaseBundle:CruiseShip',
-			'choices' =>  $this->getActiveShip()
-			,'choice_label' => 'title','empty_value'=>'Все теплоходы','required' => false))
+					'choices' =>  $this->getActiveShip()
+					,'choice_label' => 'title','empty_value'=>'Все теплоходы','required' => false))
+			->add('specialoffer','checkbox',array('required'=> false))
+			->add('burningCruise','checkbox',array('required'=> false))
+			->add('reductionPrice','checkbox',array('required'=> false))
 			->add('button', 'submit')
             ->getForm();
 

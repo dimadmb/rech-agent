@@ -8,14 +8,29 @@ body {
 	/* Отступ снизу, по высоте футера */
 	margin-bottom: 120px !important;
 }
+
+/* FOOTER */
+
+
 .footer {
+	background:#483381;
+	padding:20px 0 0 ;
+	color:#fff;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 	/* Фиксированная высота футера */
 	height: 120px;
-	background-color: #f5f5f5;
 }
+.footer .container .row {
+	background:#483381;
+	padding: 0 0 10px;
+}
+.footer a {
+	color:#fff;
+}
+
+/* END FOOTER */
 
 
 
@@ -170,20 +185,6 @@ h5{
 }
 
 
-/* FOOTER */
-
-.footer {
-	background:#483381;
-	padding:20px 15px;
-	color:#fff;
-	
-}
-
-.footer a {
-	color:#fff;
-}
-
-/* END FOOTER */
 
 
 .carousel-control.left {
@@ -203,4 +204,19 @@ h5{
   background-image:         linear-gradient(to right, rgba(255, 255, 255, .0001) 0%, rgba(255, 255, 255, .5) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffffff', endColorstr='#80ffffff', GradientType=1);
   background-repeat: repeat-x;
+}
+
+#form_places:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;	
+}
+
+#form_places div.checkbox {
+	width:30%;
+	float:left;
+	margin-top:-5px;
 }

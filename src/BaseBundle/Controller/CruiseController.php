@@ -8,8 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use BaseBundle\Controller\Helper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
-use BaseBundle\Entity\CruiseCruise;
-use BaseBundle\Entity\CruisePlace;
 
 class CruiseController extends Controller
 {
@@ -44,6 +42,14 @@ class CruiseController extends Controller
 		return $result;
 	}
 
+	/**
+	* @Template()
+	*/
+	public function monthMenuAction() 
+	{
+		return array('monthMenu'=>$this->months());
+	}
+	
 	
     /**
 	 * @Template()     
@@ -89,9 +95,6 @@ class CruiseController extends Controller
 		return /*$cruises;//*/$result;
 	}	
 
-
-	 
-	 
     /**
 	 * @Template()
 	
@@ -99,18 +102,9 @@ class CruiseController extends Controller
 	public function detailsAction($url)
 	{
 		$cruise = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrl(Helper\CruiseUrl::parse($url));
-		
-		//$data['cruise'] = Helper\PrepareCruiseRow::prepare($cruise, true);
-		//$data['programItems'] = $cruise->getProgramItems();
-		//$data['prices'] = $cruise->getPrices();
-		
 		return array('cruise' => $cruise,);
-
-		
 	}
 
-
-	
     /**
 	 * @Template("BaseBundle:Cruise:schedule.html.twig")
 	
@@ -123,9 +117,10 @@ class CruiseController extends Controller
 
 		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
-		$qb->select('c','s','p');
+		$qb->select('c','s','p','pi');
 		$qb->innerJoin('c.ship','s');
 		$qb->leftJoin('c.prices','p');
+		$qb->leftJoin('c.programItems','pi');
 
 		$qb->where("c.startdate>=?1");
 		$qb->andWhere("c.enddate<=?2");
@@ -169,10 +164,17 @@ class CruiseController extends Controller
 		$qb->setParameter(7, $mindays);				
 		$qb->setParameter(8, $maxdays);				
 		}
+
+
+		if(isset($form['places']))
+		{
+		$qb->andWhere("pi.place IN(?9)");
+		$qb->setParameter(9, implode(',',$form['places']));
+		}	
 		
 		$qb->orderBy("c.startdate");
 
-		$qb->getQuery()->execute();
+		//$qb->getQuery()->execute();
 		$result = $qb->getQuery()->getResult();
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
@@ -196,6 +198,7 @@ class CruiseController extends Controller
 		$minDays = $repository->findMinDays()->getDaycount();
 		$maxDays = $repository->findMaxDays()->getDaycount();
 		
+		
 		$form = $request->get('form');
 		
 		if(isset($form['days']))
@@ -214,16 +217,18 @@ class CruiseController extends Controller
 			
 			->add('days','text',array('attr'=>array('data-slider-min'=>$minDays,'data-slider-max'=>$maxDays,'data-slider-value'=>'['.$days.']','id'=>'days-form' )))
 			
-			//->add('cityes','collection',array('class' => 'BaseBundle:CruisePlace'))
+			->add('places','entity',array('class' => 'BaseBundle:CruisePlace','choices' =>  $this->getActivePlaces(), 'choice_label' => 'title','multiple'      => true,'expanded'      => true,))
+			
+			//->add('places', 'choice' ,array('class' => 'BaseBundle:CruisePlace','choices' =>  $this->getActivePlaces()) )
 			
 			->add('ship','entity',array('class' => 'BaseBundle:CruiseShip',
 					'choices' =>  $this->getActiveShip()
 					,'choice_label' => 'title','empty_value'=>'Все теплоходы','required' => false))
-			->add('specialoffer','checkbox',array('required'=> false))
-			->add('burningCruise','checkbox',array('required'=> false))
-			->add('reductionPrice','checkbox',array('required'=> false))
-			->add('button', 'submit')
-            ->getForm();
+			->add('specialoffer','checkbox',array('required'=> false,'label' => 'Специальный тариф'))
+			->add('burningCruise','checkbox',array('required'=> false,'label' => '«Горящий» круиз'))
+			->add('reductionPrice','checkbox',array('required'=> false,'label' => 'Сниженная цена'))
+			->add('button', 'submit',array('label' => 'Поиск'))
+            ->getForm(); 
 
 		if ($request->getMethod() == 'POST') {  
 			$form_search->handleRequest($request);
@@ -231,6 +236,59 @@ class CruiseController extends Controller
 	return array('form_search' => $form_search->createView() );
 	}
 
+	/**
+	 * @Template("BaseBundle:Cruise:schedule.html.twig")
+	*/
+	public function specialofferAction($offer)
+	{
+		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
+
+		$qb->select('c','s','p');
+		$qb->innerJoin('c.ship','s');
+		$qb->leftJoin('c.prices','p');
+
+		
+		if($offer == "burningcruise")
+		{
+			$qb->andWhere("c.burningCruise = ?1");
+		}
+		elseif($offer == "reductionprice")
+		{
+			$qb->andWhere("c.reductionPrice = ?1");
+		}
+		
+		elseif($offer == "specialoffer")
+		{
+			$qb->andWhere("c.specialoffer = ?1");
+		}
+		else
+		{
+			throw $this->createNotFoundException("Страница не найдена.");
+		}	
+		$qb->setParameter(1, 1);
+	
+		$qb->orderBy("c.startdate");
+		$result = $qb->getQuery()->getResult();		
+		$result = $this->monthsSchedule($result);
+		return array('cruises_months' => $result);;
+	}
+	
+	
+	public function getActivePlaces()
+	{
+		$em = $this->getDoctrine()->getManager();
+		$query = $em->createQuery(
+			'SELECT p 
+			FROM BaseBundle:CruisePlace p 
+			WHERE EXISTS 
+				(SELECT pi FROM BaseBundle:CruiseCruiseProgramItem pi WHERE pi.place = p.id )
+			'
+		);	
+		return $query->getResult();
+
+	}
+
+	
 	public function getActiveShip()
 	{
 		$em = $this->getDoctrine()->getManager();

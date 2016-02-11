@@ -2,6 +2,10 @@ homepage:
     path: "/"
     defaults: { _controller: BaseBundle:Document:index }
 
+specialoffer:
+    path: "/specialoffer/{offer}.html"
+    defaults: { _controller: BaseBundle:Cruise:specialoffer }
+
 cruisedetails:
     path: "/cruise/cruisedetails/{url}.html"
     defaults: { _controller: BaseBundle:Cruise:details }	

@@ -24,11 +24,12 @@
 	</tr>
 {% for item in cruise.programItems %}
 
-	
+{#{dump(item)}#}	
+
 	<tr>
 		<td>{{item.date | date("d.m.Y")}}</td>
 		<td>
-		{% if item.place != null %}
+		{% if (item.place != null) and (item.place.url != '')  %}
 			<a href="{{path('page',{'first':'cruise','second':'settlement','name':item.place.url})}}">{{item.place.title}}</a>
 		{% else %}
 			{{item.placetitle}}

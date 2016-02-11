@@ -223,7 +223,7 @@ class CruiseController extends Controller
 			
 			->add('ship','entity',array('class' => 'BaseBundle:CruiseShip',
 					'choices' =>  $this->getActiveShip()
-					,'choice_label' => 'title','empty_value'=>'Все теплоходы','required' => false))
+					,'choice_label' => 'title','placeholder'=>'Все теплоходы','required' => false))
 			->add('specialoffer','checkbox',array('required'=> false,'label' => 'Специальный тариф'))
 			->add('burningCruise','checkbox',array('required'=> false,'label' => '«Горящий» круиз'))
 			->add('reductionPrice','checkbox',array('required'=> false,'label' => 'Сниженная цена'))

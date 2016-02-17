@@ -47,6 +47,7 @@ class CruiseController extends Controller
 	*/
 	public function monthMenuAction() 
 	{
+		
 		return array('monthMenu'=>$this->months());
 	}
 	

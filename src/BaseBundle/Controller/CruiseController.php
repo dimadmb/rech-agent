@@ -20,6 +20,41 @@ class CruiseController extends Controller
 		return array("months"=>$this->months());
 	}
 	
+    /**
+	 * @Template()
+     */		
+	public function shipAction($ship)
+	{
+		$repository = $this->getDoctrine()->getRepository('BaseBundle:Document');
+		$url = "/cruise/ship/".$ship;
+		$doc = $repository->findOneByUrl($url);
+		if ($doc == null) {
+			throw $this->createNotFoundException("Страница не найдена.");
+		}
+		
+		// теплоход 
+		$repository = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip');
+		$sh = $repository->findOneByCode($ship);
+		
+		// добавить фотоальбом
+
+		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
+		$qb->select('c','s','p');
+		$qb->innerJoin('c.ship','s');
+		$qb->leftJoin('c.prices','p');
+
+		$qb->andWhere("s.code = ?1");
+		$qb->setParameter(1, $ship);			
+		
+		$qb->orderBy("c.startdate");
+
+		$result = $qb->getQuery()->getResult();
+		$result = new ArrayCollection($result);
+		$result = $this->monthsSchedule($result);
+		
+		return array("document" => $doc,'cruises_months' => $result, 'ship' => $sh); 
+	}
+	
 	# выводит список ссылок на месяцы
 	private function months() {
 		$months = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findMonths();
@@ -29,7 +64,6 @@ class CruiseController extends Controller
 			$date = date('M Y', $month['startdate']);
 		if ($date == $current) continue;
 			$model = new \stdClass();
-			//$model->title = Exx\StringUtils::month($month['startdate']);
 			$model->title = self::month_ru($month['startdate']);
 			$model->url = $this->generateUrl("month_cruises", array("month" => strtotime($date)));
 			$result[] = $model;
@@ -93,7 +127,7 @@ class CruiseController extends Controller
 			$wrap = Helper\PrepareCruiseRow::prepare($cruise);
 			$group->row[] = $wrap;
 		}
-		return /*$cruises;//*/$result;
+		return $result;
 	}	
 
     /**
@@ -118,10 +152,10 @@ class CruiseController extends Controller
 
 		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
-		$qb->select('c','s','p','pi');
+		$qb->select('c','s','p');
 		$qb->innerJoin('c.ship','s');
 		$qb->leftJoin('c.prices','p');
-		$qb->leftJoin('c.programItems','pi');
+		
 
 		$qb->where("c.startdate>=?1");
 		$qb->andWhere("c.enddate<=?2");
@@ -169,13 +203,13 @@ class CruiseController extends Controller
 
 		if(isset($form['places']))
 		{
+		$qb->leftJoin('c.programItems','pi');	
 		$qb->andWhere("pi.place IN(?9)");
 		$qb->setParameter(9, implode(',',$form['places']));
 		}	
 		
 		$qb->orderBy("c.startdate");
 
-		//$qb->getQuery()->execute();
 		$result = $qb->getQuery()->getResult();
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
@@ -219,8 +253,6 @@ class CruiseController extends Controller
 			->add('days','text',array('attr'=>array('data-slider-min'=>$minDays,'data-slider-max'=>$maxDays,'data-slider-value'=>'['.$days.']','id'=>'days-form' )))
 			
 			->add('places','entity',array('class' => 'BaseBundle:CruisePlace','choices' =>  $this->getActivePlaces(), 'choice_label' => 'title','multiple'      => true,'expanded'      => true,))
-			
-			//->add('places', 'choice' ,array('class' => 'BaseBundle:CruisePlace','choices' =>  $this->getActivePlaces()) )
 			
 			->add('ship','entity',array('class' => 'BaseBundle:CruiseShip',
 					'choices' =>  $this->getActiveShip()
@@ -274,6 +306,20 @@ class CruiseController extends Controller
 		return array('cruises_months' => $result);;
 	}
 	
+
+	/**
+	 * @Template() 
+	*/
+	public function categoryroutesAction($category)
+	{
+		$repository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseCategory');
+		$category = $repository->findWithCruises($category);
+		$cruises_months= $this->monthsSchedule($category->getCruise());
+		
+		return array('cruises_months' => $cruises_months, 'category' => $category  );
+	}
+
+
 	
 	public function getActivePlaces()
 	{

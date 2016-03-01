@@ -11,6 +11,10 @@ body {
 
 /* FOOTER */
 
+hr {
+	border-top: 2px solid #483381;
+}
+
 
 .footer {
 	background:#483381;
@@ -68,6 +72,7 @@ h2 {
 }
 h3{
 	font-size: 20px !important;
+	/*font-weight:900 ;*/
 }
 h4 {
 	font-size: 16px !important;
@@ -84,10 +89,18 @@ h5{
   background-image:         linear-gradient(to bottom, #463180 0%, #4D3884 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#463180', endColorstr='#4D3884', GradientType=0);
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  background-repeat: repeat-x;
-
-   
 }
+
+.navbar .container.header-volna {
+	background:url(../images/template/head.png) no-repeat;
+	
+	-moz-background-size: 100% 100px; 
+    -webkit-background-size: 100% 100px; 
+    -o-background-size: 100% 100px; 
+    background-size: 100% 100px; 
+	
+}
+
 
 .navbar-inverse .navbar-brand {
   color: #fff;
@@ -121,6 +134,13 @@ h5{
 .navbar-inverse .navbar-nav > .open > a,
 .navbar-inverse .navbar-nav > .active > a {
 
+}
+
+.navbar-nav{
+	background: -webkit-linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(255,255,255,0.3) 50%, rgba(0,0,0,0) 100%);
+	background: -o-linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(255,255,255,0.3) 50%, rgba(0,0,0,0) 100%);
+	background: -webkit-gradient(to right, rgba(0,0,0,0) 0%, rgba(255,255,255,0.3) 50%, rgba(0,0,0,0) 100%);
+	background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(255,255,255,0.3) 50%, rgba(0,0,0,0) 100%);
 }
 
 .nav > li > a {
@@ -206,6 +226,27 @@ h5{
   background-repeat: repeat-x;
 }
 
+.container-search {
+	background:#DCDDDF;
+}
+.container-search a[href="#spoiler-1"] {
+	width:100%;
+}
+.container-search div.slider-horizontal {
+	width:100%;
+}
+@media (max-width: 767px){
+	.container-search div.slider-horizontal  .tooltip.tooltip-main.top {
+		opacity:1;
+	}
+}
+.container-search button[type="submit"] {
+	width:100%;
+	margin:20px auto;
+	/*height:40px;*/
+}
+
+
 #form_places:after {
     visibility: hidden;
     display: block;
@@ -216,7 +257,44 @@ h5{
 }
 
 #form_places div.checkbox {
-	width:30%;
+	width:33%;
 	float:left;
 	margin-top:-5px;
+}
+
+@media (max-width: 767px){
+#form_places div.checkbox {
+    width: 50%;
+}	
+	
+}
+
+.table-special-span {
+	padding: 3px 5px;
+    border-radius: 5px;
+	margin:3px;	
+	display: block;
+	white-space: nowrap;
+	text-align:center;
+	color:#fff;
+
+}
+
+.color-gk {
+	background:#F5A3C3;
+}
+.color-sc {
+	background:#FFD370;
+}
+.color-st {
+	background:#72B3E2;
+}
+ 
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #E6E6E6;
+}
+
+.table-cruises th {
+	background:#483D9B;
+	color:#E4E7FA;
 }

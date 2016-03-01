@@ -10,17 +10,10 @@
 			{% for class in classes %}
 				<div class="clearfix">
 				<h3>{{class.title}}</h3>
+				<hr style="border-top: 1px solid #483381;">
 
 				{% for ship in class.ships %}				
-					<div class="col-xs-6 col-md-6 ">
-					<a href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}">{{ship.title}}</a><br>
-					<a href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}"><img src="{{ship.imgurl}} "></a>
-					<br>
-					<br>
-					{% for property in ship.properties %}
-						<p>{{property.n}} : {{property.v}}</p>
-					{% endfor %}
-					</div>
+					{% include 'BaseBundle:Ship:tableShip.html.twig' %}
 				{% endfor %}
 			</div>
 			{% endfor %}			

@@ -1,10 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Расписание по месяцам{% endblock %}
+{% block title %}{{category.title}}{% endblock %}
 
 {% block body %}
-<h1>Расписание по месяцам</h1>
-<br>
+<h1>{{category.title}}</h1>
 
 
 {% for cruises_month in cruises_months %}
@@ -16,7 +15,5 @@
 	
 	
 {% endfor %}
-
-
-
-{% endblock %}
+	
+{% endblock %}	

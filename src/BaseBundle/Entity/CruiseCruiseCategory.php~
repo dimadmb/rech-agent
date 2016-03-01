@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="cruise_cruise_category", indexes={@ORM\Index(name="parent_id", columns={"parent_id"})})
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="BaseBundle\Entity\Repository\CruiseCruiseCategoryRepository")
  */
 class CruiseCruiseCategory
 {

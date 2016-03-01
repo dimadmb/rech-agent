@@ -25,9 +25,21 @@ monthschedule:
     path: "/cruise/monthschedule"
     defaults: { _controller: BaseBundle:Cruise:schedule }
 
+cruiseroutes:
+    path: "/cruise/routes.html"
+    defaults: { _controller: BaseBundle:Document:routes }
+
+categoryroutes:
+    path: "/cruise/categoryroutes/{category}.html"
+    defaults: { _controller: BaseBundle:Cruise:categoryroutes }
+
 month_cruises:
     path: "/cruise/month/{month}.html"
     defaults: { _controller: BaseBundle:Cruise:month }
+
+ship:
+    path: "/cruise/ship/{ship}.html"
+    defaults: { _controller: BaseBundle:Cruise:ship }
 
 page:
     path: "/{first}/{second}/{name}.html"

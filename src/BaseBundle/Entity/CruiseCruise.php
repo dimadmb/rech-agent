@@ -120,7 +120,13 @@ class CruiseCruise
      */
 	private $programItems;	
 
-	
+	/**
+	 * @ORM\ManyToMany(targetEntity="CruiseCruiseCategory", inversedBy="cruise")
+	 * @ORM\JoinTable(name="cruise_cruises_categories", joinColumns={@ORM\JoinColumn(name="cruise_id",
+		referencedColumnName="id", onDelete="CASCADE")},
+	 * inverseJoinColumns={@ORM\JoinColumn(name="category_id",
+	referencedColumnName="id")})
+	 */	
     private $category;
 
     /**

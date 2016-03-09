@@ -5,7 +5,7 @@ namespace BaseBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use BaseBundle\Controller\Helper;
+use BaseBundle\Controller\Helper as Helper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -64,7 +64,7 @@ class CruiseController extends Controller
 			$date = date('M Y', $month['startdate']);
 		if ($date == $current) continue;
 			$model = new \stdClass();
-			$model->title = self::month_ru($month['startdate']);
+			$model->title = Helper\Convert::month_ru($month['startdate']);
 			$model->url = $this->generateUrl("month_cruises", array("month" => strtotime($date)));
 			$result[] = $model;
 			$current = $date;
@@ -92,7 +92,7 @@ class CruiseController extends Controller
 	# выводит список круизов на конкретный месяц
 	public function monthAction($month) {
 		$cruises = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findForMonth($month);
-		$title = self::month_ru($month);
+		$title = Helper\Convert::month_ru($month);
 		foreach ($cruises as $cruise) {
 			$wrap = Helper\PrepareCruiseRow::prepare($cruise);
 			$result[] = $wrap;
@@ -120,7 +120,7 @@ class CruiseController extends Controller
 			$month = date("M Y", $startDate);
 			if ($month != $currentMonth) {
 				$group = new \stdClass();
-				$group->name = self::month_ru($startDate);
+				$group->name = Helper\Convert::month_ru($startDate);
 				$result[] = $group;
 				$currentMonth = $month;
 			}
@@ -156,15 +156,20 @@ class CruiseController extends Controller
 		$qb->innerJoin('c.ship','s');
 		$qb->leftJoin('c.prices','p');
 		
-
-		$qb->where("c.startdate>=?1");
-		$qb->andWhere("c.enddate<=?2");
 		
-		$from = strtotime($form['startDate']);
+		if(isset($form['startDate']))
+		{
+			$qb->andWhere("c.startdate>=?1");
+			$from = strtotime($form['startDate']);
+			$qb->setParameter(1, $from);
+		}
+		
+		if(isset($form['endDate']))
+		{
+		$qb->andWhere("c.enddate<=?2");
 		$to = strtotime($form['endDate']);
-		$qb->setParameter(1, $from);
 		$qb->setParameter(2, $to);
-
+		}
 
 		
 		if($form['ship'] > 0 ){
@@ -352,25 +357,5 @@ class CruiseController extends Controller
 
 	}
 	
-	public static function month_ru($timestamp) {
-		setlocale(LC_TIME, "ru_RU.UTF-8");
-		//$res = mb_convert_encoding(strftime('%B %Y', $timestamp), "UTF-8", "WINDOWS-1251");
-		$res = strftime('%B %Y', $timestamp);
-		$months = array(
-			"January" => "Январь",
-			"February" => "Февраль",
-			"March" => "Март",
-			"April" => "Апрель",
-			"May" => "Май",
-			"June" => "Июнь",
-			"July" => "Июль",
-			"August" => "Август",
-			"September" => "Сентябрь",
-			"October" => "Октябрь",
-			"November" => "Ноябрь",
-			"December" => "Декабрь"
-		);
-		return str_replace(array_keys($months), array_values($months), $res);
-	}	
 	
 }

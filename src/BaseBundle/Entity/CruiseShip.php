@@ -67,11 +67,14 @@ class CruiseShip
 	 */
 	private $cruises;
 	
-	
+	/**
+	 * @ORM\OneToMany(targetEntity="CruiseShipCabin", mappedBy="ship")
+	 */
+	private $cabins;	
 	
 	public function __construct() {
 		$this->cruises = new ArrayCollection();
-		//$this->cabins = new Collections\ArrayCollection();
+		$this->cabins = new ArrayCollection();
 	}	
 
     /**
@@ -176,6 +179,19 @@ class CruiseShip
 		return $cruise;
 	}	
 
+	
+	/**
+	 * @return CruiseShipCabin
+	 */
+	public function addCabin($title) {
+		$cabin = new CruiseShipCabin();
+		$cabin->init($this);
+		$cabin->setTitle($title);
+		$this->cabins->add($cabin);
+		return $cabin;
+	}		
+	
+	
     /**
      * Set imgurl
      *
@@ -220,5 +236,45 @@ class CruiseShip
     public function getClass()
     {
         return $this->class;
+    }
+
+    /**
+     * Remove cruises
+     *
+     * @param \BaseBundle\Entity\CruiseCruise $cruises
+     */
+    public function removeCruise(\BaseBundle\Entity\CruiseCruise $cruises)
+    {
+        $this->cruises->removeElement($cruises);
+    }
+
+    /**
+     * Get cruises
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCruises()
+    {
+        return $this->cruises;
+    }
+
+    /**
+     * Remove cabins
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabin $cabins
+     */
+    public function removeCabin(\BaseBundle\Entity\CruiseShipCabin $cabins)
+    {
+        $this->cabins->removeElement($cabins);
+    }
+
+    /**
+     * Get cabins
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCabins()
+    {
+        return $this->cabins;
     }
 }

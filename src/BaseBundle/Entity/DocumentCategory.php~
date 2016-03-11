@@ -15,6 +15,7 @@ class DocumentCategory
 
     /**
      * @ORM\OneToMany(targetEntity="Document", mappedBy="category_id") 
+	 * @ORM\OrderBy({"title" = "asc"})
      */
 	protected $documents;
 	

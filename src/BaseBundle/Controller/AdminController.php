@@ -16,6 +16,7 @@ use BaseBundle\Entity\CruiseCruise;
 use BaseBundle\Entity\CruiseShip;
 
 
+
 class AdminController extends Controller
 {
 	const SHIP = "ship";
@@ -150,7 +151,7 @@ class AdminController extends Controller
 					$categoriesToAdd->add($category);
 				}
 				
-				$cruise = new CruiseCruise();
+				$cruise = $ship->addCruise($code, $categoriesToAdd);
 				$cruise->setCode($code);
 				$cruise->setShip($ship);
 				$cruise->setRoute($route);
@@ -169,20 +170,44 @@ class AdminController extends Controller
 			
 			
 			$em->persist($ship);
-			//$em->flush();
+			
 			
 			$sheetPrices = $phpExcelObject->getSheetByName(self::PRICES);
-			for($col=2 ; $col <= $sheetPrices->getHighestColumn();$col++)
+			for($col=1 ; $col < \PHPExcel_Cell::columnIndexFromString($sheetPrices->getHighestColumn());$col++)
 			{
-				$cabinTitle = $sheetPrices->getCellByColumnAndRow($col, 0)->getValue();
-				$cabinDescr = $sheetPrices->getCellByColumnAndRow($col, 1)->getValue();
+				
+				$cabinTitle = $sheetPrices->getCellByColumnAndRow($col, 1)->getValue();
+				$cabinDescr = $sheetPrices->getCellByColumnAndRow($col, 2)->getValue();
 				if (trim($cabinTitle) == '') 
 				{
 					continue;
 				}
 				
-			}
+				$cabin = $ship->addCabin($cabinTitle);
+				$cabin->setDescription($cabinDescr);
+				foreach ($ship->getCruises() as $cruise) {
+					
+					for($row=3; $row<=$sheetPrices->getHighestRow(); $row++) {
+						
+						$f[] = $cruiseCode = (int)$sheetPrices->getCellByColumnAndRow(0, $row)->getValue();
+						if ( $cruiseCode == $cruise->getCode()) {
+							$f[] = 1;
+							$cabinPrice = $sheetPrices->getCellByColumnAndRow($col, $row)->getValue();
+							if (!is_numeric($cabinPrice)) {
+								$cabinPrice = 0;
+							}
+							$f[] = $price = $cabin->setPrice($cruise, $cabinPrice);
+							$em->persist($price);
+							
+						}
+					}
+				}
+				$em->persist($cabin);
 				
+			}
+			
+			$em->flush();
+			
 			}
 			else
 			{

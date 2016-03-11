@@ -4,6 +4,8 @@ namespace BaseBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * CruiseShipCabin
  *
@@ -40,7 +42,7 @@ class CruiseShipCabin
      *
      * @ORM\ManyToOne(targetEntity="CruiseShip")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="ship_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="ship_id", onDelete="CASCADE", referencedColumnName="id")
      * })
      */
     private $ship;
@@ -52,9 +54,13 @@ class CruiseShipCabin
 	
 	
 	public function __construct() {
-		$this->prices = new Collections\ArrayCollection();
+		$this->prices = new ArrayCollection();
 	}
 
+	public function init(CruiseShip $ship) {
+		$this->ship = $ship;
+	} 
+	
     /**
      * Get id
      *
@@ -157,13 +163,35 @@ class CruiseShipCabin
         $this->prices->removeElement($prices);
     }
 
-    /**
-     * Get prices
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPrices()
-    {
-        return $this->prices;
-    }
+	/**
+	 * @return the $prices
+	 */
+	public function getPrice(CruiseCruise $cruise) {
+		return $this->getPriceInternal($cruise);
+	}
+	
+	/**
+	 * @return the $prices
+	 */
+	private function getPriceInternal(CruiseCruise $cruise) {
+		foreach ($this->prices as $price) {
+			if ($price->getCruise() == $cruise) {
+				return $price;
+			}
+		}
+		$price = new CruiseShipCabinCruisePrice();
+		$price->init($this, $cruise);
+		$this->prices->add($price);
+		return $price;
+	}	
+	
+	
+	/**
+	 * @param $prices the $prices to set
+	 */
+	public function setPrice(CruiseCruise $cruise, $price) {
+		$cruisePrice = $this->getPrice($cruise);
+		$cruisePrice->setPrice($price);
+		return $cruisePrice;
+	}	
 }

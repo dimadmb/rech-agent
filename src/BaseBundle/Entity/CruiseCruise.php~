@@ -90,7 +90,7 @@ class CruiseCruise
      *
      * @ORM\ManyToOne(targetEntity="CruiseShip")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="ship_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="ship_id", onDelete="CASCADE", referencedColumnName="id")
      * })
      */
     private $ship;
@@ -120,7 +120,13 @@ class CruiseCruise
      */
 	private $programItems;	
 
-	
+	/**
+	 * @ORM\ManyToMany(targetEntity="CruiseCruiseCategory", inversedBy="cruise")
+	 * @ORM\JoinTable(name="cruise_cruises_categories", joinColumns={@ORM\JoinColumn(name="cruise_id",
+		referencedColumnName="id", onDelete="CASCADE")},
+	 * inverseJoinColumns={@ORM\JoinColumn(name="category_id",
+	referencedColumnName="id")})
+	 */	
     private $category;
 
     /**
@@ -132,7 +138,12 @@ class CruiseCruise
 		$this->programItems = new ArrayCollection();
     }
 
-
+	public function init(CruiseShip $ship, ArrayCollection $categories) {
+		$this->ship = $ship;
+		$this->categories = $categories;
+	}
+	
+	
     /**
      * Get id
      *
@@ -435,5 +446,51 @@ class CruiseCruise
     public function getProgramItems()
     {
         return $this->programItems;
+    }
+
+    /**
+     * Set burningCruise
+     *
+     * @param boolean $burningCruise
+     * @return CruiseCruise
+     */
+    public function setBurningCruise($burningCruise)
+    {
+        $this->burningCruise = $burningCruise;
+
+        return $this;
+    }
+
+    /**
+     * Get burningCruise
+     *
+     * @return boolean 
+     */
+    public function getBurningCruise()
+    {
+        return $this->burningCruise;
+    }
+
+    /**
+     * Set reductionPrice
+     *
+     * @param boolean $reductionPrice
+     * @return CruiseCruise
+     */
+    public function setReductionPrice($reductionPrice)
+    {
+        $this->reductionPrice = $reductionPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get reductionPrice
+     *
+     * @return boolean 
+     */
+    public function getReductionPrice()
+    {
+        return $this->reductionPrice;
     }
 }

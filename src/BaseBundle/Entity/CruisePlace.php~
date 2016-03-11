@@ -55,7 +55,19 @@ class CruisePlace
      * @ORM\Column(name="pageable", type="boolean", nullable=false)
      */
     private $pageable;
+	
+	/**
+     * @ORM\OneToMany(targetEntity="CruiseCruiseProgramItem", mappedBy="place")
+     */
+	private $programItems;	
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+		$this->programItems = new ArrayCollection();
+    }
 
 
     /**
@@ -181,5 +193,38 @@ class CruisePlace
     public function getPageable()
     {
         return $this->pageable;
+    }
+
+    /**
+     * Add programItems
+     *
+     * @param \BaseBundle\Entity\CruiseCruiseProgramItem $programItems
+     * @return CruisePlace
+     */
+    public function addProgramItem(\BaseBundle\Entity\CruiseCruiseProgramItem $programItems)
+    {
+        $this->programItems[] = $programItems;
+
+        return $this;
+    }
+
+    /**
+     * Remove programItems
+     *
+     * @param \BaseBundle\Entity\CruiseCruiseProgramItem $programItems
+     */
+    public function removeProgramItem(\BaseBundle\Entity\CruiseCruiseProgramItem $programItems)
+    {
+        $this->programItems->removeElement($programItems);
+    }
+
+    /**
+     * Get programItems
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getProgramItems()
+    {
+        return $this->programItems;
     }
 }

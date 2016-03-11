@@ -138,7 +138,12 @@ class CruiseCruise
 		$this->programItems = new ArrayCollection();
     }
 
-
+	public function init(CruiseShip $ship, ArrayCollection $categories) {
+		$this->ship = $ship;
+		$this->categories = $categories;
+	}
+	
+	
     /**
      * Get id
      *

@@ -90,7 +90,7 @@ class CruiseCruise
      *
      * @ORM\ManyToOne(targetEntity="CruiseShip")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="ship_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="ship_id", onDelete="CASCADE", referencedColumnName="id")
      * })
      */
     private $ship;

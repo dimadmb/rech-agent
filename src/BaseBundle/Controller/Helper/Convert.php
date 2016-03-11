@@ -5,7 +5,25 @@ namespace BaseBundle\Controller\Helper;
 class Convert
 {
 	public static function translit($str) {
-		$transtable = array ('À' => 'A', 'Á' => 'B', 'Â' => 'V', 'Ã' => 'G', 'Ä' => 'D', 'Å' => 'E', '¨' => 'Yo', 'Æ' => 'Zh', 'Ç' => 'Z', 'È' => 'I', 'É' => 'Y', 'Ê' => 'K', 'Ë' => 'L', 'Ì' => 'M', 'Í' => 'N', 'Î' => 'O', 'Ï' => 'P', 'Ð' => 'R', 'Ñ' => 'S', 'Ò' => 'T', 'Ó' => 'U', 'Ô' => 'F', 'Õ' => 'H', 'Ö' => 'Ts', '×' => 'Ch', 'Ø' => 'Sh', 'Ù' => 'Shch', 'Ú' => '', 'Û' => 'I', 'Ü' => '', 'Ý' => 'E', 'Þ' => 'Yu', 'ß' => 'Ya', 'à' => 'a', 'á' => 'b', 'â' => 'v', 'ã' => 'g', 'ä' => 'd', 'å' => 'e', '¸' => 'yo', 'æ' => 'zh', 'ç' => 'z', 'è' => 'i', 'é' => 'y', 'ê' => 'k', 'ë' => 'l', 'ì' => 'm', 'í' => 'n', 'î' => 'o', 'ï' => 'p', 'ð' => 'r', 'ñ' => 's', 'ò' => 't', 'ó' => 'u', 'ô' => 'f', 'õ' => 'h', 'ö' => 'ts', '÷' => 'ch', 'ø' => 'sh', 'ù' => 'shch', 'ú' => '', 'û' => 'y', 'ü' => '', 'ý' => 'e', 'þ' => 'yu', 'ÿ' => 'ya');
+		$str = trim($str);
+		$expl = explode(" ", $str);
+		$res = "";
+		foreach ($expl as $i=>$part) {
+			$part = trim($part);
+			$res .= $part;
+			if ($i < sizeof($expl) - 1) {
+				$res += " ";
+			}
+		}
+		$str = self::string_translit($str);
+		$translit=array(" "=>"-", "."=>"_");
+		$str = strtr($str, $translit);
+		return strtolower(trim($str));
+	}
+
+
+	public static function string_translit($str) {
+		$transtable = array ('Ð' => 'A', 'Ð‘' => 'B', 'Ð’' => 'V', 'Ð“' => 'G', 'Ð”' => 'D', 'Ð•' => 'E', 'Ð' => 'Yo', 'Ð–' => 'Zh', 'Ð—' => 'Z', 'Ð˜' => 'I', 'Ð™' => 'Y', 'Ðš' => 'K', 'Ð›' => 'L', 'Ðœ' => 'M', 'Ð' => 'N', 'Ðž' => 'O', 'ÐŸ' => 'P', 'Ð ' => 'R', 'Ð¡' => 'S', 'Ð¢' => 'T', 'Ð£' => 'U', 'Ð¤' => 'F', 'Ð¥' => 'H', 'Ð¦' => 'Ts', 'Ð§' => 'Ch', 'Ð¨' => 'Sh', 'Ð©' => 'Shch', 'Ðª' => '', 'Ð«' => 'I', 'Ð¬' => '', 'Ð­' => 'E', 'Ð®' => 'Yu', 'Ð¯' => 'Ya', 'Ð°' => 'a', 'Ð±' => 'b', 'Ð²' => 'v', 'Ð³' => 'g', 'Ð´' => 'd', 'Ðµ' => 'e', 'Ñ‘' => 'yo', 'Ð¶' => 'zh', 'Ð·' => 'z', 'Ð¸' => 'i', 'Ð¹' => 'y', 'Ðº' => 'k', 'Ð»' => 'l', 'Ð¼' => 'm', 'Ð½' => 'n', 'Ð¾' => 'o', 'Ð¿' => 'p', 'Ñ€' => 'r', 'Ñ' => 's', 'Ñ‚' => 't', 'Ñƒ' => 'u', 'Ñ„' => 'f', 'Ñ…' => 'h', 'Ñ†' => 'ts', 'Ñ‡' => 'ch', 'Ñˆ' => 'sh', 'Ñ‰' => 'shch', 'ÑŠ' => '', 'Ñ‹' => 'y', 'ÑŒ' => '', 'Ñ' => 'e', 'ÑŽ' => 'yu', 'Ñ' => 'ya');
 		$str = strtr ( $str, $transtable );
 		return $str;
 	}
@@ -15,18 +33,18 @@ class Convert
 		//$res = mb_convert_encoding(strftime('%B %Y', $timestamp), "UTF-8", "WINDOWS-1251");
 		$res = strftime('%B %Y', $timestamp);
 		$months = array(
-			"January" => "ßíâàðü",
-			"February" => "Ôåâðàëü",
-			"March" => "Ìàðò",
-			"April" => "Àïðåëü",
-			"May" => "Ìàé",
-			"June" => "Èþíü",
-			"July" => "Èþëü",
-			"August" => "Àâãóñò",
-			"September" => "Ñåíòÿáðü",
-			"October" => "Îêòÿáðü",
-			"November" => "Íîÿáðü",
-			"December" => "Äåêàáðü"
+			"January" => "Ð¯Ð½Ð²Ð°Ñ€ÑŒ",
+			"February" => "Ð¤ÐµÐ²Ñ€Ð°Ð»ÑŒ",
+			"March" => "ÐœÐ°Ñ€Ñ‚",
+			"April" => "ÐÐ¿Ñ€ÐµÐ»ÑŒ",
+			"May" => "ÐœÐ°Ð¹",
+			"June" => "Ð˜ÑŽÐ½ÑŒ",
+			"July" => "Ð˜ÑŽÐ»ÑŒ",
+			"August" => "ÐÐ²Ð³ÑƒÑÑ‚",
+			"September" => "Ð¡ÐµÐ½Ñ‚ÑÐ±Ñ€ÑŒ",
+			"October" => "ÐžÐºÑ‚ÑÐ±Ñ€ÑŒ",
+			"November" => "ÐÐ¾ÑÐ±Ñ€ÑŒ",
+			"December" => "Ð”ÐµÐºÐ°Ð±Ñ€ÑŒ"
 		);
 		return str_replace(array_keys($months), array_values($months), $res);
 	}

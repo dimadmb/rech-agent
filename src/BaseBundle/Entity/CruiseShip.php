@@ -4,6 +4,8 @@ namespace BaseBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * CruiseShip
  *
@@ -59,7 +61,18 @@ class CruiseShip
      */
     private $class;
 
-
+	/**
+	 * @ORM\OneToMany(targetEntity="CruiseCruise", mappedBy="ship")
+	 * @ORM\OrderBy({"startDate" = "ASC"})
+	 */
+	private $cruises;
+	
+	
+	
+	public function __construct() {
+		$this->cruises = new ArrayCollection();
+		//$this->cabins = new Collections\ArrayCollection();
+	}	
 
     /**
      * Get id
@@ -140,6 +153,28 @@ class CruiseShip
         //return $this->properties;
 		return json_decode($this->properties);
     }
+	
+	/**
+	 * @param $properties the $properties to set
+	 */
+	public function addProperty($name, $value) {
+		$properties = $this->getProperties();
+		$property["n"] = $name;
+		$property["v"] = $value;
+		$properties[] = $property;
+		$this->properties = json_encode($properties); 
+	}
+
+	/**
+	 * @return CruiseCruise
+	 */
+	public function addCruise($code, ArrayCollection $categories) {
+		$cruise = new CruiseCruise();
+		$cruise->init($this, $categories);
+		$cruise->setCode($code);
+		$this->cruises->add($cruise);
+		return $cruise;
+	}	
 
     /**
      * Set imgurl

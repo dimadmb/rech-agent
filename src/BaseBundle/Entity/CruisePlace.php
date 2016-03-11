@@ -194,4 +194,37 @@ class CruisePlace
     {
         return $this->pageable;
     }
+
+    /**
+     * Add programItems
+     *
+     * @param \BaseBundle\Entity\CruiseCruiseProgramItem $programItems
+     * @return CruisePlace
+     */
+    public function addProgramItem(\BaseBundle\Entity\CruiseCruiseProgramItem $programItems)
+    {
+        $this->programItems[] = $programItems;
+
+        return $this;
+    }
+
+    /**
+     * Remove programItems
+     *
+     * @param \BaseBundle\Entity\CruiseCruiseProgramItem $programItems
+     */
+    public function removeProgramItem(\BaseBundle\Entity\CruiseCruiseProgramItem $programItems)
+    {
+        $this->programItems->removeElement($programItems);
+    }
+
+    /**
+     * Get programItems
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getProgramItems()
+    {
+        return $this->programItems;
+    }
 }

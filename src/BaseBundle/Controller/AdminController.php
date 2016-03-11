@@ -79,6 +79,7 @@ class AdminController extends Controller
 	
 	private function getShip($phpExcelObject)
 	{
+		$f= array();
 		if(sizeof($this->isValid($phpExcelObject)) == 0 )
 			{
 				
@@ -164,7 +165,6 @@ class AdminController extends Controller
 				$cruise->setBurningCruise($burningcruise);
 				$cruise->setReductionPrice($reductionprice);
 				$em->persist($cruise);	
-				$f[] = $cruise;
 				
 			}
 			
@@ -189,14 +189,14 @@ class AdminController extends Controller
 					
 					for($row=3; $row<=$sheetPrices->getHighestRow(); $row++) {
 						
-						$f[] = $cruiseCode = (int)$sheetPrices->getCellByColumnAndRow(0, $row)->getValue();
+						$cruiseCode = (int)$sheetPrices->getCellByColumnAndRow(0, $row)->getValue();
 						if ( $cruiseCode == $cruise->getCode()) {
-							$f[] = 1;
+		
 							$cabinPrice = $sheetPrices->getCellByColumnAndRow($col, $row)->getValue();
 							if (!is_numeric($cabinPrice)) {
 								$cabinPrice = 0;
 							}
-							$f[] = $price = $cabin->setPrice($cruise, $cabinPrice);
+							$price = $cabin->setPrice($cruise, $cabinPrice);
 							$em->persist($price);
 							
 						}
@@ -205,6 +205,62 @@ class AdminController extends Controller
 				$em->persist($cabin);
 				
 			}
+			
+			
+			// программы 
+			
+			$sheetProgram = $phpExcelObject->getSheetByName(self::PROGRAM);
+			
+			$placeRepos = $this->getDoctrine()->getRepository('BaseBundle:CruisePlace');
+			$added = new ArrayCollection();
+			$i=0;
+			
+			$places = $placeRepos->findAll();			
+			
+			$map = new ArrayCollection();
+			foreach ($places as $place) {
+				$map->set(Helper\Convert::translit($place->getTitle()), $place);
+			}			
+			
+			for ($row=2; $row<=$sheetProgram->getHighestRow(); $row++) {
+				$cruiseCode =  $sheetProgram->getCellByColumnAndRow(0, $row)->getValue(); 
+				
+				if (trim($cruiseCode) != '') { // Это надо будет переделать
+					foreach ($ship->getCruises() as $cruise) {
+						if (trim($cruiseCode) == $cruise->getCode()) { 
+							break;
+							$i=0;
+						}
+					}
+				}
+				//$f[] = $cruise->getCode();
+				
+				
+				$i++;
+				$description = $sheetProgram->getCellByColumnAndRow(4, $row)->getValue();  
+				if (trim($description) == '') {
+					continue;
+				}
+				$placeTitle = $sheetProgram->getCellByColumnAndRow(3, $row)->getValue();  
+				$date = \PHPExcel_Shared_Date::ExcelToPHP($sheetProgram->getCellByColumnAndRow(2, $row)->getValue());  
+				$placeType = $sheetProgram->getCellByColumnAndRow(5, $row)->getValue();  
+				
+				$placeKey = Helper\Convert::translit($placeTitle);
+				$f[] = $place = $map->get($placeKey);
+				if ($place == null) {
+					$this->errorMessages[] = ("Предупреждение: " . $placeTitle . " не найден и не будет участвовать в поиске.");
+				}
+				//$f[] = $this->errorMessages;
+				$programItem = $cruise->addProgramItem($place);
+				
+				$programItem->setDescription($description);
+				$programItem->setOrd($i);
+				$programItem->setPlaceTitle($placeTitle);
+				$programItem->setDate($date);
+				
+				$em->persist($programItem);
+				
+			}			
 			
 			$em->flush();
 			

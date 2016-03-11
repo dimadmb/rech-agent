@@ -40,7 +40,7 @@ class CruiseShipCabin
     /**
      * @var \CruiseShip
      *
-     * @ORM\ManyToOne(targetEntity="CruiseShip")
+     * @ORM\ManyToOne(targetEntity="CruiseShip", inversedBy="cabins")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ship_id", onDelete="CASCADE", referencedColumnName="id")
      * })
@@ -194,4 +194,14 @@ class CruiseShipCabin
 		$cruisePrice->setPrice($price);
 		return $cruisePrice;
 	}	
+
+    /**
+     * Get prices
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPrices()
+    {
+        return $this->prices;
+    }
 }

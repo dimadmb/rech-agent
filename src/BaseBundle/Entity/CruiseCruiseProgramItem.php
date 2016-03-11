@@ -54,7 +54,7 @@ class CruiseCruiseProgramItem
      *
      * @ORM\ManyToOne(targetEntity="CruiseCruise", inversedBy="programItems")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cruise_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="cruise_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $cruise;
@@ -69,7 +69,13 @@ class CruiseCruiseProgramItem
      */
     private $place;
 
+	
+	public function init(CruiseCruise $cruise, CruisePlace $place = null) {
+		$this->cruise = $cruise;
+		$this->place = $place;
+	}
 
+	
 
     /**
      * Get id

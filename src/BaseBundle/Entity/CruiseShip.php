@@ -63,7 +63,7 @@ class CruiseShip
 
 	/**
 	 * @ORM\OneToMany(targetEntity="CruiseCruise", mappedBy="ship")
-	 * @ORM\OrderBy({"startDate" = "ASC"})
+	 * @ORM\OrderBy({"startdate" = "ASC"})
 	 */
 	private $cruises;
 	

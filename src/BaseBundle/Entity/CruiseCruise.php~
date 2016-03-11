@@ -88,7 +88,7 @@ class CruiseCruise
     /**
      * @var \CruiseShip
      *
-     * @ORM\ManyToOne(targetEntity="CruiseShip")
+     * @ORM\ManyToOne(targetEntity="CruiseShip" , inversedBy="cruises")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ship_id", onDelete="CASCADE", referencedColumnName="id")
      * })
@@ -415,18 +415,18 @@ class CruiseCruise
         return $this->prices;
     }
 
-    /**
-     * Add programItems
-     *
-     * @param \BaseBundle\Entity\CruiseCruiseProgramItem $programItems
-     * @return CruiseCruise
-     */
-    public function addProgramItem(\BaseBundle\Entity\CruiseCruiseProgramItem $programItems)
-    {
-        $this->programItems[] = $programItems;
-
-        return $this;
-    }
+	
+	
+	/**
+	 * @param $programItems the $programItems to set
+	 */
+	public function addProgramItem(CruisePlace $place = null) {
+		$programItem = new CruiseCruiseProgramItem();
+		$programItem->init($this, $place);
+		$this->programItems->add($programItem);
+		return $programItem;
+	}	
+	
 
     /**
      * Remove programItems

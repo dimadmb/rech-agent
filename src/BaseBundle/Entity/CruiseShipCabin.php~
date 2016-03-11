@@ -40,9 +40,9 @@ class CruiseShipCabin
     /**
      * @var \CruiseShip
      *
-     * @ORM\ManyToOne(targetEntity="CruiseShip")
+     * @ORM\ManyToOne(targetEntity="CruiseShip", inversedBy="cabins")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="ship_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="ship_id", onDelete="CASCADE", referencedColumnName="id")
      * })
      */
     private $ship;
@@ -59,7 +59,7 @@ class CruiseShipCabin
 
 	public function init(CruiseShip $ship) {
 		$this->ship = $ship;
-	}
+	} 
 	
     /**
      * Get id
@@ -162,6 +162,38 @@ class CruiseShipCabin
     {
         $this->prices->removeElement($prices);
     }
+
+	/**
+	 * @return the $prices
+	 */
+	public function getPrice(CruiseCruise $cruise) {
+		return $this->getPriceInternal($cruise);
+	}
+	
+	/**
+	 * @return the $prices
+	 */
+	private function getPriceInternal(CruiseCruise $cruise) {
+		foreach ($this->prices as $price) {
+			if ($price->getCruise() == $cruise) {
+				return $price;
+			}
+		}
+		$price = new CruiseShipCabinCruisePrice();
+		$price->init($this, $cruise);
+		$this->prices->add($price);
+		return $price;
+	}	
+	
+	
+	/**
+	 * @param $prices the $prices to set
+	 */
+	public function setPrice(CruiseCruise $cruise, $price) {
+		$cruisePrice = $this->getPrice($cruise);
+		$cruisePrice->setPrice($price);
+		return $cruisePrice;
+	}	
 
     /**
      * Get prices

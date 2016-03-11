@@ -33,7 +33,7 @@ class CruiseShipCabinCruisePrice
      *
      * @ORM\ManyToOne(targetEntity="CruiseShipCabin", inversedBy="prices" )
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cabin_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="cabin_id", referencedColumnName="id" , onDelete="CASCADE" )
      * })
      */
     private $cabin;
@@ -43,12 +43,15 @@ class CruiseShipCabinCruisePrice
      *
      * @ORM\ManyToOne(targetEntity="CruiseCruise", inversedBy="prices")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cruise_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="cruise_id", referencedColumnName="id" , onDelete="CASCADE" )
      * })
      */
     private $cruise;
 
-
+	public function init(CruiseShipCabin $cabin, CruiseCruise $cruise) {
+		$this->cabin = $cabin;
+		$this->cruise = $cruise;
+	}
 
     /**
      * Get id

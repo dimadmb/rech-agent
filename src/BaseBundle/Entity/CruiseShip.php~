@@ -63,7 +63,7 @@ class CruiseShip
 
 	/**
 	 * @ORM\OneToMany(targetEntity="CruiseCruise", mappedBy="ship")
-	 * @ORM\OrderBy({"startDate" = "ASC"})
+	 * @ORM\OrderBy({"startdate" = "ASC"})
 	 */
 	private $cruises;
 	
@@ -236,5 +236,45 @@ class CruiseShip
     public function getClass()
     {
         return $this->class;
+    }
+
+    /**
+     * Remove cruises
+     *
+     * @param \BaseBundle\Entity\CruiseCruise $cruises
+     */
+    public function removeCruise(\BaseBundle\Entity\CruiseCruise $cruises)
+    {
+        $this->cruises->removeElement($cruises);
+    }
+
+    /**
+     * Get cruises
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCruises()
+    {
+        return $this->cruises;
+    }
+
+    /**
+     * Remove cabins
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabin $cabins
+     */
+    public function removeCabin(\BaseBundle\Entity\CruiseShipCabin $cabins)
+    {
+        $this->cabins->removeElement($cabins);
+    }
+
+    /**
+     * Get cabins
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCabins()
+    {
+        return $this->cabins;
     }
 }

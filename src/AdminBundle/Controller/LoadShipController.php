@@ -41,24 +41,18 @@ class LoadShipController extends Controller
 		
 		//$directory = $this->container->getParameter('kernel.root_dir').'/../web';
 		
-		$f = '';
+		
 		
 		if (isset($_FILES['form']))
 		{
 			$file =  $_FILES['form']['tmp_name']['file'];
 			$phpExcelObject = $this->get('phpexcel')->createPHPExcelObject($file);
-			
-			
-			$f = $parser = $this->getShip($phpExcelObject);
-			
-			//$f = get_class_methods($phpExcelObject->getSheetByName(self::SHIP)->getCell('A2'));
+
+			$f = $this->getShip($phpExcelObject);
 			
 			$success = $f ? "Теплоход и круизы успешно добавлены " : "";
 		}
-		
-		
-					
-		
+
 		return array('messages'=>$this->errorMessages, 'success'=>$success);
 	}
 
@@ -92,7 +86,7 @@ class LoadShipController extends Controller
 	}	
 	private function getShip($phpExcelObject)
 	{
-		$f = '';
+		$f = array();
 		if(sizeof($this->isValid($phpExcelObject)) == 0 )
 			{
 				
@@ -160,6 +154,7 @@ class LoadShipController extends Controller
 						$this->errorMessages[] = "Не найдена категория $catId. Возможно они не были импортированы.";
 						//return null;
 					}
+					//$f[] = $catId;
 					$categoriesToAdd->add($category);
 				}
 				
@@ -256,7 +251,7 @@ class LoadShipController extends Controller
 				$placeType = $sheetProgram->getCellByColumnAndRow(5, $row)->getValue();  
 				
 				$placeKey = Helper\Convert::translit($placeTitle);
-				$f[] = $place = $map->get($placeKey);
+				$place = $map->get($placeKey);
 				if ($place == null) {
 					$this->errorMessages[] = ("Предупреждение: " . $placeTitle . " не найден и не будет участвовать в поиске.");
 				}

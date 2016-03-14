@@ -27,7 +27,8 @@ class AppKernel extends Kernel
 			*/
 			
 			new Liuggio\ExcelBundle\LiuggioExcelBundle(),
-			
+
+            new AdminBundle\AdminBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

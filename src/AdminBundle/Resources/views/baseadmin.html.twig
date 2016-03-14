@@ -25,12 +25,17 @@
   <nav class="navbar navbar-default navbar-inverse navbar-static-top navbar-admin" role="navigation">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="{{path('admin')}}">Домой</a>
+		<a class="navbar-brand" href="{{path('loadship')}}">Загрузить теплоход</a>
 	</div>
   </nav>
-  
-  
+  <div class="container-fluid">
+   <div class="row">
+	<div class="col-sm-12">
 		{% block body %}{% endblock %}
-
+	</div>
+   </div>
+		
+  </div>
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
 	<!-- Latest compiled and minified JavaScript -->

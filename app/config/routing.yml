@@ -8,7 +8,15 @@
 #   prefix: /admin
 #
 
+base:
+    resource: "@BaseBundle/Controller/"
+    type:     annotation
+    prefix:   /
 
+admin:
+    resource: "@AdminBundle/Controller/"
+    type:     annotation
+    prefix:   /
 
 homepage:
     path: "/"
@@ -67,7 +75,4 @@ showDocuments:
     defaults: { _controller: BaseBundle:DocumentCategory:documents }	
 
 
-base:
-    resource: "@BaseBundle/Controller/"
-    type:     annotation
-    prefix:   /
+

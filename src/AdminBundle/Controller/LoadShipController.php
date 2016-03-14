@@ -1,6 +1,6 @@
 <?php
 
-namespace BaseBundle\Controller;
+namespace AdminBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -15,10 +15,57 @@ use Liuggio\ExcelBundle;
 use BaseBundle\Entity\CruiseCruise;
 use BaseBundle\Entity\CruiseShip;
 
-
-
-class AdminController extends Controller
+class LoadShipController extends Controller
 {
+
+    /**
+	 * @Template()
+	 * @Route("/admin/loadship", name="loadship" )
+     */			
+	public function loadshipAction()
+	{
+		$form_excel = $this->createFormBuilder()
+			->add('file','file',array('label' => 'файл'))
+			->add('button', 'submit',array('label' => 'Загрузить'))
+			->getForm(); 
+			
+		return array('form_excel' => $form_excel->createView());		
+	}
+
+    /**
+	 * @Template()
+	 * @Route("/admin/loadshipdo", name="loadshipdo" )
+     */			
+	public function loadshipDoAction()
+	{
+		
+		//$directory = $this->container->getParameter('kernel.root_dir').'/../web';
+		
+		$f = '';
+		
+		if (isset($_FILES['form']))
+		{
+			$file =  $_FILES['form']['tmp_name']['file'];
+			$phpExcelObject = $this->get('phpexcel')->createPHPExcelObject($file);
+			
+			
+			$f = $parser = $this->getShip($phpExcelObject);
+			
+			//$f = get_class_methods($phpExcelObject->getSheetByName(self::SHIP)->getCell('A2'));
+			
+			$success = $f ? "Теплоход и круизы успешно добавлены " : "";
+		}
+		
+		
+					
+		
+		return array('messages'=>$this->errorMessages, 'success'=>$success);
+	}
+
+
+
+
+
 	const SHIP = "ship";
 	const PRICES = "price";
 	const CRUISE = "marsh";
@@ -43,43 +90,9 @@ class AdminController extends Controller
 		}
 		return $this->errorMessages;
 	}	
-
-	
-    /**
-	 * @Template()
-	 * @Route("/admin", name="admin" )
-     */			
-	public function indexAction()
-	{
-		
-		//$directory = $this->container->getParameter('kernel.root_dir').'/../web';
-		
-		$f = '';
-		
-		if (isset($_FILES['form'])){
-		$file =  $_FILES['form']['tmp_name']['file'];
-		$phpExcelObject = $this->get('phpexcel')->createPHPExcelObject($file);
-		
-		
-		$f = $parser = $this->getShip($phpExcelObject);
-		
-		//$f = get_class_methods($phpExcelObject->getSheetByName(self::SHIP)->getCell('A2'));
-		
-		}
-		
-		
-					
-		$form_excel = $this->createFormBuilder()
-			->add('file','file',array('label' => 'файл'))
-			->add('button', 'submit',array('label' => 'Загрузить'))
-			->getForm(); 
-			
-		return array('form_excel' => $form_excel->createView(),'form'=>$f);
-	}
-	
 	private function getShip($phpExcelObject)
 	{
-		$f= array();
+		$f = '';
 		if(sizeof($this->isValid($phpExcelObject)) == 0 )
 			{
 				
@@ -119,7 +132,6 @@ class AdminController extends Controller
 				$propertyValue = $sheetShip->getCellByColumnAndRow(3, $i)->getValue();
 				$ship->addProperty($propertyName, $propertyValue);
 			}
-			//$f = $ship;
 			
 			$cruiseRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
 			$sheetCruise = $phpExcelObject->getSheetByName(self::CRUISE);
@@ -130,7 +142,6 @@ class AdminController extends Controller
 				$code = Helper\Convert::translit($sheetCruise->getCellByColumnAndRow(0, $i)->getValue());
 				if ($code == "") continue;	
 				
-				//$f[] = get_class_methods($sheetCruise->getCellByColumnAndRow(1, $i));
 				
 				$route = $sheetCruise->getCellByColumnAndRow(3, $i)->getValue();
 				$startDate = \PHPExcel_Shared_Date::ExcelToPHP($sheetCruise->getCellByColumnAndRow(1, $i)->getValue()); 
@@ -233,7 +244,6 @@ class AdminController extends Controller
 						}
 					}
 				}
-				//$f[] = $cruise->getCode();
 				
 				
 				$i++;
@@ -250,7 +260,6 @@ class AdminController extends Controller
 				if ($place == null) {
 					$this->errorMessages[] = ("Предупреждение: " . $placeTitle . " не найден и не будет участвовать в поиске.");
 				}
-				//$f[] = $this->errorMessages;
 				$programItem = $cruise->addProgramItem($place);
 				
 				$programItem->setDescription($description);
@@ -264,13 +273,13 @@ class AdminController extends Controller
 			
 			$em->flush();
 			
-			}
-			else
-			{
-				$f = $this->errorMessages;
-			}	
+			return true;	
 			
-			return array('f'=>$f, 'ship'=>$ship);
+			}
+
+		
+			
 	
-	}
+	}	
+	
 }

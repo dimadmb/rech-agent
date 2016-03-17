@@ -69,7 +69,6 @@ class CruiseCruiseProgramItem
      */
     private $place;
 
-
 	
 	public function init(CruiseCruise $cruise, CruisePlace $place = null) {
 		$this->cruise = $cruise;

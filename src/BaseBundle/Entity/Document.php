@@ -94,7 +94,10 @@ class Document
      */
     private $category_id;
 
- 
+    /**
+     * @ORM\OneToMany(targetEntity="Photo", mappedBy="document") 
+     */	
+	private $photos;
 
     /**
      * Get id
@@ -336,5 +339,45 @@ class Document
     public function getCategoryId()
     {
         return $this->category_id;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->photos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add photos
+     *
+     * @param \BaseBundle\Entity\Photo $photos
+     * @return Document
+     */
+    public function addPhoto(\BaseBundle\Entity\Photo $photos)
+    {
+        $this->photos[] = $photos;
+
+        return $this;
+    }
+
+    /**
+     * Remove photos
+     *
+     * @param \BaseBundle\Entity\Photo $photos
+     */
+    public function removePhoto(\BaseBundle\Entity\Photo $photos)
+    {
+        $this->photos->removeElement($photos);
+    }
+
+    /**
+     * Get photos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPhotos()
+    {
+        return $this->photos;
     }
 }

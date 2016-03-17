@@ -41,7 +41,7 @@ class CruiseCruiseCategory
      *
      * @ORM\ManyToOne(targetEntity="CruiseCruiseCategory")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $parent;

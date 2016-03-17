@@ -2,7 +2,7 @@
 	<a style="font-size:16px;"  href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}">{{ship.title}}</a><br>
 	<div style="float:left; padding-right:10px;">
 		
-		<a href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}"><img src="{{ship.imgurl}}" style="width:115px;" ></a>
+		<a href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}"><img src="{{ship.imgurl}}" style="width:115px; height:75px; margin-bottom:15px;" ></a>
 	</div>
 	<div style="float:left; padding-left:0px; padding-top:0px;">	
 	{% for property in ship.properties %}

@@ -94,7 +94,10 @@ class Document
      */
     private $category_id;
 
- 
+    /**
+     * @ORM\OneToMany(targetEntity="Photo", mappedBy="document") 
+     */	
+	private $photos;
 
     /**
      * Get id

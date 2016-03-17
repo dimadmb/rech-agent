@@ -59,9 +59,9 @@ class Photo
     /**
      * @var \Document
      *
-     * @ORM\ManyToOne(targetEntity="Document")
+     * @ORM\ManyToOne(targetEntity="Document", inversedBy="photos")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="document_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="document_id", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $document;

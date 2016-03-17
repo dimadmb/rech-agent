@@ -140,7 +140,7 @@ class CruiseCruise
 
 	public function init(CruiseShip $ship, ArrayCollection $categories) {
 		$this->ship = $ship;
-		$this->categories = $categories;
+		$this->category = $categories;
 	}
 	
 	

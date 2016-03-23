@@ -25,7 +25,7 @@
         {% if (cruise.reductionPrice) %} <span class="table-special-span color-sc">Снижена цена</span> {% endif %}
         {% if (cruise.specialoffer) %} <span class="table-special-span color-st">Специальный тариф</span> {% endif %}</td>
 
-        <td><a href="{{path('page',{'first':'cruise','second':'order','name':cruise.cruiseUrl.shipCode ~ '_' ~ cruise.cruiseUrl.code}) }}">Забронировать</a></td>
+        <td><a href="{{path('cruiseorder_code',{'code':cruise.cruiseUrl.code}) }}">Забронировать</a></td>
 		
       </tr>					
 					

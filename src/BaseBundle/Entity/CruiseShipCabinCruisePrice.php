@@ -27,6 +27,29 @@ class CruiseShipCabinCruisePrice
      * @ORM\Column(name="price", type="decimal", precision=10, scale=0, nullable=false)
      */
     private $price;
+	
+	
+    /**
+     * @var string
+	 * 
+	 * @ORM\Column(name="deck_name", type="string", length=255)
+     */	
+	private $deck_name	;	
+	
+	
+    /**
+     * @var string
+	 * 
+	 * @ORM\Column(name="rt_name", type="string", length=255)
+     */	
+	private $rt_name	;
+	
+    /**
+     * @var string
+	 * 
+	 * @ORM\Column(name="rp_name", type="string", length=255)
+     */	
+	private $rp_name;
 
     /**
      * @var \CruiseShipCabin
@@ -48,12 +71,20 @@ class CruiseShipCabinCruisePrice
      */
     private $cruise;
 
+	/**
+	* @var \CruiseTariff
+	* @ORM\ManyToOne(targetEntity="CruiseTariff", inversedBy="prices")
+	* @ORM\JoinColumn(name="tariff_id", referencedColumnName="id")
+	*/
+	private $tariff;
+	
 	public function init(CruiseShipCabin $cabin, CruiseCruise $cruise) {
 		$this->cabin = $cabin;
 		$this->cruise = $cruise;
 	}
-
-    /**
+	
+	
+	/**
      * Get id
      *
      * @return integer 
@@ -130,5 +161,97 @@ class CruiseShipCabinCruisePrice
     public function getCruise()
     {
         return $this->cruise;
+    }
+
+    /**
+     * Set tariff
+     *
+     * @param \BaseBundle\Entity\CruiseTariff $tariff
+     * @return CruiseShipCabinCruisePrice
+     */
+    public function setTariff(\BaseBundle\Entity\CruiseTariff $tariff = null)
+    {
+        $this->tariff = $tariff;
+
+        return $this;
+    }
+
+    /**
+     * Get tariff
+     *
+     * @return \BaseBundle\Entity\CruiseTariff 
+     */
+    public function getTariff()
+    {
+        return $this->tariff;
+    }
+
+    /**
+     * Set rt_name
+     *
+     * @param string $rtName
+     * @return CruiseShipCabinCruisePrice
+     */
+    public function setRtName($rtName)
+    {
+        $this->rt_name = $rtName;
+
+        return $this;
+    }
+
+    /**
+     * Get rt_name
+     *
+     * @return string 
+     */
+    public function getRtName()
+    {
+        return $this->rt_name;
+    }
+
+    /**
+     * Set rp_name
+     *
+     * @param string $rpName
+     * @return CruiseShipCabinCruisePrice
+     */
+    public function setRpName($rpName)
+    {
+        $this->rp_name = $rpName;
+
+        return $this;
+    }
+
+    /**
+     * Get rp_name
+     *
+     * @return string 
+     */
+    public function getRpName()
+    {
+        return $this->rp_name;
+    }
+
+    /**
+     * Set deck_name
+     *
+     * @param string $deckName
+     * @return CruiseShipCabinCruisePrice
+     */
+    public function setDeckName($deckName)
+    {
+        $this->deck_name = $deckName;
+
+        return $this;
+    }
+
+    /**
+     * Get deck_name
+     *
+     * @return string 
+     */
+    public function getDeckName()
+    {
+        return $this->deck_name;
     }
 }

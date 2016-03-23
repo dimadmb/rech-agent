@@ -36,6 +36,13 @@ class CruiseShip
      * @ORM\Column(name="code", type="string", length=255, nullable=false)
      */
     private $code;
+	
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="$motorship_id", type="integer")
+     */	
+	private $motorship_id;
 
     /**
      * @var string
@@ -77,6 +84,11 @@ class CruiseShip
 		$this->cabins = new ArrayCollection();
 	}	
 
+	public function __toString()
+	{
+		return $this->getTitle();
+	}
+	
     /**
      * Get id
      *
@@ -183,10 +195,9 @@ class CruiseShip
 	/**
 	 * @return CruiseShipCabin
 	 */
-	public function addCabin($title) {
+	public function addCabin() {
 		$cabin = new CruiseShipCabin();
 		$cabin->init($this);
-		$cabin->setTitle($title);
 		$this->cabins->add($cabin);
 		return $cabin;
 	}		
@@ -276,5 +287,28 @@ class CruiseShip
     public function getCabins()
     {
         return $this->cabins;
+    }
+
+    /**
+     * Set motorship_id
+     *
+     * @param integer $motorshipId
+     * @return CruiseShip
+     */
+    public function setMotorshipId($motorshipId)
+    {
+        $this->motorship_id = $motorshipId;
+
+        return $this;
+    }
+
+    /**
+     * Get motorship_id
+     *
+     * @return integer 
+     */
+    public function getMotorshipId()
+    {
+        return $this->motorship_id;
     }
 }

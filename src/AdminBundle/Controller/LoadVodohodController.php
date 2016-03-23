@@ -11,6 +11,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use BaseBundle\Entity\CruiseCruise;
 use BaseBundle\Entity\CruiseShip;
 use BaseBundle\Entity\Document;
+use BaseBundle\Entity\CruiseShipCabinCruisePrice;
+use BaseBundle\Entity\CruiseShipDeck;
+use BaseBundle\Entity\CruiseShipCabinType;
+use BaseBundle\Entity\CruiseShipCabinPlace;
 
 class LoadVodohodController extends Controller
 {
@@ -35,6 +39,84 @@ class LoadVodohodController extends Controller
      */			
 	public function indexAction()
 	{
+		$em = $this->getDoctrine()->getManager();
+		$base_url = "http://www.vodohod.spb.ru/api/";
+		
+		/// загрузим таблицу палуб
+		
+		$decks_url = $base_url."decks.php";
+		$decks_json = $this->curl_get_file_contents($decks_url);
+		$decks_v = json_decode($decks_json,true);
+		$decksRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipDeck');
+		/*
+		foreach($decks_v as $deck_v)
+		{
+			$deck = $decksRepos->findOneByDeckId($deck_v['deck_id']);
+			if ($deck != null) {
+				$em->remove($deck);
+				//FIXME: remove after Doctrine fix
+				$em->flush();
+			}
+			$deck = new CruiseShipDeck();
+			$deck
+				->setName($deck_v['deck_name'])
+				->setDeckId($deck_v['deck_id'])
+			;
+			$em->persist($deck);
+		}
+		$em->flush();
+		// палубы загрузили
+		*/
+		// типерь загрузим типы кают
+		$room_types_url = $base_url."room_types.php";
+		$room_types_json = $this->curl_get_file_contents($room_types_url);
+		$room_types_v = json_decode($room_types_json,true);
+		$cabinTypeRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinType');		
+		foreach($room_types_v as $room_type_v)
+		{
+			$room_type = $cabinTypeRepos->findOneByRtId($room_type_v['rt_id']);
+			if ($room_type != null) {
+				$em->remove($room_type);
+				//FIXME: remove after Doctrine fix
+				$em->flush();
+			}
+			$room_type = new CruiseShipCabinType();
+			$room_type
+				->setRtId($room_type_v['rt_id'])
+				->setRtName($room_type_v['rt_name'])
+				->setRtComment($room_type_v['rt_comment'])
+			;
+			$em->persist($room_type);
+		}
+		$em->flush();
+		
+		// теперь загрузим типы размещения в каютах
+		$room_placings_url = $base_url."room_placings.php";
+		$room_placings_json = $this->curl_get_file_contents($room_placings_url);
+		$room_placings_v = json_decode($room_placings_json,true);
+		$cabinPlaceRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinPlace');		
+		foreach($room_placings_v as $room_place_v)
+		{
+			$room_place = $cabinPlaceRepos->findOneByRpId($room_place_v['rp_id']);
+			if ($room_place != null) {
+				$em->remove($room_place);
+				//FIXME: remove after Doctrine fix
+				$em->flush();
+			}
+			$room_place = new CruiseShipCabinPlace();
+			$room_place
+				->setRpId($room_place_v['rp_id'])
+				->setRpName($room_place_v['rp_name'])
+			;
+			$em->persist($room_place);
+		}
+		$em->flush();		
+		
+		
+		
+		
+		
+		
 		
 		$url_cruises = "http://cruises.vodohod.com/agency/json-cruises.htm?pauth=jnrehASKDLJcdakljdx";
 		
@@ -55,13 +137,17 @@ class LoadVodohodController extends Controller
 		}
  
 		
-		$em = $this->getDoctrine()->getManager();
+		
 		$shipRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip');
 		$classRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipClass');
+
+
+		
+
 		
 		foreach($motorships as $motorship_id=>$motorship)
 		{
-			if($motorship_id == 29){
+			if($motorship_id == 6){
 			
 			$shipCode = $motorship['code'];
 			$shipName = $motorship['name'];
@@ -102,12 +188,60 @@ class LoadVodohodController extends Controller
 			fclose($fp); //Закрытие файла	
 			
 			
-			$ship->setImgurl(self::PATH_IMG.$shipCode.'-main.jpg');
+			$ship->setImgurl(self::PATH_IMG.$shipCode.'/'.$shipCode.'-main.jpg');
 			
 			$ship->setCode($shipCode);
 			$ship->setTitle($shipName);
 			$ship->setClass($class);
 			$ship->setProperties('');	
+			$ship->setMotorshipId($motorship_id);	
+			
+			$em->persist($ship);
+			
+			
+			
+
+			/*
+			// получаем все кабины и заносим их $ship->addCabin($num,$cabinClass,$deck,$side)
+			$cabin_url = "http://r.a163.ru/api/kauta.php?id_teplohod=".$motorship_id;
+			$cabin_json = $this->curl_get_file_contents($cabin_url);
+			$cabins_v = json_decode($cabin_json,true);
+			foreach($cabins_v as $cabin_v)
+			{
+				$num = $cabin_v['num'];
+				$cabinClass = $cabin_v['id_class'];
+				$deck = $cabin_v['deck'];
+				$side = $cabin_v['side'];
+				
+				$cabin = $ship->addCabin($num,$cabinClass,$deck,$side);
+				$em->persist($cabin);
+			}
+			*/
+			
+			
+			
+			$cabin_url = $base_url."rooms_motorship.php?motorship_id=".$motorship_id;
+			$cabin_json = $this->curl_get_file_contents($cabin_url);
+			$cabins_v = json_decode($cabin_json,true);
+			foreach($cabins_v as $cabin_v)
+			{
+				$cabin = $ship->addCabin();
+				
+				$cabinType = $cabinTypeRepos->findOneByRtId($cabin_v['rt_id']);
+				$Deck = $decksRepos->findOneByDeckId((int)$cabin_v['deck_id']);
+				
+				$cabin
+					->setDeckId($Deck)
+					->setRtId($cabinType)
+					
+				;	
+				$dump[] = $cabin;
+				$em->persist($cabin);
+				//$em->flush();
+			}
+			
+
+			
 			
 			$cruiseRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
 			$categoryRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseCategory');
@@ -190,46 +324,12 @@ class LoadVodohodController extends Controller
 					
 					
 					
-					//$price_json = $this->curl_get_file_contents('http://cruises.vodohod.com/agency/json-prices.htm?pauth=jnrehASKDLJcdakljdx&cruise='.$code);
-					//$price_v = json_decode($price_json,true);
-					//$dump[] = $price_v;
-					/*
-					foreach($price_v['tariffs'] as $tariffs)
-					{
-					$tariffs_name = $tariffs['tariff_name'];
-					
-						foreach($tariffs['prices'] as $prices){
-							
-							$cabinTitle = $tariffs_name . $prices['deck_name'] . $prices['rt_name'] .$prices['rp_name']  ;
-							
-							$cabinPrice = $prices['price_value'];
-							
-							//$dump[] = array('name' => $cabinTitle, 'price'=>$cabinPrice);
-							
-							$cabin = $ship->addCabin($cabinTitle);
-							$cabin->setDescription($cabinTitle.' descr');
-								$price = $cabin->setPrice($cruise, $cabinPrice);
-								$dump[] = $price;
-								//$em->persist($price);							
-							
-							
-						}
 
-							
-					}
-					*/
 					
 				}
 			}
 			
 			$em->persist($ship); 
-			
-			
-			// теперь создадим цены 
-			
-			
-			
-			
 			$em->flush(); // удалить
 			
 			};
@@ -239,6 +339,6 @@ class LoadVodohodController extends Controller
 			
 
 		
-		return array('cruises'=>'3'/*$cruises_v*/,'dump'=>$dump);
+		return array('cruises'=>''/*$cruises_v*/,'dump' => $dump );
 	}
 }

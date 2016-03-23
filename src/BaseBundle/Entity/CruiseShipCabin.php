@@ -23,19 +23,6 @@ class CruiseShipCabin
      */
     private $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="title", type="string", length=255, nullable=false)
-     */
-    private $title;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="string", length=255, nullable=false)
-     */
-    private $description;
 
     /**
      * @var \CruiseShip
@@ -46,6 +33,22 @@ class CruiseShipCabin
      * })
      */
     private $ship;
+
+
+
+	/**
+     * @ORM\ManyToOne(targetEntity="CruiseShipCabinType", inversedBy="cabins")
+     * @ORM\JoinColumn(name="rt_id", referencedColumnName="id")	 
+     */	
+    private $rtId;
+
+	
+	/**
+     * @ORM\ManyToOne(targetEntity="CruiseShipDeck", inversedBy="cabins")
+    
+     */	
+    private $deckId;
+	
 
 	/**
 	 * @ORM\OneToMany(targetEntity="CruiseShipCabinCruisePrice", mappedBy="cabin")
@@ -71,51 +74,7 @@ class CruiseShipCabin
         return $this->id;
     }
 
-    /**
-     * Set title
-     *
-     * @param string $title
-     * @return CruiseShipCabin
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
 
-        return $this;
-    }
-
-    /**
-     * Get title
-     *
-     * @return string 
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Set description
-     *
-     * @param string $description
-     * @return CruiseShipCabin
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Get description
-     *
-     * @return string 
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
 
     /**
      * Set ship
@@ -203,5 +162,59 @@ class CruiseShipCabin
     public function getPrices()
     {
         return $this->prices;
+    }
+
+
+
+
+
+
+
+
+
+    /**
+     * Set rtId
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinType $rtId
+     * @return CruiseShipCabin
+     */
+    public function setRtId(\BaseBundle\Entity\CruiseShipCabinType $rtId = null)
+    {
+        $this->rtId = $rtId;
+
+        return $this;
+    }
+
+    /**
+     * Get rtId
+     *
+     * @return \BaseBundle\Entity\CruiseShipCabinType 
+     */
+    public function getRtId()
+    {
+        return $this->rtId;
+    }
+
+    /**
+     * Set deckId
+     *
+     * @param \BaseBundle\Entity\CruiseShipDeck $deckId
+     * @return CruiseShipCabin
+     */
+    public function setDeckId(\BaseBundle\Entity\CruiseShipDeck $deckId = null)
+    {
+        $this->deckId = $deckId;
+
+        return $this;
+    }
+
+    /**
+     * Get deckId
+     *
+     * @return \BaseBundle\Entity\CruiseShipDeck 
+     */
+    public function getDeckId()
+    {
+        return $this->deckId;
     }
 }

@@ -18,6 +18,14 @@ admin:
     type:     annotation
     prefix:   /
 
+cruiseorder:
+    path: "/cruise/order.html"
+    defaults: { _controller: BaseBundle:Order:index }
+
+cruiseorder_code:
+    path: "/cruise/order/{code}"
+    defaults: { _controller: BaseBundle:Order:index }
+
 homepage:
     path: "/"
     defaults: { _controller: BaseBundle:Document:index }

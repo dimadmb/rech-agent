@@ -43,15 +43,19 @@ class CruiseCruiseRepository extends EntityRepository
 	}	
 	
 	public function findByUrl(\BaseBundle\Controller\Helper\CruiseUrl $url) {
-		$str = "SELECT c, s, pi, pr, cab, pl
+		$str = "SELECT c, s, pi, pr, cab, pl, rt, deck, rp, tariff
 			FROM BaseBundle\Entity\CruiseCruise c 
 			JOIN c.ship s
 			LEFT JOIN c.programItems pi
 			LEFT JOIN c.prices pr
 			LEFT JOIN pi.place pl
 			LEFT JOIN pr.cabin cab
+			LEFT JOIN pr.rp_id rp
+			LEFT JOIN pr.tariff tariff
+			LEFT JOIN cab.rtId rt
+			LEFT JOIN cab.deckId deck
 			WHERE s.code = ?1 AND c.code = ?2
-			ORDER BY pi.date, pr.price";
+			ORDER BY deck.deckId , tariff.id , pi.date, pr.price";
    		$q = $this->_em->createQuery($str);
    		$q->setParameter(1, $url->getShipCode());
    		$q->setParameter(2, $url->getCode());

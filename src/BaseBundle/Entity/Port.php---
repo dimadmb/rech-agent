@@ -1,0 +1,124 @@
+<?php
+
+namespace BaseBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Port
+ *
+ * @ORM\Table(name="port", indexes={@ORM\Index(name="port_id", columns={"port_id"})})
+ * @ORM\Entity
+ */
+class Port
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="port_id", type="integer")
+     */
+    private $portId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="port_name", type="string", length=255)
+     */
+    private $portName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="port_code", type="string", length=255)
+     */
+    private $portCode;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set portId
+     *
+     * @param integer $portId
+     * @return Port
+     */
+    public function setPortId($portId)
+    {
+        $this->portId = $portId;
+
+        return $this;
+    }
+
+    /**
+     * Get portId
+     *
+     * @return integer 
+     */
+    public function getPortId()
+    {
+        return $this->portId;
+    }
+
+    /**
+     * Set portName
+     *
+     * @param string $portName
+     * @return Port
+     */
+    public function setPortName($portName)
+    {
+        $this->portName = $portName;
+
+        return $this;
+    }
+
+    /**
+     * Get portName
+     *
+     * @return string 
+     */
+    public function getPortName()
+    {
+        return $this->portName;
+    }
+
+    /**
+     * Set portCode
+     *
+     * @param string $portCode
+     * @return Port
+     */
+    public function setPortCode($portCode)
+    {
+        $this->portCode = $portCode;
+
+        return $this;
+    }
+
+    /**
+     * Get portCode
+     *
+     * @return string 
+     */
+    public function getPortCode()
+    {
+        return $this->portCode;
+    }
+}

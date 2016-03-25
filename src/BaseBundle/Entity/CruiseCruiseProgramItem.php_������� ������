@@ -223,4 +223,27 @@ class CruiseCruiseProgramItem
     {
         return $this->comment;
     }
+
+    /**
+     * Set ports
+     *
+     * @param \BaseBundle\Entity\Port $ports
+     * @return CruiseCruiseProgramItem
+     */
+    public function setPorts(\BaseBundle\Entity\Port $ports = null)
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
+    /**
+     * Get ports
+     *
+     * @return \BaseBundle\Entity\Port 
+     */
+    public function getPorts()
+    {
+        return $this->ports;
+    }
 }

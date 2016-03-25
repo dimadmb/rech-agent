@@ -40,7 +40,7 @@ class CruiseShip
     /**
      * @var integer
      *
-     * @ORM\Column(name="$motorship_id", type="integer")
+     * @ORM\Column(name="motorship_id", type="integer")
      */	
 	private $motorship_id;
 

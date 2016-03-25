@@ -48,17 +48,32 @@
 
 <table class="table  table-hover">
 	<tr>
+		<th>Палуба</th>
 		<th>Каюта</th>
-		<th>Описание каюты	</th>
+		<th>Размещение</th>
+		<th>Тариф</th>
 		<th>Стоимость</th>
 	</tr>
 {% for item in cruise.prices %}
 	<tr>
-		<td>{{item.cabin.title}}</td>
-		<td>{{item.cabin.description}}</td>
-		<td>{{item.price}}</td>
+		<td>{{item.cabin.deckId.name}}</td>
+		<td>{{item.cabin.rtId.rtComment}}</td>
+		<td>{{ item.rpId.rpName}}</td>
+		<td>{{ item.tariff.name}}</td>
+		<td>
+		{% if cruise.burningCruise %}
+			<span style=" text-decoration:line-through;">{{item.price}}  руб.</span><br>
+			<span style="color:red; ">{{(item.price*0.75) | round}} руб.</span>			
+			
+			
+		{% else %}
+		{{item.price}}  руб.
+		{% endif %}
+		</td>
 	</tr>
-{% endfor %}	
+{% endfor %}
+
+
 </table>
 
 <p>* Цены действительны на момент публикации и могут незначительно измениться до полной оплаты рейса.</p>

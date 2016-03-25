@@ -28,28 +28,17 @@ class CruiseShipCabinCruisePrice
      */
     private $price;
 	
+
 	
     /**
-     * @var string
+     * @var \CruiseShipCabinPlace
 	 * 
-	 * @ORM\Column(name="deck_name", type="string", length=255)
+	 * @ORM\ManyToOne(targetEntity="CruiseShipCabinPlace", inversedBy="prices" )
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="rp_id", referencedColumnName="id"  )
+     * })	 
      */	
-	private $deck_name	;	
-	
-	
-    /**
-     * @var string
-	 * 
-	 * @ORM\Column(name="rt_name", type="string", length=255)
-     */	
-	private $rt_name	;
-	
-    /**
-     * @var string
-	 * 
-	 * @ORM\Column(name="rp_name", type="string", length=255)
-     */	
-	private $rp_name;
+	private $rp_id;
 
     /**
      * @var \CruiseShipCabin
@@ -186,72 +175,32 @@ class CruiseShipCabinCruisePrice
         return $this->tariff;
     }
 
+
+
+
+
+
+
     /**
-     * Set rt_name
+     * Set rp_id
      *
-     * @param string $rtName
+     * @param integer $rpId
      * @return CruiseShipCabinCruisePrice
      */
-    public function setRtName($rtName)
+    public function setRpId($rpId)
     {
-        $this->rt_name = $rtName;
+        $this->rp_id = $rpId;
 
         return $this;
     }
 
     /**
-     * Get rt_name
+     * Get rp_id
      *
-     * @return string 
+     * @return integer 
      */
-    public function getRtName()
+    public function getRpId()
     {
-        return $this->rt_name;
-    }
-
-    /**
-     * Set rp_name
-     *
-     * @param string $rpName
-     * @return CruiseShipCabinCruisePrice
-     */
-    public function setRpName($rpName)
-    {
-        $this->rp_name = $rpName;
-
-        return $this;
-    }
-
-    /**
-     * Get rp_name
-     *
-     * @return string 
-     */
-    public function getRpName()
-    {
-        return $this->rp_name;
-    }
-
-    /**
-     * Set deck_name
-     *
-     * @param string $deckName
-     * @return CruiseShipCabinCruisePrice
-     */
-    public function setDeckName($deckName)
-    {
-        $this->deck_name = $deckName;
-
-        return $this;
-    }
-
-    /**
-     * Get deck_name
-     *
-     * @return string 
-     */
-    public function getDeckName()
-    {
-        return $this->deck_name;
+        return $this->rp_id;
     }
 }

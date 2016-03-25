@@ -35,7 +35,11 @@ class CruiseShipCabinPlace
      */
     private $rpName;
 
-
+	/**
+	 * @ORM\OneToMany(targetEntity="CruiseShipCabinCruisePrice", mappedBy="rp_id")
+	 */	
+	private $prices;
+	
     /**
      * Get id
      *
@@ -90,5 +94,45 @@ class CruiseShipCabinPlace
     public function getRpName()
     {
         return $this->rpName;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->prices = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add prices
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinCruisePrice $prices
+     * @return CruiseShipCabinPlace
+     */
+    public function addPrice(\BaseBundle\Entity\CruiseShipCabinCruisePrice $prices)
+    {
+        $this->prices[] = $prices;
+
+        return $this;
+    }
+
+    /**
+     * Remove prices
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinCruisePrice $prices
+     */
+    public function removePrice(\BaseBundle\Entity\CruiseShipCabinCruisePrice $prices)
+    {
+        $this->prices->removeElement($prices);
+    }
+
+    /**
+     * Get prices
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPrices()
+    {
+        return $this->prices;
     }
 }

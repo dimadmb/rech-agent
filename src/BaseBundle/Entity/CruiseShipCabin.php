@@ -45,7 +45,7 @@ class CruiseShipCabin
 	
 	/**
      * @ORM\ManyToOne(targetEntity="CruiseShipDeck", inversedBy="cabins")
-    
+     * @ORM\JoinColumn(name="deck_id", referencedColumnName="id")	 
      */	
     private $deckId;
 	

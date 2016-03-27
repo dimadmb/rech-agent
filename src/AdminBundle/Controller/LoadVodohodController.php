@@ -185,6 +185,16 @@ class LoadVodohodController extends Controller
 		}
 		$em->flush();
 		
+		$cruise_days_url = $base_url."cruise_days.php";
+		$cruise_days_json =  $this->curl_get_file_contents($cruise_days_url);
+		$cruise_days_v = json_decode($cruise_days_json,true);
+		foreach($cruise_days_v as $cruise_day_v)
+		{
+			//$cruise_program_item = 
+		}
+		
+		
+		
 		
 		$url_cruises = "http://cruises.vodohod.com/agency/json-cruises.htm?pauth=jnrehASKDLJcdakljdx";
 		

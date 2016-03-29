@@ -4,10 +4,12 @@ namespace BaseBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * CruisePlace
  *
- * @ORM\Table(name="cruise_place", uniqueConstraints={@ORM\UniqueConstraint(name="cruise_place_url_type_uniq", columns={"url", "type"})})
+ * @ORM\Table(name="cruise_place", uniqueConstraints={@ORM\UniqueConstraint(name="cruise_place_url_type_uniq", columns={"url", "type", "place_id"})})
  * @ORM\Entity
  */
 class CruisePlace
@@ -21,7 +23,17 @@ class CruisePlace
      */
     private $id;
 
-    /**
+    
+	
+	/**
+     * @var integer
+     *
+     * @ORM\Column(name="place_id", type="integer")
+     */	
+	private $placeId;
+	
+	
+	/**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
@@ -226,5 +238,28 @@ class CruisePlace
     public function getProgramItems()
     {
         return $this->programItems;
+    }
+
+    /**
+     * Set placeId
+     *
+     * @param integer $placeId
+     * @return CruisePlace
+     */
+    public function setPlaceId($placeId)
+    {
+        $this->placeId = $placeId;
+
+        return $this;
+    }
+
+    /**
+     * Get placeId
+     *
+     * @return integer 
+     */
+    public function getPlaceId()
+    {
+        return $this->placeId;
     }
 }

@@ -20,7 +20,7 @@ class CruiseCruiseProgramItem
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
-
+	
     /**
      * @var integer
      *
@@ -28,6 +28,12 @@ class CruiseCruiseProgramItem
      */
     private $ord;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="date_stop", type="integer", nullable=false)
+     */
+    private $dateStop;
     /**
      * @var integer
      *
@@ -68,6 +74,7 @@ class CruiseCruiseProgramItem
      * })
      */
     private $place;
+
 
 	
 	public function init(CruiseCruise $cruise, CruisePlace $place = null) {
@@ -200,6 +207,35 @@ class CruiseCruiseProgramItem
     public function getCruise()
     {
         return $this->cruise;
+    }
+
+
+
+
+
+
+
+    /**
+     * Set dateStop
+     *
+     * @param integer $dateStop
+     * @return CruiseCruiseProgramItem
+     */
+    public function setDateStop($dateStop)
+    {
+        $this->dateStop = $dateStop;
+
+        return $this;
+    }
+
+    /**
+     * Get dateStop
+     *
+     * @return integer 
+     */
+    public function getDateStop()
+    {
+        return $this->dateStop;
     }
 
     /**

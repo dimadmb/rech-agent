@@ -115,7 +115,7 @@ class CruiseController extends Controller
 	private function monthsSchedule($cruises) {
 		$currentMonth = null;
 		$result = array();
-		foreach ($cruises as $cruise) {
+		foreach ($cruises as &$cruise) {
 			$startDate = $cruise->getStartdate();
 			$month = date("M Y", $startDate);
 			if ($month != $currentMonth) {
@@ -152,9 +152,10 @@ class CruiseController extends Controller
 
 		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
-		$qb->select('c','s','p');
+		$qb->select('c','s','p','code');
 		$qb->innerJoin('c.ship','s');
 		$qb->leftJoin('c.prices','p');
+		$qb->leftJoin('c.code','code');
 		
 		
 		if(isset($form['startDate']))
@@ -180,19 +181,19 @@ class CruiseController extends Controller
 		
 		if(isset($form['specialoffer']))
 		{
-		$qb->andWhere("c.specialoffer = ?4");
+		$qb->andWhere("code.specialOffer = ?4");
 		$qb->setParameter(4, 1);			
 		}
 
 		if(isset($form['burningCruise']))
 		{
-		$qb->andWhere("c.burningCruise = ?5");
+		$qb->andWhere("code.burningCruise = ?5");
 		$qb->setParameter(5, 1);			
 		}	
 
 		if(isset($form['reductionPrice']))
 		{
-		$qb->andWhere("c.reductionPrice = ?6");
+		$qb->andWhere("code.reductionPrice = ?6");
 		$qb->setParameter(6, 1);				
 		}
 
@@ -281,23 +282,23 @@ class CruiseController extends Controller
 	{
 		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
-		$qb->select('c','s','p');
+		$qb->select('c','s','p','code');
 		$qb->innerJoin('c.ship','s');
 		$qb->leftJoin('c.prices','p');
-
+		$qb->leftJoin('c.code','code');
 		
 		if($offer == "burningcruise")
 		{
-			$qb->andWhere("c.burningCruise = ?1");
+			$qb->andWhere("code.burningCruise = ?1");
 		}
 		elseif($offer == "reductionprice")
 		{
-			$qb->andWhere("c.reductionPrice = ?1");
+			$qb->andWhere("code.reductionPrice = ?1");
 		}
 		
 		elseif($offer == "specialoffer")
 		{
-			$qb->andWhere("c.specialoffer = ?1");
+			$qb->andWhere("code.specialOffer = ?1");
 		}
 		else
 		{
@@ -330,11 +331,11 @@ class CruiseController extends Controller
 	{
 		$em = $this->getDoctrine()->getManager();
 		$query = $em->createQuery(
-			'SELECT p 
+			"SELECT p 
 			FROM BaseBundle:CruisePlace p 
 			WHERE EXISTS 
-				(SELECT pi FROM BaseBundle:CruiseCruiseProgramItem pi WHERE pi.place = p.id )
-			'
+				(SELECT pi FROM BaseBundle:CruiseCruiseProgramItem pi WHERE pi.place = p.id AND p.url <> '' )
+			"
 		);	
 		return $query->getResult();
 

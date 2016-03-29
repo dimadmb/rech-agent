@@ -16,8 +16,11 @@ use BaseBundle\Entity\CruiseShipDeck;
 use BaseBundle\Entity\CruiseShipCabinType;
 use BaseBundle\Entity\CruiseShipCabin;
 use BaseBundle\Entity\CruiseShipCabinPlace;
-use BaseBundle\Entity\Port;
+use BaseBundle\Entity\CruisePlace;
+
 use BaseBundle\Entity\Excursion;
+use BaseBundle\Entity\CruiseCruiseProgramItem;
+use BaseBundle\Entity\CruiseCruiseSpec;
 
 
 class LoadVodohodController extends Controller
@@ -74,16 +77,30 @@ class LoadVodohodController extends Controller
 		
 		/// загрузим таблицу палуб
 		
-		$decks_url = $base_url."decks.php";
-		$decks_json = $this->curl_get_file_contents($decks_url);
-		$decks_v = json_decode($decks_json,true);
+
 		$decksRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipDeck');
 		$cabinRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabin');
 		$cabinTypeRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinType');
 		$cabinPlaceRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinPlace');
-		$portRepos = $this->getDoctrine()->getRepository('BaseBundle:Port');
+		$placeRepos = $this->getDoctrine()->getRepository('BaseBundle:CruisePlace');
 		$excursionRepos = $this->getDoctrine()->getRepository('BaseBundle:Excursion');
-
+		$progItemRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseProgramItem'); 
+		$cruiseSpecRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseSpec');
+		
+		
+		
+		
+		
+		$cruiseSpecsAll = $cruiseSpecRepos->findAll();
+		foreach($cruiseSpecsAll as $cruiseSpecItem)
+		{
+			$cruiseSpec[$cruiseSpecItem->getCode()] = $cruiseSpecItem;
+		}
+		
+		
+		$decks_url = $base_url."decks.php";
+		$decks_json = $this->curl_get_file_contents($decks_url);
+		$decks_v = json_decode($decks_json,true);
 		foreach($decks_v as $deck_v)
 		{
 			$deck = $decksRepos->findOneByDeckId($deck_v['deck_id']);
@@ -148,21 +165,31 @@ class LoadVodohodController extends Controller
 		$ports_v = json_decode($ports_json,true);
 		foreach($ports_v as $port_v)
 		{
-			$port = $portRepos->findOneByPortId($port_v['port_id']);
-			if($port != null)
+			$place = $placeRepos->findOneByPlaceId($port_v['port_id']);
+			if($place != null)
 			{
 				continue;
 			}
 			
-			$port = new Port();
-			$port 
-				->setPortId($port_v['port_id'])
-				->setPortName($port_v['port_name'])
-				->setPortCode($port_v['port_code'])
+			$place = new CruisePlace();
+			$place 
+				->setPlaceId($port_v['port_id'])
+				->setTitle($port_v['port_name'])
+				->setUrl($port_v['port_code'])
+				->setType('prt')
+				->setSearcheable(1)
+				->setPageable(1)
 			;
-			$em->persist($port);
+			$em->persist($place);
 		}
 		$em->flush(); 
+		
+		$placesAll = $placeRepos->findAll();
+		foreach($placesAll as $placesAllItem)
+		{
+			$places[$placesAllItem->getTitle()] = $placesAllItem;
+		}
+		
 		
 		$excursions_url = $base_url."excursions.php";
 		$excursions_json =  $this->curl_get_file_contents($excursions_url);
@@ -184,16 +211,28 @@ class LoadVodohodController extends Controller
 			$em->persist($excursion);
 		}
 		$em->flush();
-		
+		/*
 		$cruise_days_url = $base_url."cruise_days.php";
 		$cruise_days_json =  $this->curl_get_file_contents($cruise_days_url);
 		$cruise_days_v = json_decode($cruise_days_json,true);
 		foreach($cruise_days_v as $cruise_day_v)
 		{
-			//$cruise_program_item = 
+			$dump[] = $cruise_program_item = $progItemRepos->findBy(array('cruise'=>$cruise_day_v['cruise_id'],'excursion'=>$cruise_day_v['excursion_id']));
+			if($cruise_program_item != null)
+			{
+				continue;
+			}
+			$cruise_program_item = new CruiseCruiseProgramItem();
+			$cruise_program_item
+						->setExcursion($cruise_day_v['excursion_id'])
+						->setCruise($cruise_day_v['cruise_id'])
+						->setDate($cruise_day_v['cd_day'])
+						->setPlace($cruise_day_v['port_id'])
+						
+			;			
 		}
 		
-		
+		*/
 		
 		
 		$url_cruises = "http://cruises.vodohod.com/agency/json-cruises.htm?pauth=jnrehASKDLJcdakljdx";
@@ -368,6 +407,22 @@ class LoadVodohodController extends Controller
 			{
 				if($cruise_v["motorship_id"] == $motorship_id )
 				{
+					
+					if(!isset($cruiseSpec[$code]))
+					{
+						$spec = new CruiseCruiseSpec();
+						$spec
+							->setCode($code)
+							->setSpecialOffer(0)
+							->setBurningCruise(0)
+							->setReductionPrice(0)
+						;	
+						$em->persist($spec);
+						$cruiseSpec[$code] = $spec;
+					}
+					
+					
+					
 					$route = $cruise_v["name"];
 					$startDate = strtotime($cruise_v["date_start"]);
 					$endDate = strtotime($cruise_v["date_stop"]);
@@ -381,7 +436,12 @@ class LoadVodohodController extends Controller
 					
 					$cruise = $ship->addCruise($code,$categoriesToAdd);
 					
-					$cruise->setCode($code);
+					//$special = new CruiseSpec();
+					
+					//$special->setBurning(5);
+					//$em->persist($special);
+					
+					$cruise->setCode($cruiseSpec[$code]);
 					$cruise->setShip($ship);
 					$cruise->setRoute($route);
 					$cruise->setStartDate($startDate);
@@ -389,14 +449,37 @@ class LoadVodohodController extends Controller
 					$cruise->setRoute($route);
 					$cruise->setDayCount($dayCount);
 					$cruise->setDescription("");
-					$cruise->setSpecialOffer($specialOffer);
-					$cruise->setBurningCruise($burningcruise);
-					$cruise->setReductionPrice($reductionprice);
+
+					
+					//$cruise->setSpecial(null);
+					
 					$em->persist($cruise);	
 					
 					// стоянки
 					
 					// создть сущности port b excursion 
+					
+					$program_item_url = "http://cruises.vodohod.com/agency/json-days.htm?pauth=jnrehASKDLJcdakljdx&cruise=".$code;
+					$program_item_json = $this->curl_get_file_contents($program_item_url);
+					$program_items_v = json_decode($program_item_json,true);
+					foreach($program_items_v as $program_item_v)
+					{
+						$cruise_program_item = new CruiseCruiseProgramItem();
+						$date_item_start = strtotime( date("d-m-Y ",$startDate+($program_item_v['day']-1)*60*60*24).$program_item_v['time_start']);//($program_item_v['day']-1);
+						$date_item_stop = strtotime( date("d-m-Y ",$startDate+($program_item_v['day']-1)*60*60*24).$program_item_v['time_stop']);//($program_item_v['day']-1);
+						$cruise_program_item
+									
+									->setCruise($cruise)
+									->setPlace($places[$program_item_v['port']])
+									->setOrd(500)
+									->setDate($date_item_start)
+									->setDateStop($date_item_stop)
+									->setDescription(nl2br($program_item_v['excursion']))
+									->setPlacetitle($program_item_v['port'])
+									
+						;	
+						$em->persist($cruise_program_item);
+					}
 					
 					
 					
@@ -412,7 +495,7 @@ class LoadVodohodController extends Controller
 			}
 			
 			$em->persist($ship); 
-			
+			$em->flush();
 			// здесь заливать прайсы
 			// подготовить массив прайсов для данного теплохода 
 			// можно выбирать в циклке по круизам теплохода (плучится массив прайсов для конкретного круиза, останется сопоставить его с кабинами)
@@ -455,7 +538,7 @@ class LoadVodohodController extends Controller
 			
 			foreach ($ship->getCruises() as $cruise)
 			{
-				$code = $cruise->getCode();
+				$code = $cruise->getCode()->getCode();
 				
 				$url_prices  = "http://cruises.vodohod.com/agency/json-prices.htm?pauth=jnrehASKDLJcdakljdx&cruise=".$code;
 				

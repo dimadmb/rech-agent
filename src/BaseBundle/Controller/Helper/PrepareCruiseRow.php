@@ -19,9 +19,9 @@ class PrepareCruiseRow {
 		$wrap->minprice = $minprice < 1 ? "-" : $minprice . "&nbsp;руб.";
 		$wrap->cruiseUrl = CruiseUrl::create($cruise);
 		
-		$wrap->specialoffer =   $cruise->getSpecialoffer();
-		$wrap->burningCruise = $cruise->getBurningCruise();
-		$wrap->reductionPrice = $cruise->getReductionPrice();
+		$wrap->specialoffer =   $cruise->getCode()->getSpecialoffer();
+		$wrap->burningCruise = $cruise->getCode()->getBurningCruise();
+		$wrap->reductionPrice = $cruise->getCode()->getReductionPrice();
 		/*if($cat) {
 			$category = $cruise->getCategory()->Category;
 			

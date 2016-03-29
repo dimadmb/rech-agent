@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;  //необязательно
 /**
  * CruiseCruise
  *
- * @ORM\Table(name="cruise_cruise", uniqueConstraints={@ORM\UniqueConstraint(name="cruise_cruise_ship_id_code_uniq", columns={"ship_id", "code"})}, indexes={@ORM\Index(name="cruise_cruise_specialOffer_idx", columns={"specialOffer"}), @ORM\Index(name="IDX_7D5C275BC256317D", columns={"ship_id"})})
+ * @ORM\Table(name="cruise_cruise", uniqueConstraints={@ORM\UniqueConstraint(name="cruise_cruise_ship_id_code_uniq", columns={"ship_id", "code"})}, indexes={ @ORM\Index(name="IDX_7D5C275BC256317D", columns={"ship_id"}), @ORM\Index(name="code", columns={"code"})})
  * @ORM\Entity(repositoryClass="BaseBundle\Entity\Repository\CruiseCruiseRepository")
  */
 class CruiseCruise
@@ -22,10 +22,10 @@ class CruiseCruise
      */
     private $id;
 
+
     /**
-     * @var string
-     *
-     * @ORM\Column(name="code", type="string", length=255, nullable=false)
+     * @ORM\OneToOne(targetEntity="CruiseCruiseSpec")
+     * @ORM\JoinColumn(name="code", referencedColumnName="code", nullable=true)
      */
     private $code;
 
@@ -64,26 +64,6 @@ class CruiseCruise
      */
     private $daycount;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="specialOffer", type="boolean", nullable=false)
-     */
-    private $specialoffer;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="burningCruise", type="boolean", nullable=false)
-     */
-    private $burningCruise;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="reductionPrice", type="boolean", nullable=false)
-     */
-    private $reductionPrice;
 
     /**
      * @var \CruiseShip
@@ -128,6 +108,10 @@ class CruiseCruise
 	referencedColumnName="id")})
 	 */	
     private $category;
+	
+	
+	
+
 
     /**
      * Constructor
@@ -292,28 +276,6 @@ class CruiseCruise
         return $this->daycount;
     }
 
-    /**
-     * Set specialoffer
-     *
-     * @param boolean $specialoffer
-     * @return CruiseCruise
-     */
-    public function setSpecialoffer($specialoffer)
-    {
-        $this->specialoffer = $specialoffer;
-
-        return $this;
-    }
-
-    /**
-     * Get specialoffer
-     *
-     * @return boolean 
-     */
-    public function getSpecialoffer()
-    {
-        return $this->specialoffer;
-    }
 
     /**
      * Set ship
@@ -448,49 +410,7 @@ class CruiseCruise
         return $this->programItems;
     }
 
-    /**
-     * Set burningCruise
-     *
-     * @param boolean $burningCruise
-     * @return CruiseCruise
-     */
-    public function setBurningCruise($burningCruise)
-    {
-        $this->burningCruise = $burningCruise;
 
-        return $this;
-    }
 
-    /**
-     * Get burningCruise
-     *
-     * @return boolean 
-     */
-    public function getBurningCruise()
-    {
-        return $this->burningCruise;
-    }
 
-    /**
-     * Set reductionPrice
-     *
-     * @param boolean $reductionPrice
-     * @return CruiseCruise
-     */
-    public function setReductionPrice($reductionPrice)
-    {
-        $this->reductionPrice = $reductionPrice;
-
-        return $this;
-    }
-
-    /**
-     * Get reductionPrice
-     *
-     * @return boolean 
-     */
-    public function getReductionPrice()
-    {
-        return $this->reductionPrice;
-    }
 }

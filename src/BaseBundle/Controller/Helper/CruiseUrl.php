@@ -14,7 +14,7 @@ class CruiseUrl {
 	public static function create(\BaseBundle\Entity\CruiseCruise $cruise) {
 		$url = new CruiseUrl();
 		$url->shipCode = $cruise->getShip()->getCode();
-		$url->code = $cruise->getCode();
+		$url->code = $cruise->getCode()->getCode();
 		return $url;
 	}
 	

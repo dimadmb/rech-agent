@@ -19,6 +19,7 @@
 <table class="table  table-hover">
 	<tr>
 		<th>Дата</th>
+		<th style="    width: 110px;">Время</th>
 		<th>Стоянка	</th>
 		<th>Программа дня</th>
 	</tr>
@@ -28,6 +29,7 @@
 
 	<tr>
 		<td>{{item.date | date("d.m.Y")}}</td>
+		<td>{{item.date | date("H:i")}} - {{item.dateStop | date("H:i")}}</td>
 		<td>
 		{% if (item.place != null) and (item.place.url != '')  %}
 			<a href="{{path('page',{'first':'cruise','second':'settlement','name':item.place.url})}}">{{item.place.title}}</a>
@@ -35,7 +37,7 @@
 			{{item.placetitle}}
 		{% endif %}	
 		</td>
-		<td>{{item.description}}</td>
+		<td>{{item.description | raw}}</td>
 	</tr>
 	
 
@@ -61,7 +63,7 @@
 		<td>{{ item.rpId.rpName}}</td>
 		<td>{{ item.tariff.name}}</td>
 		<td>
-		{% if cruise.burningCruise %}
+		{% if cruise.code.burningCruise %}
 			<span style=" text-decoration:line-through;">{{item.price}}  руб.</span><br>
 			<span style="color:red; ">{{(item.price*0.75) | round}} руб.</span>			
 			

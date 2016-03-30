@@ -412,26 +412,5 @@ class CruiseCruise
 
 
 
-    /**
-     * Set special
-     *
-     * @param \BaseBundle\Entity\CruiseSpec $special
-     * @return CruiseCruise
-     */
-    public function setSpecial(\BaseBundle\Entity\CruiseSpec $special = null)
-    {
-        $this->special = $special;
 
-        return $this;
-    }
-
-    /**
-     * Get special
-     *
-     * @return \BaseBundle\Entity\CruiseSpec 
-     */
-    public function getSpecial()
-    {
-        return $this->special;
-    }
 }

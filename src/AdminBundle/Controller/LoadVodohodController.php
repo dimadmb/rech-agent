@@ -22,6 +22,9 @@ use BaseBundle\Entity\Excursion;
 use BaseBundle\Entity\CruiseCruiseProgramItem;
 use BaseBundle\Entity\CruiseCruiseSpec;
 
+use BaseBundle\Entity\CruiseShipRoom;
+use BaseBundle\Entity\CruiseShipRoomProp;
+
 
 class LoadVodohodController extends Controller
 {
@@ -86,8 +89,12 @@ class LoadVodohodController extends Controller
 		$excursionRepos = $this->getDoctrine()->getRepository('BaseBundle:Excursion');
 		$progItemRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseProgramItem'); 
 		$cruiseSpecRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseSpec');
-		
-		
+		$shipRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip');
+		$classRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipClass');
+		$tariffRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseTariff');		
+		$cruiseRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
+		$categoryRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseCategory');
+		$roomPropRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipRoomProp');
 		
 		
 		
@@ -95,7 +102,8 @@ class LoadVodohodController extends Controller
 		foreach($cruiseSpecsAll as $cruiseSpecItem)
 		{
 			$cruiseSpec[$cruiseSpecItem->getCode()] = $cruiseSpecItem;
-		}
+		}		
+
 		
 		
 		$decks_url = $base_url."decks.php";
@@ -234,6 +242,51 @@ class LoadVodohodController extends Controller
 		
 		*/
 		
+			$tariffs = array();
+			$cruiseTariffs = $tariffRepos->findAll();  
+			foreach($cruiseTariffs as $tariff)
+			{
+				$tariffs[$tariff->getName()]  = $tariff;
+			}
+			
+			$decks = array();
+			$decksAll = $decksRepos->findAll();
+			foreach($decksAll as $deck)
+			{
+				$decks[$deck->getName()] = $deck;
+				$decksById[$deck->getDeckId()] = $deck;
+			}
+			
+ 			
+			$room_types = array();
+			$room_types_all = $cabinTypeRepos->findAll();
+			foreach($room_types_all as $room_type)
+			{
+				$room_types[$room_type->getRtComment()] = $room_type;
+				$room_typesById[$room_type->getRtId()] = $room_type;
+			} 	
+			
+			$room_places = array();
+			$room_places_all = $cabinPlaceRepos->findAll();
+			foreach($room_places_all as $room_place)
+			{
+				$room_places[$room_place->getRpName()] = $room_place;
+			}
+			
+			
+			$roomPropAll = $roomPropRepos->findAll();
+			foreach($roomPropAll as $roomPropitem)
+			{
+				$roomProp[$roomPropitem->getRoomId()] = $roomPropitem;
+			}
+			
+
+
+
+
+			
+		
+		
 		
 		$url_cruises = "http://cruises.vodohod.com/agency/json-cruises.htm?pauth=jnrehASKDLJcdakljdx";
 		
@@ -256,9 +309,7 @@ class LoadVodohodController extends Controller
  
 		
 		
-		$shipRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip');
-		$classRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipClass');
-		$tariffRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseTariff');
+
 
 		
 
@@ -317,24 +368,45 @@ class LoadVodohodController extends Controller
 			$em->persist($ship);
 			
 			
-			
+			// ROOM 
 
-			/*
-			// получаем все кабины и заносим их $ship->addCabin($num,$cabinClass,$deck,$side)
-			$cabin_url = "http://r.a163.ru/api/kauta.php?id_teplohod=".$motorship_id;
-			$cabin_json = $this->curl_get_file_contents($cabin_url);
-			$cabins_v = json_decode($cabin_json,true);
-			foreach($cabins_v as $cabin_v)
+			// получаем все кабины и заносим их $ship->addRoom($num,$cabinClass,$deck,$side)
+			$room_url = $base_url."rooms.php?motorship_id=".$motorship_id;
+			$room_json = $this->curl_get_file_contents($room_url);
+			$rooms_v = json_decode($room_json,true);
+			foreach($rooms_v as $room_v)
 			{
-				$num = $cabin_v['num'];
-				$cabinClass = $cabin_v['id_class'];
-				$deck = $cabin_v['deck'];
-				$side = $cabin_v['side'];
+					if(!isset($roomProp[$room_v['room_id']]))
+					{
+						$roomPr = new CruiseShipRoomProp();
+						$roomPr
+							->setRoomId($room_v['room_id'])
+							->setSpecialOffer(0)
+						;	
+						$em->persist($roomPr);
+						$roomProp[$room_v['room_id']] = $roomPr;
+					}
 				
-				$cabin = $ship->addCabin($num,$cabinClass,$deck,$side);
-				$em->persist($cabin);
+				$room_id = $roomProp[$room_v['room_id']];
+				$room_number = $room_v['room_number'];
+				$rt_id = $room_typesById[$room_v['rt_id']];
+				$deck = $decksById[$room_v['deck_id']];
+				
+				$room = new CruiseShipRoom();
+				$room
+					->setRoomId($room_id)
+					->setRoomNumber($room_number)
+					->setRtId($rt_id)
+					->setDeckId($deck)
+					->setShipId($motorship_id)
+				;	
+				$dump[] = $room_id;
+				$dump[] = $room;
+				$em->persist($room);
+				
+
 			}
-			*/
+			// END ROOM
 			
 			
 			
@@ -358,11 +430,15 @@ class LoadVodohodController extends Controller
 				//$em->flush();
 			}
 			
+			$cabins = array();
+			$cabins_all = $ship->getCabins();
+			foreach($cabins_all as $cabin)
+			{
+				$cabins[$cabin->getRtId()->getRtId()][$cabin->getDeckId()->getDeckId()] = $cabin;
+			}
+			
+			
 
-			
-			
-			$cruiseRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
-			$categoryRepos = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseCategory');
 			
 			// Создать страницы с теплоходами!!!
 			
@@ -501,40 +577,7 @@ class LoadVodohodController extends Controller
 			// можно выбирать в циклке по круизам теплохода (плучится массив прайсов для конкретного круиза, останется сопоставить его с кабинами)
 			// 
 
-			$tariffs = array();
-			$cruiseTariffs = $tariffRepos->findAll();  
-			foreach($cruiseTariffs as $tariff)
-			{
-				$tariffs[$tariff->getName()]  = $tariff;
-			}
-			
-			$decks = array();
-			$decksAll = $decksRepos->findAll();
-			foreach($decksAll as $deck)
-			{
-				$decks[$deck->getName()] = $deck;
-			}
- 			
-			$room_types = array();
-			$room_types_all = $cabinTypeRepos->findAll();
-			foreach($room_types_all as $room_type)
-			{
-				$room_types[$room_type->getRtComment()] = $room_type;
-			} 	
-			
-			$room_places = array();
-			$room_places_all = $cabinPlaceRepos->findAll();
-			foreach($room_places_all as $room_place)
-			{
-				$room_places[$room_place->getRpName()] = $room_place;
-			}
-			
-			$cabins = array();
-			$cabins_all = $ship->getCabins();
-			foreach($cabins_all as $cabin)
-			{
-				$cabins[$cabin->getRtId()->getRtId()][$cabin->getDeckId()->getDeckId()] = $cabin;
-			}
+
 			
 			foreach ($ship->getCruises() as $cruise)
 			{

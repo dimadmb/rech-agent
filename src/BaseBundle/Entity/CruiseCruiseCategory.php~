@@ -14,9 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
 class CruiseCruiseCategory
 {
     /**
-     * @var string
+     * @var integer
      *
-     * @ORM\Column(name="id", type="string", length=6, nullable=false)
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */

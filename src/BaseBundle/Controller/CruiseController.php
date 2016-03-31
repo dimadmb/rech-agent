@@ -136,8 +136,32 @@ class CruiseController extends Controller
 	 */		
 	public function detailsAction($url)
 	{
+		//нужно разбить на несколько запросов для оптимизации
+		
+		
 		$cruise = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrl(Helper\CruiseUrl::parse($url));
-		return array('cruise' => $cruise,);
+		
+		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip')->findByUrl(Helper\CruiseUrl::parse($url));
+		
+		$cabinsAll = $cruiseShipPrice->getShip()->getCabins();
+		foreach($cabinsAll as $cabinsItem)
+		{
+			
+			foreach($cabinsItem->getPrices() as $prices)
+			{
+				$price[$prices->getRpId()->getRpName()][$prices->getTariff()->getname()] = $prices;
+			}
+			$cabins[$cabinsItem->getDeckId()->getName()][] = array(
+				'deckName' =>$cabinsItem->getRtId()->getRtComment(),
+				'cabin' => $cabinsItem,
+				'rpPrices' => $price
+				)
+				;
+			unset($price);	
+		}
+		//$dump = $cruise;
+		
+		return array('cruise' => $cruise, 'cabins' => $cabins, );
 	}
 
     /**
@@ -256,7 +280,7 @@ class CruiseController extends Controller
             ->add('startDate', 'date',array('widget' => 'single_text','data'=> new \DateTime(date("Y-m-d",$minDate->getStartdate())) ))
             ->add('endDate', 'date',array('widget' => 'single_text','data'=> new \DateTime(date("Y-m-d",$maxDate->getEnddate()))))
 			
-			->add('days','text',array('attr'=>array('data-slider-min'=>$minDays,'data-slider-max'=>$maxDays,'data-slider-value'=>'['.$days.']','id'=>'days-form' )))
+			->add('days','text',array('attr'=>array('data-slider-min'=>$minDays,'data-slider-max'=>$maxDays,'data-slider-value'=>'['.$days.']' )))
 			
 			->add('places','entity',array('class' => 'BaseBundle:CruisePlace','choices' =>  $this->getActivePlaces(), 'choice_label' => 'title','multiple'      => true,'expanded'      => true,))
 			

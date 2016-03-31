@@ -34,26 +34,16 @@ class CruiseShipRoom
      */
     private $roomNumber;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="CruiseShipCabinType")
-     * @ORM\JoinColumn(name="rt_id", referencedColumnName="id")	
-     */
-    private $rtId;
 
     /**
- 
-     * @ORM\ManyToOne(targetEntity="CruiseShipDeck")
-     * @ORM\JoinColumn(name="deck_id", referencedColumnName="id")	
-     */
-    private $deckId;
-
-    /**
-     * @var integer
+     * @var \CruiseShipCabin
      *
-     * @ORM\Column(name="ship_id", type="integer")
+     * @ORM\ManyToOne(targetEntity="CruiseShipCabin", inversedBy="rooms" )
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="cabin_id", referencedColumnName="id" , onDelete="CASCADE" )
+     * })
      */
-    private $shipId;
-
+    private $cabin;
 
 
 
@@ -92,77 +82,6 @@ class CruiseShipRoom
     }
 
     /**
-     * Set rtId
-     *
-     * @param integer $rtId
-     * @return CruiseShipRoom
-     */
-    public function setRtId($rtId)
-    {
-        $this->rtId = $rtId;
-
-        return $this;
-    }
-
-    /**
-     * Get rtId
-     *
-     * @return integer 
-     */
-    public function getRtId()
-    {
-        return $this->rtId;
-    }
-
-    /**
-     * Set deckId
-     *
-     * @param integer $deckId
-     * @return CruiseShipRoom
-     */
-    public function setDeckId($deckId)
-    {
-        $this->deckId = $deckId;
-
-        return $this;
-    }
-
-    /**
-     * Get deckId
-     *
-     * @return integer 
-     */
-    public function getDeckId()
-    {
-        return $this->deckId;
-    }
-
-    /**
-     * Set shipId
-     *
-     * @param integer $shipId
-     * @return CruiseShipRoom
-     */
-    public function setShipId($shipId)
-    {
-        $this->shipId = $shipId;
-
-        return $this;
-    }
-
-    /**
-     * Get shipId
-     *
-     * @return integer 
-     */
-    public function getShipId()
-    {
-        return $this->shipId;
-    }
-
-
-
-    /**
      * Set roomId
      *
      * @param \BaseBundle\Entity\CruiseShipRoomProp $roomId
@@ -183,5 +102,28 @@ class CruiseShipRoom
     public function getRoomId()
     {
         return $this->roomId;
+    }
+
+    /**
+     * Set cabin
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabin $cabin
+     * @return CruiseShipRoom
+     */
+    public function setCabin(\BaseBundle\Entity\CruiseShipCabin $cabin = null)
+    {
+        $this->cabin = $cabin;
+
+        return $this;
+    }
+
+    /**
+     * Get cabin
+     *
+     * @return \BaseBundle\Entity\CruiseShipCabin 
+     */
+    public function getCabin()
+    {
+        return $this->cabin;
     }
 }

@@ -56,8 +56,15 @@ class CruiseShipCabin
 	private $prices;
 	
 	
+	/**
+	 * @ORM\OneToMany(targetEntity="CruiseShipRoom", mappedBy="cabin")
+	 */
+	private $rooms;	
+	
+	
 	public function __construct() {
 		$this->prices = new ArrayCollection();
+		$this->rooms = new ArrayCollection();
 	}
 
 	public function init(CruiseShip $ship) {

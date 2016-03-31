@@ -56,8 +56,15 @@ class CruiseShipCabin
 	private $prices;
 	
 	
+	/**
+	 * @ORM\OneToMany(targetEntity="CruiseShipRoom", mappedBy="cabin")
+	 */
+	private $rooms;	
+	
+	
 	public function __construct() {
 		$this->prices = new ArrayCollection();
+		$this->rooms = new ArrayCollection();
 	}
 
 	public function init(CruiseShip $ship) {
@@ -216,5 +223,40 @@ class CruiseShipCabin
     public function getDeckId()
     {
         return $this->deckId;
+    }
+
+    /**
+     * Add rooms
+     *
+     * @param \BaseBundle\Entity\CruiseShipRoom $rooms
+     * @return CruiseShipCabin
+     */
+    public function addRoom(\BaseBundle\Entity\CruiseShipRoom $rooms)
+    {
+        $rooms->setCabin($this);
+		
+		$this->rooms[] = $rooms;
+		
+        return $this;
+    }
+
+    /**
+     * Remove rooms
+     *
+     * @param \BaseBundle\Entity\CruiseShipRoom $rooms
+     */
+    public function removeRoom(\BaseBundle\Entity\CruiseShipRoom $rooms)
+    {
+        $this->rooms->removeElement($rooms);
+    }
+
+    /**
+     * Get rooms
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRooms()
+    {
+        return $this->rooms;
     }
 }

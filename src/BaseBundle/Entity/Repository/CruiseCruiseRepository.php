@@ -43,13 +43,76 @@ class CruiseCruiseRepository extends EntityRepository
 	}	
 	
 	public function findByUrl(\BaseBundle\Controller\Helper\CruiseUrl $url) {
-		$str = "SELECT c, s, pi, pr, cab, pl, rt, deck, rp, tariff
+		$str = "SELECT c, s, pi, pr,   pl 
+			FROM BaseBundle\Entity\CruiseCruise c 
+			JOIN c.ship s
+			LEFT JOIN c.programItems pi
+			LEFT JOIN c.prices pr
+			LEFT JOIN pi.place pl
+			
+			
+			WHERE s.code = ?1 
+			AND c.code = ?2
+			
+			ORDER BY  pi.date, pr.price";
+   		$q = $this->_em->createQuery($str);
+   		$q->setParameter(1, $url->getShipCode());
+   		$q->setParameter(2, $url->getCode());
+   		return $q->getSingleResult();
+	}	
+
+
+
+/*
+	
+	public function findByUrl(\BaseBundle\Controller\Helper\CruiseUrl $url) {
+		$str = "SELECT c, s, pi, pr, cab, room, roomProp,  pl, rt, deck, rp, tariff
 			FROM BaseBundle\Entity\CruiseCruise c 
 			JOIN c.ship s
 			LEFT JOIN c.programItems pi
 			LEFT JOIN c.prices pr
 			LEFT JOIN pi.place pl
 			LEFT JOIN pr.cabin cab
+			LEFT JOIN cab.rooms room
+			LEFT JOIN room.roomId roomProp
+			LEFT JOIN pr.rp_id rp
+			LEFT JOIN pr.tariff tariff
+			LEFT JOIN cab.rtId rt
+			LEFT JOIN cab.deckId deck
+			WHERE s.code = ?1 
+			AND c.code = ?2
+			
+			ORDER BY deck.deckId , tariff.id , pi.date, pr.price";
+   		$q = $this->_em->createQuery($str);
+   		$q->setParameter(1, $url->getShipCode());
+   		$q->setParameter(2, $url->getCode());
+   		return $q->getSingleResult();
+	}	
+
+
+*/
+
+
+
+
+
+
+
+
+	
+	/*
+	public function findByUrl(\BaseBundle\Controller\Helper\CruiseUrl $url) {
+		$str = "SELECT c, s, pi, pr, cab, room, roomProp,  pl, rt, deck, rp, tariff
+			FROM BaseBundle\Entity\CruiseCruise c 
+			JOIN c.ship s
+			LEFT JOIN s.cabins cab
+			LEFT JOIN cab.prices pr
+			LEFT JOIN c.programItems pi 
+
+			LEFT JOIN pi.place pl
+
+			LEFT JOIN cab.rooms room
+			LEFT JOIN room.roomId roomProp
 			LEFT JOIN pr.rp_id rp
 			LEFT JOIN pr.tariff tariff
 			LEFT JOIN cab.rtId rt
@@ -61,7 +124,7 @@ class CruiseCruiseRepository extends EntityRepository
    		$q->setParameter(2, $url->getCode());
    		return $q->getSingleResult();
 	}
-	
+	*/
 
 
 	public function findSpecial() {

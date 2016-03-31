@@ -337,7 +337,7 @@ class LoadVodohodController extends Controller
 			// Копируем фотографии
 			
 			$dir = $this->container->getParameter('kernel.root_dir').'/../web'.self::PATH_IMG.$shipCode;
-			if(!is_dir($dir)) mkdir($dir) ;
+			if(!is_dir($dir)) mkdir($dir,0777,true) ;
 			$img_main = "http://vodohod.com/cruises/vodohod/".$shipCode."/".$shipCode."-main.jpg";
 			$newfile = $dir.'/'.$shipCode.'-main.jpg';
 			$file_content = $this->curl_get_file_contents($img_main);
@@ -368,14 +368,19 @@ class LoadVodohodController extends Controller
 			$em->persist($ship);
 			
 			
+			
 			// ROOM 
 
 			// получаем все кабины и заносим их $ship->addRoom($num,$cabinClass,$deck,$side)
 			$room_url = $base_url."rooms.php?motorship_id=".$motorship_id;
 			$room_json = $this->curl_get_file_contents($room_url);
 			$rooms_v = json_decode($room_json,true);
+
+
 			foreach($rooms_v as $room_v)
 			{
+				$rooms[$room_v['deck_id']][$room_v['rt_id']][]	 = $room_v;
+				/*	
 					if(!isset($roomProp[$room_v['room_id']]))
 					{
 						$roomPr = new CruiseShipRoomProp();
@@ -403,11 +408,12 @@ class LoadVodohodController extends Controller
 				$dump[] = $room_id;
 				$dump[] = $room;
 				$em->persist($room);
-				
+				*/
 
 			}
-			// END ROOM
-			
+			//  подготовить массив rooms [deck] [rt_id]
+
+			//$dump[] = $rooms;
 			
 			
 			$cabin_url = $base_url."rooms_motorship.php?motorship_id=".$motorship_id;
@@ -418,16 +424,56 @@ class LoadVodohodController extends Controller
 				$cabin = $ship->addCabin();
 				
 				$cabinType = $cabinTypeRepos->findOneByRtId($cabin_v['rt_id']);
-				$Deck = $decksRepos->findOneByDeckId((int)$cabin_v['deck_id']);
+				$deck = $decksRepos->findOneByDeckId((int)$cabin_v['deck_id']);
+				
+				
+					
+				
+				
+				
 				
 				$cabin
-					->setDeckId($Deck)
+					->setDeckId($deck)
 					->setRtId($cabinType)
-					
-				;	
+				;
+				foreach($rooms[$cabin_v['deck_id']][$cabin_v['rt_id']] as $roomItem)
+				{
+
+					if(!isset($roomProp[$roomItem['room_id']]))
+					{
+						$roomPr = new CruiseShipRoomProp();
+						$roomPr
+							->setRoomId($roomItem['room_id'])
+							->setSpecialOffer(0)
+						;	
+						$em->persist($roomPr);
+						$roomProp[$roomItem['room_id']] = $roomPr;
+					}
+				
+					$room = new CruiseShipRoom();
+					$room
+						->setRoomId($roomProp[$roomItem['room_id']])
+						->setRoomNumber($roomItem['room_number'])
+					;
+					$em->persist($room);
+					$cabin->addRoom($room);
+				}
+				
 				//$dump[] = $cabin;
 				$em->persist($cabin);
 				//$em->flush();
+				
+				
+		
+				
+				
+				
+				
+				
+				
+				
+				
+				
 			}
 			
 			$cabins = array();
@@ -436,8 +482,47 @@ class LoadVodohodController extends Controller
 			{
 				$cabins[$cabin->getRtId()->getRtId()][$cabin->getDeckId()->getDeckId()] = $cabin;
 			}
+
 			
+			//$dump = $cabins; 
 			
+			/*
+
+			foreach($rooms_v as $room_v)
+			{
+					if(!isset($roomProp[$room_v['room_id']]))
+					{
+						$roomPr = new CruiseShipRoomProp();
+						$roomPr
+							->setRoomId($room_v['room_id'])
+							->setSpecialOffer(0)
+						;	
+						$em->persist($roomPr);
+						$roomProp[$room_v['room_id']] = $roomPr;
+					}
+				
+				$room_id = $roomProp[$room_v['room_id']];
+				$room_number = $room_v['room_number'];
+				$rt_id = $room_typesById[$room_v['rt_id']];
+				$deck = $decksById[$room_v['deck_id']];
+				
+				$room = new CruiseShipRoom();
+				$room
+					->setRoomId($room_id)
+					->setRoomNumber($room_number)
+					->setRtId($rt_id)
+					->setDeckId($deck)
+					->setShipId($motorship_id)
+				;	
+				//$dump[] = $room_id;
+				//$dump[] = $room;
+				$em->persist($room);
+			
+
+			}
+			// END ROOM			
+			
+			*/
 
 			
 			// Создать страницы с теплоходами!!!
@@ -589,17 +674,21 @@ class LoadVodohodController extends Controller
 				
 				$prices_v = json_decode($prices_json,true);
 				
-
+				
+				$dump[] = array('cruise' =>$cruise ,$prices_v["room_availability"]);
+				
+				
+				
 				
 				foreach($prices_v['tariffs'] as $p_t)
 				{
-
+					
 					$cruiseTariff = $tariffs[$p_t['tariff_name']];
 					
 					// сделать проверку на существование тарифа, если нет, то дописать в базу его
 					
 					
-					foreach($p_t['prices'] as $prices)
+					foreach($p_t['prices'] as $key => $prices)
 					{
 						$deck = $decks[$prices['deck_name']];
 						$rt_name = $room_types[$prices['rt_name']];
@@ -609,10 +698,16 @@ class LoadVodohodController extends Controller
 						if($price_value <= 0) continue;
 
 						
+						
+						
+						
 						// запишем это всё в price
 						
 						
 						$price = new CruiseShipCabinCruisePrice();
+						
+						//print_r();
+						
 						$cabin = $cabins[$rt_name->getRtId()][$deck->getDeckId()];
 						
 						$price	
@@ -628,6 +723,9 @@ class LoadVodohodController extends Controller
 					
 				}
 				
+				
+				
+				
 			}
 
 			
@@ -638,7 +736,7 @@ class LoadVodohodController extends Controller
 			};
 			
 			
-			$em->flush(); // удалить
+			$em->flush(); 
 			
 			
 		}

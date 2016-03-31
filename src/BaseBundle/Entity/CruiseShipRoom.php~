@@ -34,26 +34,16 @@ class CruiseShipRoom
      */
     private $roomNumber;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="CruiseShipCabinType")
-     * @ORM\JoinColumn(name="rt_id", referencedColumnName="id")	
-     */
-    private $rtId;
 
     /**
- 
-     * @ORM\ManyToOne(targetEntity="CruiseShipDeck")
-     * @ORM\JoinColumn(name="deck_id", referencedColumnName="id")	
-     */
-    private $deckId;
-
-    /**
-     * @var integer
+     * @var \CruiseShipCabin
      *
-     * @ORM\Column(name="ship_id", type="integer")
+     * @ORM\ManyToOne(targetEntity="CruiseShipCabin", inversedBy="rooms" )
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="cabin_id", referencedColumnName="id" , onDelete="CASCADE" )
+     * })
      */
-    private $shipId;
-
+    private $cabin;
 
 
 
@@ -92,73 +82,25 @@ class CruiseShipRoom
     }
 
     /**
-     * Set rtId
+     * Set roomId
      *
-     * @param integer $rtId
+     * @param \BaseBundle\Entity\CruiseShipRoomProp $roomId
      * @return CruiseShipRoom
      */
-    public function setRtId($rtId)
+    public function setRoomId(\BaseBundle\Entity\CruiseShipRoomProp $roomId = null)
     {
-        $this->rtId = $rtId;
+        $this->roomId = $roomId;
 
         return $this;
     }
 
     /**
-     * Get rtId
+     * Get roomId
      *
-     * @return integer 
+     * @return \BaseBundle\Entity\CruiseShipRoomProp 
      */
-    public function getRtId()
+    public function getRoomId()
     {
-        return $this->rtId;
+        return $this->roomId;
     }
-
-    /**
-     * Set deckId
-     *
-     * @param integer $deckId
-     * @return CruiseShipRoom
-     */
-    public function setDeckId($deckId)
-    {
-        $this->deckId = $deckId;
-
-        return $this;
-    }
-
-    /**
-     * Get deckId
-     *
-     * @return integer 
-     */
-    public function getDeckId()
-    {
-        return $this->deckId;
-    }
-
-    /**
-     * Set shipId
-     *
-     * @param integer $shipId
-     * @return CruiseShipRoom
-     */
-    public function setShipId($shipId)
-    {
-        $this->shipId = $shipId;
-
-        return $this;
-    }
-
-    /**
-     * Get shipId
-     *
-     * @return integer 
-     */
-    public function getShipId()
-    {
-        return $this->shipId;
-    }
-
-
 }

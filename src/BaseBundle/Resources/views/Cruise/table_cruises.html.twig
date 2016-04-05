@@ -20,16 +20,11 @@
         <td><a href="{{path('page',{'first':'cruise','second':'ship','name':cruise.cruiseUrl.shipCode})}}">{{cruise.ship}}</a></td>
         <td>{{cruise.start}}</td>
         <td>{{cruise.days}}</td>
-        <td>{% if (cruise.burningCruise) %}
-			<span style=" text-decoration:line-through;">{{cruise.minprice | raw }}</span><br>
-			<span style="color:red; ">{{((cruise.minprice)*0.75)|round }} руб.</span>
-			
-			{% else %}
+        <td>
 			{{cruise.minprice| raw}}
-			{% endif %}
 		</td>
-        <td style="min-width:153px;">{% if (cruise.burningCruise) %}<span class="table-special-span color-gk">«Горящий» круиз</span>{% endif %}
-        {% if (cruise.reductionPrice) %} <span class="table-special-span color-sc">Снижена цена</span> {% endif %}
+        <td style="min-width:153px;">{% if (cruise.burningCruise) %}<span class="table-special-span color-gk">«Счастливый» круиз</span>{% endif %}
+
         {% if (cruise.specialoffer) %} <span class="table-special-span color-st">Специальный тариф</span> {% endif %}</td>
 
         <td><a href="{{path('cruiseorder_code',{'code':cruise.cruiseUrl.code}) }}">Забронировать</a></td>

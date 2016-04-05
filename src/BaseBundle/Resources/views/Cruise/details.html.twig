@@ -47,7 +47,7 @@
 {% endfor %}	
 </table>
 
-{{dump(cabins)}}
+
 
 <hr>
 <h3>Стоимость тура на 1 человека *</h3><br>
@@ -68,10 +68,10 @@
 				<tr>
 					<td style="width:30%;">{{type.deckName}}<br>
 					
-					{% for room in type.cabin.rooms %}
+					{#% for room in type.cabin.rooms %}
 						<span {% if (room.roomId.specialOffer == 1 and cruise.code.specialOffer == 1) %} style="color:red; font-weight:700;" {% endif %}>{{room.roomNumber}} </span>
 						
-					{% endfor %}
+					{% endfor %#}
 					
 					</td>
 					<td>
@@ -84,14 +84,9 @@
 								{% for tariff,price in rp.prices %}
 								<td>
 								{{tariff}}<br>
-									{% if cruise.code.burningCruise %}
-										<span style=" text-decoration:line-through;">{{price.price|number_format(0, '.', ' ')}}  руб.</span><br>
-										<span style="color:red; "><b>{{(price.price*0.75) | round |number_format(0, '.', ' ')}} руб.</b></span>			
-										
-										
-									{% else %}
+			
 									<b>{{price.price|number_format(0, '.', ' ')}}  руб.</b>
-									{% endif %}
+
 								</td>
 								{% endfor %}
 							</tr>

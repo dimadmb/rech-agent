@@ -366,8 +366,7 @@ $dump = $qb->getQuery();
 					'choices' =>  $this->getActiveShip()
 					,'choice_label' => 'title','placeholder'=>'Все теплоходы','required' => false))
 			->add('specialoffer','checkbox',array('required'=> false,'label' => 'Специальный тариф'))
-			->add('burningCruise','checkbox',array('required'=> false,'label' => '«Горящий» круиз'))
-			->add('reductionPrice','checkbox',array('required'=> false,'label' => 'Сниженная цена'))
+			->add('burningCruise','checkbox',array('required'=> false,'label' => '«Счастливый» круиз'))
 			->add('button', 'submit',array('label' => 'Поиск'))
             ->getForm(); 
 

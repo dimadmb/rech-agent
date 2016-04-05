@@ -10,6 +10,8 @@
 
 	{{ document.body| raw }}
 
+	{{ render(controller('BaseBundle:Photo:getPhotos',{doc_id : document.id, path:document.url }))  }}	
+	
 	{% if cruises_months %}
 	<br>
 	<h3>Расписание круизов теплохода «{{ ship.title }}»</h3>
@@ -19,6 +21,6 @@
 			{% include 'BaseBundle:Cruise:table_cruises.html.twig'  with {'cruises':cruises_month.row} %}
 		{% endfor %}
 	{% endif %}
-	{{ render(controller('BaseBundle:Photo:getPhotos',{doc_id : document.id, path:document.url }))  }}
+	
 		
 {% endblock %}

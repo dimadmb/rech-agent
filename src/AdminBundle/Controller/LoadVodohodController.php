@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use BaseBundle\Entity\CruiseCruise;
 use BaseBundle\Entity\CruiseShip;
 use BaseBundle\Entity\Document;
+use BaseBundle\Entity\Photo;
 use BaseBundle\Entity\CruiseShipCabinCruisePrice;
 use BaseBundle\Entity\CruiseShipDeck;
 use BaseBundle\Entity\CruiseShipCabinType;
@@ -28,7 +29,7 @@ use BaseBundle\Entity\CruiseShipRoomProp;
 
 class LoadVodohodController extends Controller
 {
-	const PATH_IMG = "/bundles/cruise/ship/";
+	const PATH_IMG = "/bundles/base/files/cruise/ship/";
 	
 	
 	public function curl_get_file_contents($URL)
@@ -357,6 +358,8 @@ class LoadVodohodController extends Controller
 			fclose($fp); //Закрытие файла	
 			
 			
+			
+			
 			$ship->setImgurl(self::PATH_IMG.$shipCode.'/'.$shipCode.'-main.jpg');
 			
 			$ship->setCode($shipCode);
@@ -559,8 +562,59 @@ class LoadVodohodController extends Controller
 				->setContentTitle($shipName)
 				
 			;	
-			$em->persist($docShip);
+			
 			//$em->flush();
+
+			# ФОТОГРАФИИ
+			
+			$base_url_vodohod = "http://vodohod.com";
+			$parser = $this->container->get('simple_html_dom');
+			$htmlFoto = $this->curl_get_file_contents("http://vodohod.com/cruises/vodohod/".$shipCode."/foto.htm");
+			$parser->load($htmlFoto);
+			
+			if ( !$htmlFoto || isset($parser->getElementByTagName('h2')->attr['title']) && $parser->getElementByTagName('h2')->attr['title'] == "error 404")
+			{
+			$htmlFoto = $this->curl_get_file_contents("http://vodohod.com/cruises/vodohod/".$shipCode."/photo.htm");
+				$parser->load($htmlFoto);				
+			}
+
+			foreach($parser->find('.item a') as $element) 
+			{
+								
+				// получаем адрес фото
+				$photo_url =  $base_url_vodohod.$element->href;
+				$photo_title = $element->title;
+				
+				// получаем название файла 
+				$arr = explode('/',$photo_url);
+				$photo_name = array_pop($arr);
+				
+				// сохраняем файл на диск 
+				$newfile = $dir.'/'.$photo_name;
+				$file_content = $this->curl_get_file_contents($photo_url);
+				$fp = fopen($newfile, "w");
+				$test = fwrite($fp, $file_content); // Запись в файл
+				//if ($test) echo 'Данные в файл успешно занесены.';
+				//else echo 'Ошибка при записи в файл.';
+				fclose($fp); //Закрытие файла	
+				
+				
+				$photo = new Photo();
+				$photo
+					->setTitle($photo_title)
+					->setDescription('')
+					->setFilename($photo_name)
+					->setDocument($docShip)
+				;	
+				$em->persist($photo);
+				$dump[] = $photo_name;
+				
+				$docShip->addPhoto($photo);
+			}
+			
+			# ФОТОГРАФИИ
+			$em->persist($docShip);
+
 			
 			// Создать массив ассоциаций категорий круизов
 			

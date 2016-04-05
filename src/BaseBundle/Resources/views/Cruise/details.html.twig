@@ -3,7 +3,7 @@
 {% block title %}Описание речного круиза {{cruise.route}}{% endblock %}
 
 {% block body %}
-<h1>Описание речного круиза  {{cruise.route}}</h1>
+<h1>Описание речного круиза  «{{cruise.route}}»</h1>
 
 
 
@@ -47,6 +47,7 @@
 {% endfor %}	
 </table>
 
+{{dump(cabins)}}
 
 <hr>
 <h3>Стоимость тура на 1 человека *</h3><br>
@@ -80,7 +81,7 @@
 								<td>
 									{{rpName}}
 								</td>
-								{% for tariff,price in rp %}
+								{% for tariff,price in rp.prices %}
 								<td>
 								{{tariff}}<br>
 									{% if cruise.code.burningCruise %}

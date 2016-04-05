@@ -42,7 +42,10 @@ class CruiseController extends Controller
 		$qb->select('c','s','p');
 		$qb->innerJoin('c.ship','s');
 		$qb->leftJoin('c.prices','p');
-
+		$qb->leftJoin('p.tariff','tariff');
+		$qb->andWhere("tariff.id = 1");
+		
+		
 		$qb->andWhere("s.code = ?1");
 		$qb->setParameter(1, $ship);			
 		
@@ -143,25 +146,28 @@ class CruiseController extends Controller
 		
 		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip')->findByUrl(Helper\CruiseUrl::parse($url));
 		
-		$cabinsAll = $cruiseShipPrice->getShip()->getCabins();
+		$dump = $cabinsAll = $cruiseShipPrice->getShip()->getCabins();
 		foreach($cabinsAll as $cabinsItem)
 		{
-			
 			foreach($cabinsItem->getPrices() as $prices)
 			{
-				$price[$prices->getRpId()->getRpName()][$prices->getTariff()->getname()] = $prices;
+				$price[$prices->getRpId()->getRpName()]['prices'][$prices->getTariff()->getname()] = $prices;
+				$price[$prices->getRpId()->getRpName()]['rooms'] = $cabinsItem->getRooms();//список кают
+				// сюда добавить свободные каюты
+				//$rooms => 				
 			}
 			$cabins[$cabinsItem->getDeckId()->getName()][] = array(
 				'deckName' =>$cabinsItem->getRtId()->getRtComment(),
 				'cabin' => $cabinsItem,
-				'rpPrices' => $price
+				'rpPrices' => $price,
+
 				)
 				;
 			unset($price);	
 		}
 		//$dump = $cruise;
 		
-		return array('cruise' => $cruise, 'cabins' => $cabins, );
+		return array('cruise' => $cruise, 'cabins' => $cabins,'dump'=>$dump );
 	}
 
     /**
@@ -174,11 +180,76 @@ class CruiseController extends Controller
 		
 		$form = $request->get('form');
 
+		$em = $this->getDoctrine()->getManager();
+		
+		$where = "";
+		
+		if(isset($form['startDate']))
+		{
+			$where .= "
+			AND c.startdate >= ".strtotime($form['startDate']);
+		}		
+		if(isset($form['endDate']))
+		{
+			$where .= "
+			AND c.enddate <= ".strtotime($form['endDate']);
+		}
+		if($form['ship'] > 0 )
+		{
+			$where .= "
+			AND c.ship = ".$form['ship'];
+		}
+		if(isset($form['specialoffer']))
+		{
+			$where .= "
+			AND code.specialOffer = 1";			
+		}
+		if(isset($form['burningCruise']))
+		{
+			$where .= "
+			AND code.burningCruise = 1";			
+		}	
+		if(isset($form['reductionPrice']))
+		{
+			$where .= "
+			AND code.reductionPrice = 1";			
+		}
+		if(isset($form['days']))
+		{
+			list($mindays,$maxdays) = explode(',',$form['days']);
+			$where .= "
+			AND c.daycount >=".$mindays;
+			$where .= "
+			AND c.daycount <=".$maxdays;			
+		}		
+		
+		
+		$str = "
+		SELECT c,s,p,code
+		FROM BaseBundle\Entity\CruiseCruise c
+		LEFT JOIN c.ship s
+		LEFT JOIN c.prices p
+		LEFT JOIN c.code code
+		WHERE p.tariff = 1
+		".$where."
+		
+
+		
+		ORDER BY c.startdate 
+		
+		";
+		
+		
+		$q = $em->createQuery($str);
+		
+/*
 		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
 		$qb->select('c','s','p','code');
 		$qb->innerJoin('c.ship','s');
 		$qb->leftJoin('c.prices','p');
+		//$qb->where('p.id IN (SELECT p.id FROM BaseBundle\Entity\CruiseShipCabinCruisePrice  ) ');
+		$qb->leftJoin('p.tariff','tariff');
 		$qb->leftJoin('c.code','code');
 		
 		
@@ -237,14 +308,21 @@ class CruiseController extends Controller
 		$qb->andWhere("pi.place IN(?9)");
 		$qb->setParameter(9, implode(',',$form['places']));
 		}	
+
+
+		$qb->andWhere("tariff.id = 1");
 		
 		$qb->orderBy("c.startdate");
+		
+$dump = $qb->getQuery();
 
-		$result = $qb->getQuery()->getResult();
+		*/
+		$dump = $str;
+		$result = $q->getResult();
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
 		
-		return array('cruises_months' => $result);		
+		return array('cruises_months' => $result, 'dump'=>$dump);		
 		
 	}
 
@@ -310,6 +388,8 @@ class CruiseController extends Controller
 		$qb->innerJoin('c.ship','s');
 		$qb->leftJoin('c.prices','p');
 		$qb->leftJoin('c.code','code');
+		$qb->leftJoin('p.tariff','tariff');
+		$qb->andWhere("tariff.id = 1");
 		
 		if($offer == "burningcruise")
 		{

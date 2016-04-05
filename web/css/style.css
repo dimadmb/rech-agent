@@ -16,6 +16,11 @@ hr {
 }
 
 
+.container {
+	/*width: 970px !important;*/
+}
+
+
 .footer {
 	background:#483381;
 	padding:20px 0 0 ;

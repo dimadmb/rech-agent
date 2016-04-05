@@ -58,19 +58,34 @@ class ImageResizer {
 
        // imagecopyresampled($gd_image_dest, $gd_image_src, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
         imagecopyresampled($gd_image_dest, $gd_image_src, 0, 0, $dx, $dy, $width_temp, $height_temp, $width_orig, $height_orig);
+		
+		if($newPath != null)
+		{
+			$filesystem = new Filesystem();
+			$filesystem->mkdir($newPath, 0744); 
+			$newFileName = $newPath . $name . "." . $fileExtention;
 
-        $filesystem = new Filesystem();
-        $filesystem->mkdir($newPath, 0744); 
-        $newFileName = $newPath . $name . "." . $fileExtention;
+			switch( $fileExtention ){
+				case 'png' : imagepng($gd_image_dest, $newFileName); break;
+				case 'jpeg' : case 'jpg' : imagejpeg($gd_image_dest, $newFileName, $jpegQuality); break;
+				case 'gif' : imagegif($gd_image_dest, $newFileName); break;
+				default: break;
+			}
 
-        switch( $fileExtention ){
-            case 'png' : imagepng($gd_image_dest, $newFileName); break;
-            case 'jpeg' : case 'jpg' : imagejpeg($gd_image_dest, $newFileName, $jpegQuality); break;
-            case 'gif' : imagegif($gd_image_dest, $newFileName); break;
-            default: break;
-        }
+			return $name . "." . $fileExtention;	
+		}
+		else
+		{
+			switch( $fileExtention ){
+				case 'png' : imagepng($gd_image_dest); break;
+				case 'jpeg' : case 'jpg' : imagejpeg($gd_image_dest); break;
+				case 'gif' : imagegif($gd_image_dest); break;
+				default: break;
+			}
+			return true;
+		}
+		
 
-        return $name . "." . $fileExtention;
     }
 
     /**

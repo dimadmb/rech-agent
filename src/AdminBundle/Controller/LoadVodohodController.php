@@ -319,7 +319,7 @@ class LoadVodohodController extends Controller
 			if($motorship_id == $ship_id ){
 			
 			$shipCode = $motorship['code'];
-			$shipName = $motorship['name'];
+			$dump[] = $shipName = $motorship['name'];
 			$shipBody = $motorship['description'];
 			$classId = 4;
 			$class = $classRepos->find($classId);
@@ -643,7 +643,7 @@ class LoadVodohodController extends Controller
 					}
 					
 					
-					
+					//$em->flush();
 					// нужно создать все кабины, после чего создавать строки прайсов под эти кабины, причём создать их нужно при создании теплохода
 					
 					

@@ -1,8 +1,14 @@
 <div class="col-sm-6 clearfix" style="margin-bottom:10px;">
-	<a style="font-size:16px;"  href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}">{{ship.title}}</a><br>
-	<div style="float:left; padding-right:10px;">
-		
-		<a href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}"><img src="{{ship.imgurl}}" style="width:115px; height:75px; margin-bottom:15px;" ></a>
+	<p style="font-size:16px; text-align:center;" >
+		<a   href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}">{{ship.title}}</a><br>
+	</p>
+	
+	<div style="float:left; padding-right:10px;     width: 100%; ">
+
+			<a href="{{path('page',{'first':'cruise','second':'ship','name':ship.code})}}">
+				<img src="{{path('image_resize',{'path':ship.imgurl})}}" class="img-responsive" style=" margin:0 auto 15px;" >
+			</a>
+
 	</div>
 	<div style="float:left; padding-left:0px; padding-top:0px;">	
 	{% for property in ship.properties %}

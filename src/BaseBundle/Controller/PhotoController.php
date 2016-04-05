@@ -42,6 +42,23 @@ class PhotoController extends Controller
 		
 	}
 
+	/**
+	* Вывод фоток на лету
+	* @Route("/image", name="image_resize" )
+	*/
+	public function imageAction()
+	{
+		$ir = new ImageResizer();
+		$request = Request::createFromGlobals();
+		$path = $request->query-> get ('path');
+		return $ir->resizeImage(
+			$request->server->get('DOCUMENT_ROOT').'/web/'.$path,
+			null,
+			450,
+			260
+		);
+	}
+	
 
 	
 }

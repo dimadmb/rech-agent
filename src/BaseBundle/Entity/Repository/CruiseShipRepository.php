@@ -28,7 +28,10 @@ class CruiseShipRepository extends EntityRepository
 			WHERE s.code = ?1 
 			AND c.code = ?2
 			AND pr.cruise = c.id
-			ORDER BY deck.deckId , room.roomNumber , tariff.id , pr.price";
+			
+
+			
+			ORDER BY deck.deckId , room.roomNumber*1 , tariff.id , pr.price";
    		$q = $this->_em->createQuery($str);
    		$q->setParameter(1, $url->getShipCode());
    		$q->setParameter(2, $url->getCode());

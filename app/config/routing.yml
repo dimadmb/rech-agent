@@ -18,6 +18,12 @@ admin:
     type:     annotation
     prefix:   /
 
+image_resize:
+    path: "/image"
+    defaults: { _controller: BaseBundle:Photo:image }
+    requirements:
+    methods: GET
+
 cruiseorder:
     path: "/cruise/order.html"
     defaults: { _controller: BaseBundle:Order:index }

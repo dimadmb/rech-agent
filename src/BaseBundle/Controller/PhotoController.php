@@ -27,13 +27,22 @@ class PhotoController extends Controller
 		
 		foreach($photos as $photo)
 		{	
-			$ir = new ImageResizer();
-			$photo->setPreview( '//'.$request->server->get('SERVER_NAME').self::THUMB_PATH.$path.self::DS.
-				$ir->resizeImage($request->server->get('DOCUMENT_ROOT').self::FILE_PATH.$path.self::DS.$photo->getFilename(),
-				$request->server->get('DOCUMENT_ROOT').self::THUMB_PATH.$path.self::DS,
-				400,300) 
-			) 
-				;
+			if(!file_exists($request->server->get('DOCUMENT_ROOT').self::THUMB_PATH.$path.self::DS.$photo->getFilename()) )
+			{
+				$ir = new ImageResizer();
+				$photo->setPreview( '//'.$request->server->get('SERVER_NAME').self::THUMB_PATH.$path.self::DS.
+					$ir->resizeImage($request->server->get('DOCUMENT_ROOT').self::FILE_PATH.$path.self::DS.$photo->getFilename(),
+					$request->server->get('DOCUMENT_ROOT').self::THUMB_PATH.$path.self::DS,
+					400,300) 
+				) 
+				;	
+			}
+			else
+			{
+				$photo->setPreview('//'.$request->server->get('SERVER_NAME').self::THUMB_PATH.$path.self::DS.$photo->getFilename());
+			}
+
+
 				
 			$photo->setUrl('//'.$request->server->get('SERVER_NAME').self::FILE_PATH.$path.self::DS.$photo->getFilename());	
 		}

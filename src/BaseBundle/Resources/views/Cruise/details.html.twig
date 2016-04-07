@@ -57,6 +57,10 @@
 	<span style="color:red; font-weight:700;">* На некоторые каюты распространяется специальный тариф -10% от указанной стоимости</span><br><br>
 {% endif %}
 
+{% if (cruise.code.burningCruise == 1) %}
+	<span style="color:red; font-weight:700;">* На некоторые каюты распространяется специальный тариф -20% от указанной стоимости</span><br><br>
+{% endif %}
+
 <table class="table  table-hover">
 {% for  deckName, deck in cabins %}
 

@@ -9,6 +9,8 @@ use BaseBundle\Controller\Helper as Helper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 
+use Doctrine\ORM\Query\ResultSetMapping;
+
 class CruiseController extends Controller
 {
     /**
@@ -19,6 +21,118 @@ class CruiseController extends Controller
 	{
 		return array("months"=>$this->months());
 	}
+
+
+	public function searchCruise($parameters = array())
+	{
+		print_r($parameters);
+		$em = $this->getDoctrine()->getManager();
+		$rsm = new ResultSetMapping;
+		$rsm->addEntityResult('BaseBundle:CruiseCruise', 'c');
+		$rsm->addFieldResult('c', 'c_id', 'id');
+		$rsm->addMetaResult('c', 'c_ship', 'ship');
+		$rsm->addFieldResult('c', 'c_startdate', 'startdate');
+		$rsm->addFieldResult('c', 'c_enddate', 'enddate');
+		$rsm->addFieldResult('c', 'c_daycount', 'daycount');
+		$rsm->addFieldResult('c', 'c_description', 'description');
+		$rsm->addFieldResult('c', 'c_route', 'route');
+		$rsm->addMetaResult('c', 'c_code', 'code');
+		$rsm->addJoinedEntityResult('BaseBundle:CruiseShip', 's','c', 'ship');
+		$rsm->addFieldResult('s', 's_id', 'id');
+		$rsm->addFieldResult('s', 's_title', 'title');
+		$rsm->addFieldResult('s', 's_code', 'code');
+		$rsm->addFieldResult('s', 's_m_id', 'motorship_id');
+		$rsm->addFieldResult('s', 's_img', 'imgurl');
+		$rsm->addJoinedEntityResult('BaseBundle:CruiseShipCabinCruisePrice', 'p','c', 'prices');
+		$rsm->addFieldResult('p', 'p_id', 'id');
+		$rsm->addFieldResult('p', 'p_price', 'price');
+		$rsm->addJoinedEntityResult('BaseBundle:CruiseCruiseSpec', 'code','c', 'code');		
+		$rsm->addFieldResult('code', 'code_code', 'code');
+		$rsm->addFieldResult('code', 'code_so', 'specialOffer');
+		$rsm->addFieldResult('code', 'code_bc', 'burningCruise');
+		$rsm->addFieldResult('code', 'code_rp', 'reductionPrice');
+
+		
+		$where = "";
+		
+		if(isset($parameters['startDate']))
+		{
+			$where .= "
+			AND c.startdate >= ".strtotime($parameters['startDate']);
+		}		
+		if(isset($parameters['endDate']))
+		{
+			$where .= "
+			AND c.enddate <= ".strtotime($parameters['endDate']);
+		}
+		if(isset($parameters['ship']) && ($parameters['ship'] > 0) )
+		{
+			$where .= "
+			AND s.id = ".$parameters['ship'];
+		}
+		if(isset($parameters['specialoffer']))
+		{
+			$where .= "
+			AND code.specialOffer = 1";			
+		}
+		if(isset($parameters['burningCruise']))
+		{
+			$where .= "
+			AND code.burningCruise = 1";			
+		}	
+		if(isset($parameters['reductionPrice']))
+		{
+			$where .= "
+			AND code.reductionPrice = 1";			
+		}
+		if(isset($parameters['days']))
+		{
+			list($mindays,$maxdays) = explode(',',$parameters['days']);
+			$where .= "
+			AND c.daycount >=".$mindays;
+			$where .= "
+			AND c.daycount <=".$maxdays;			
+		}			
+		
+		$sql = "
+		SELECT 
+			c.id c_id , c.ship_id c_ship, c.startDate c_startdate, c.endDate c_enddate, c.dayCount c_daycount, c.description c_description, c.route c_route, c.code c_code
+			,
+			s.id s_id, s.title s_title, s.code s_code, s.motorship_id s_m_id , s.imgUrl s_img
+			,
+			p.id p_id, p.price p_price
+			,
+			code.code code_code, code.specialOffer code_so, code.burningCruise code_bc, code.reductionPrice code_rp
+		FROM cruise_cruise c
+		LEFT JOIN cruise_ship s ON c.ship_id = s.id
+		LEFT JOIN 
+		
+			(
+				SELECT p2.id , MIN(p2.price) price, p2.cruise_id
+				FROM cruise_ship_cabin_cruise_price p2
+				WHERE p2.tariff_id = 1
+				GROUP BY p2.cruise_id
+				
+			) p ON c.id = p.cruise_id
+		
+		
+		LEFT JOIN cruise_cruise_spec code ON c.code = code.code
+		WHERE 1
+		"
+		.$where.
+		"
+		ORDER BY c.startdate
+		";
+		
+		$query = $em->createNativeQuery($sql, $rsm);
+		
+		
+		//$query->setParameter(1, 'romanb');
+		
+		$result = $query->getResult();
+		return $result;
+	}
+
 	
     /**
 	 * @Template()
@@ -37,7 +151,7 @@ class CruiseController extends Controller
 		$sh = $repository->findOneByCode($ship);
 		
 		// добавить фотоальбом
-
+/*
 		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 		$qb->select('c','s','p');
 		$qb->innerJoin('c.ship','s');
@@ -51,7 +165,8 @@ class CruiseController extends Controller
 		
 		$qb->orderBy("c.startdate");
 
-		$result = $qb->getQuery()->getResult();
+		$result = $qb->getQuery()->getResult();*/
+		$result = $this->searchCruise(array('ship'=>$sh->getId()));
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
 		
@@ -144,7 +259,7 @@ class CruiseController extends Controller
 		
 		$cruise = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrl(Helper\CruiseUrl::parse($url));
 		
-		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip')->findByUrl(Helper\CruiseUrl::parse($url));
+		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrlPrice(Helper\CruiseUrl::parse($url));
 		
 		$dump = $cabinsAll = $cruiseShipPrice->getShip()->getCabins();
 		foreach($cabinsAll as $cabinsItem)

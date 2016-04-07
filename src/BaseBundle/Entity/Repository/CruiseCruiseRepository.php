@@ -61,7 +61,31 @@ class CruiseCruiseRepository extends EntityRepository
    		return $q->getSingleResult();
 	}	
 
+	public function findByUrlPrice(\BaseBundle\Controller\Helper\CruiseUrl $url) {
+		$str = "SELECT c, s, pr, cab, room, roomProp,   rt, deck, rp, tariff
+			FROM BaseBundle\Entity\CruiseCruise c 
+			JOIN c.ship s
+			LEFT JOIN s.cabins cab
+			LEFT JOIN cab.prices pr
 
+			LEFT JOIN cab.rooms room
+			LEFT JOIN room.roomId roomProp
+			LEFT JOIN pr.rp_id rp
+			LEFT JOIN pr.tariff tariff
+			LEFT JOIN cab.rtId rt
+			LEFT JOIN cab.deckId deck
+			WHERE s.code = ?1 
+			AND c.code = ?2
+			AND pr.cruise = c.id
+			
+
+			
+			ORDER BY deck.deckId , room.roomNumber*1 , tariff.id , pr.price";
+   		$q = $this->_em->createQuery($str);
+   		$q->setParameter(1, $url->getShipCode());
+   		$q->setParameter(2, $url->getCode());
+   		return $q->getSingleResult();
+	}
 
 /*
 	

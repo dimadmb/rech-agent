@@ -21,12 +21,32 @@ class ApiInController extends Controller
 		if($cruiseSpec == null)
 		{
 			return new Response('Данного круиза нет в базе');
-		}	
+		}
+		if(!in_array($val,array(0,1)))
+		{
+			return new Response('Значение 0 или 1');
+		}
+		//$not_val = $val == 1 ? 0 : 1;
+
+		
 		switch ($type)
 		{
-			case 'hot': $cruiseSpec->setBurningCruise($val); break;
-			case 'spec': $cruiseSpec->setSpecialOffer($val); break;
-			default: return new Response('FAIL ("hot or spec")');
+			case 'happy': 
+			{
+				$cruiseSpec->setBurningCruise($val);
+				if($val == 1) $cruiseSpec->setSpecialOffer(0);
+				break;
+			}
+				
+			case 'spec':
+			{
+				$cruiseSpec->setSpecialOffer($val);
+				if($val == 1) $cruiseSpec->setBurningCruise(0);
+				break;
+			}
+			
+
+			default: return new Response('FAIL ("happy or spec")');
 		}
 		
 		$em->flush();

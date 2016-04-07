@@ -52,8 +52,10 @@ class CruiseController extends Controller
 		$rsm->addFieldResult('code', 'code_bc', 'burningCruise');
 		$rsm->addFieldResult('code', 'code_rp', 'reductionPrice');
 
-		
+
+
 		$where = "";
+		$join = "";
 		
 		if(isset($parameters['startDate']))
 		{
@@ -90,7 +92,17 @@ class CruiseController extends Controller
 				AND code.burningCruise = 1";			
 			}		
 		}
-
+		
+		if(isset($parameters['places']))
+		{
+			$join .= "
+			LEFT JOIN cruise_cruise_program_item pi ON pi.cruise_id = c.id
+			LEFT JOIN cruise_place cp ON pi.place_id = cp.id
+			";
+			$where .= "
+			AND cp.id IN (".implode(',',$parameters['places']).")";	
+			
+		}
 
 		
 		
@@ -113,6 +125,7 @@ class CruiseController extends Controller
 			,
 			code.code code_code, code.specialOffer code_so, code.burningCruise code_bc, code.reductionPrice code_rp
 		FROM cruise_cruise c
+		".$join."
 		LEFT JOIN cruise_ship s ON c.ship_id = s.id
 		LEFT JOIN 
 		

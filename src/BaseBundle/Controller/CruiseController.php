@@ -25,7 +25,7 @@ class CruiseController extends Controller
 
 	public function searchCruise($parameters = array())
 	{
-		print_r($parameters);
+		
 		$em = $this->getDoctrine()->getManager();
 		$rsm = new ResultSetMapping;
 		$rsm->addEntityResult('BaseBundle:CruiseCruise', 'c');
@@ -70,21 +70,30 @@ class CruiseController extends Controller
 			$where .= "
 			AND s.id = ".$parameters['ship'];
 		}
-		if(isset($parameters['specialoffer']))
+		
+		
+		if(isset($parameters['specialoffer']) && isset($parameters['burningCruise']))
 		{
 			$where .= "
-			AND code.specialOffer = 1";			
+			AND ((code.specialOffer = 1) OR (code.burningCruise = 1)) ";	
 		}
-		if(isset($parameters['burningCruise']))
+		else
 		{
-			$where .= "
-			AND code.burningCruise = 1";			
-		}	
-		if(isset($parameters['reductionPrice']))
-		{
-			$where .= "
-			AND code.reductionPrice = 1";			
+			if(isset($parameters['specialoffer']))
+			{
+				$where .= "
+				AND code.specialOffer = 1";			
+			}
+			if(isset($parameters['burningCruise']))
+			{
+				$where .= "
+				AND code.burningCruise = 1";			
+			}		
 		}
+
+
+		
+		
 		if(isset($parameters['days']))
 		{
 			list($mindays,$maxdays) = explode(',',$parameters['days']);
@@ -150,22 +159,6 @@ class CruiseController extends Controller
 		$repository = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip');
 		$sh = $repository->findOneByCode($ship);
 		
-		// добавить фотоальбом
-/*
-		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
-		$qb->select('c','s','p');
-		$qb->innerJoin('c.ship','s');
-		$qb->leftJoin('c.prices','p');
-		$qb->leftJoin('p.tariff','tariff');
-		$qb->andWhere("tariff.id = 1");
-		
-		
-		$qb->andWhere("s.code = ?1");
-		$qb->setParameter(1, $ship);			
-		
-		$qb->orderBy("c.startdate");
-
-		$result = $qb->getQuery()->getResult();*/
 		$result = $this->searchCruise(array('ship'=>$sh->getId()));
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
@@ -294,150 +287,13 @@ class CruiseController extends Controller
 		$request =  Request::createFromGlobals();
 		
 		$form = $request->get('form');
-
-		$em = $this->getDoctrine()->getManager();
-		
-		$where = "";
-		
-		if(isset($form['startDate']))
-		{
-			$where .= "
-			AND c.startdate >= ".strtotime($form['startDate']);
-		}		
-		if(isset($form['endDate']))
-		{
-			$where .= "
-			AND c.enddate <= ".strtotime($form['endDate']);
-		}
-		if($form['ship'] > 0 )
-		{
-			$where .= "
-			AND c.ship = ".$form['ship'];
-		}
-		if(isset($form['specialoffer']))
-		{
-			$where .= "
-			AND code.specialOffer = 1";			
-		}
-		if(isset($form['burningCruise']))
-		{
-			$where .= "
-			AND code.burningCruise = 1";			
-		}	
-		if(isset($form['reductionPrice']))
-		{
-			$where .= "
-			AND code.reductionPrice = 1";			
-		}
-		if(isset($form['days']))
-		{
-			list($mindays,$maxdays) = explode(',',$form['days']);
-			$where .= "
-			AND c.daycount >=".$mindays;
-			$where .= "
-			AND c.daycount <=".$maxdays;			
-		}		
-		
-		
-		$str = "
-		SELECT c,s,p,code
-		FROM BaseBundle\Entity\CruiseCruise c
-		LEFT JOIN c.ship s
-		LEFT JOIN c.prices p
-		LEFT JOIN c.code code
-		WHERE p.tariff = 1
-		".$where."
 		
 
-		
-		ORDER BY c.startdate 
-		
-		";
-		
-		
-		$q = $em->createQuery($str);
-		
-/*
-		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
-
-		$qb->select('c','s','p','code');
-		$qb->innerJoin('c.ship','s');
-		$qb->leftJoin('c.prices','p');
-		//$qb->where('p.id IN (SELECT p.id FROM BaseBundle\Entity\CruiseShipCabinCruisePrice  ) ');
-		$qb->leftJoin('p.tariff','tariff');
-		$qb->leftJoin('c.code','code');
-		
-		
-		if(isset($form['startDate']))
-		{
-			$qb->andWhere("c.startdate>=?1");
-			$from = strtotime($form['startDate']);
-			$qb->setParameter(1, $from);
-		}
-		
-		if(isset($form['endDate']))
-		{
-		$qb->andWhere("c.enddate<=?2");
-		$to = strtotime($form['endDate']);
-		$qb->setParameter(2, $to);
-		}
-
-		
-		if($form['ship'] > 0 ){
-		
-		$qb->andWhere("c.ship = ?3");
-		$qb->setParameter(3, $form['ship']);	
-		}
-		
-		if(isset($form['specialoffer']))
-		{
-		$qb->andWhere("code.specialOffer = ?4");
-		$qb->setParameter(4, 1);			
-		}
-
-		if(isset($form['burningCruise']))
-		{
-		$qb->andWhere("code.burningCruise = ?5");
-		$qb->setParameter(5, 1);			
-		}	
-
-		if(isset($form['reductionPrice']))
-		{
-		$qb->andWhere("code.reductionPrice = ?6");
-		$qb->setParameter(6, 1);				
-		}
-
-		if(isset($form['days']))
-		{
-			list($mindays,$maxdays) = explode(',',$form['days']);
-		$qb->andWhere("c.daycount >= ?7");
-		$qb->andWhere("c.daycount <= ?8");
-		$qb->setParameter(7, $mindays);				
-		$qb->setParameter(8, $maxdays);				
-		}
-
-
-		if(isset($form['places']))
-		{
-		$qb->leftJoin('c.programItems','pi');	
-		$qb->andWhere("pi.place IN(?9)");
-		$qb->setParameter(9, implode(',',$form['places']));
-		}	
-
-
-		$qb->andWhere("tariff.id = 1");
-		
-		$qb->orderBy("c.startdate");
-		
-$dump = $qb->getQuery();
-
-		*/
-		$dump = $str;
-		$result = $q->getResult();
+		$result = $this->searchCruise($form);
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
 		
-		return array('cruises_months' => $result, 'dump'=>$dump);		
+		return array('cruises_months' => $result,);		
 		
 	}
 
@@ -496,36 +352,24 @@ $dump = $qb->getQuery();
 	*/
 	public function specialofferAction($offer)
 	{
-		$qb = $this->getDoctrine()->getRepository("BaseBundle:CruiseCruise")->createQueryBuilder("c");
 
-		$qb->select('c','s','p','code');
-		$qb->innerJoin('c.ship','s');
-		$qb->leftJoin('c.prices','p');
-		$qb->leftJoin('c.code','code');
-		$qb->leftJoin('p.tariff','tariff');
-		$qb->andWhere("tariff.id = 1");
-		
+		$parameters = array();
 		if($offer == "burningcruise")
 		{
-			$qb->andWhere("code.burningCruise = ?1");
+			$parameters['burningCruise'] = 1;
 		}
-		elseif($offer == "reductionprice")
-		{
-			$qb->andWhere("code.reductionPrice = ?1");
-		}
+
 		
 		elseif($offer == "specialoffer")
 		{
-			$qb->andWhere("code.specialOffer = ?1");
+			$parameters['specialoffer'] = 1;
 		}
 		else
 		{
 			throw $this->createNotFoundException("Страница не найдена.");
 		}	
-		$qb->setParameter(1, 1);
-	
-		$qb->orderBy("c.startdate");
-		$result = $qb->getQuery()->getResult();		
+
+		$result = $this->searchCruise($parameters);
 		$result = $this->monthsSchedule($result);
 		return array('cruises_months' => $result);;
 	}

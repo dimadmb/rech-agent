@@ -70,9 +70,9 @@ doctrine:
             driver: pdo_mysql
             host:     "%database_host%"
             port:     "%database_port%"			
-            dbname: q12naswz_booking
-            user: q12naswz_booking
-            password: Oxygen999
+            dbname:   "%database_booking_name%"
+            user:     "%database_booking_user%"
+            password: "%database_booking_password%"
             charset:  UTF8
             mapping_types:
                 enum: string

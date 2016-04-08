@@ -261,27 +261,60 @@ class CruiseController extends Controller
 	public function detailsAction($url)
 	{
 		//нужно разбить на несколько запросов для оптимизации
+		$dump = array();
+		
+		$cruise_code = Helper\CruiseUrl::parse($url)->getCode();
+		
+		$sql="
+		SELECT * FROM `aa_discount`
+		WHERE id_tur = $cruise_code
+		";
+		$em_booking = $this->getDoctrine()->getManager('booking');
+		$connection = $em_booking->getConnection();
+		$statement = $connection->prepare($sql);
+		$statement->execute();
+		$results = $statement->fetchAll();
+		// нужно получить активные каюты
+		$active_rooms = array();
+		foreach($results as $item)
+		{
+			$active_rooms[] = $item['num'];
+		}
 		
 		
 		$cruise = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrl(Helper\CruiseUrl::parse($url));
 		
 		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrlPrice(Helper\CruiseUrl::parse($url));
 		
-		$dump = $cabinsAll = $cruiseShipPrice->getShip()->getCabins();
+		$cabinsAll = $cruiseShipPrice->getShip()->getCabins();
 		foreach($cabinsAll as $cabinsItem)
 		{
-			foreach($cabinsItem->getPrices() as $prices)
+		
+			$rooms_in_cabin = array();
+			foreach($cabinsItem->getRooms() as $room)
 			{
+				if(in_array($room->getRoomNumber(),$active_rooms))
+				{
+					$rooms_in_cabin[] = $room->getRoomNumber();
+				}
+			}
+
+		    foreach($cabinsItem->getPrices() as $prices)
+			{
+
+				
 				$price[$prices->getRpId()->getRpName()]['prices'][$prices->getTariff()->getname()] = $prices;
-				$price[$prices->getRpId()->getRpName()]['rooms'] = $cabinsItem->getRooms();//список кают
+				//$price[$prices->getRpId()->getRpName()]['rooms'] = $rooms_in_cabin;//список кают
 				// сюда добавить свободные каюты
-				//$rooms => 				
+				//$rooms => 
+				
 			}
 			$cabins[$cabinsItem->getDeckId()->getName()][] = array(
-				'deckName' =>$cabinsItem->getRtId()->getRtComment(),
+				'cabinName' =>$cabinsItem->getRtId()->getRtComment(),
 				'cabin' => $cabinsItem,
 				'rpPrices' => $price,
-
+				'rooms' => $rooms_in_cabin
+				
 				)
 				;
 			unset($price);	

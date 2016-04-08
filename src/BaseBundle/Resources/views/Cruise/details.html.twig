@@ -61,6 +61,9 @@
 	<span style="color:red; font-weight:700;">* На некоторые каюты распространяется специальный тариф -20% от указанной стоимости</span><br><br>
 {% endif %}
 
+
+
+
 <table class="table  table-hover">
 {% for  deckName, deck in cabins %}
 
@@ -70,12 +73,12 @@
 			<table class="table  table-hover" style="width: 100%;" >
 				{% for type in deck %}
 				<tr>
-					<td style="width:30%;">{{type.deckName}}<br>
+					<td style="width:30%;">{{type.cabinName}}<br>
 					
-					{#% for room in type.cabin.rooms %}
-						<span {% if (room.roomId.specialOffer == 1 and cruise.code.specialOffer == 1) %} style="color:red; font-weight:700;" {% endif %}>{{room.roomNumber}} </span>
+					{% for room in type.rooms %}
+						<span style="color:red; font-weight:700;" >{{room}} </span>
 						
-					{% endfor %#}
+					{% endfor %}
 					
 					</td>
 					<td>

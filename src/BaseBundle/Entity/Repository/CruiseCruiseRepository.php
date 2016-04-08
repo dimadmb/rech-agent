@@ -67,7 +67,6 @@ class CruiseCruiseRepository extends EntityRepository
 			JOIN c.ship s
 			LEFT JOIN s.cabins cab
 			LEFT JOIN cab.prices pr
-
 			LEFT JOIN cab.rooms room
 			LEFT JOIN room.roomId roomProp
 			LEFT JOIN pr.rp_id rp

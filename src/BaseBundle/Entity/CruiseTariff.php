@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * CruiseTariff
  *
- * @ORM\Table()
+ * @ORM\Table(name="cruise_tariff")
  * @ORM\Entity
  */
 class CruiseTariff

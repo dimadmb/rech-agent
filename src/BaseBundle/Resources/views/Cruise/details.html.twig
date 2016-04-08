@@ -64,13 +64,13 @@
 
 
 
-<table class="table  table-hover">
+<table class="table-details">
 {% for  deckName, deck in cabins %}
 
 	<tr>
 		<td  style="width:100px;">{{deckName}}</td>
 		<td>
-			<table class="table  table-hover" style="width: 100%;" >
+			<table class="" style="width: 100%;" >
 				{% for type in deck %}
 				<tr>
 					<td style="width:30%;">{{type.cabinName}}<br>
@@ -82,7 +82,7 @@
 					
 					</td>
 					<td>
-						<table class="table ">
+						<table class="">
 						{% for rpName, rp in type.rpPrices  %}
 							<tr>
 								<td>

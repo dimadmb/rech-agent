@@ -286,10 +286,12 @@ class CruiseController extends Controller
 		
 		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrlPrice(Helper\CruiseUrl::parse($url));
 		
+		$tariff_arr = array();
+		
 		$cabinsAll = $cruiseShipPrice->getShip()->getCabins();
 		foreach($cabinsAll as $cabinsItem)
 		{
-		
+			
 			$rooms_in_cabin = array();
 			foreach($cabinsItem->getRooms() as $room)
 			{
@@ -302,6 +304,7 @@ class CruiseController extends Controller
 		    foreach($cabinsItem->getPrices() as $prices)
 			{
 
+				$tariff_arr[$prices->getTariff()->getname()]=1;
 				
 				$price[$prices->getRpId()->getRpName()]['prices'][$prices->getTariff()->getname()] = $prices;
 				//$price[$prices->getRpId()->getRpName()]['rooms'] = $rooms_in_cabin;//список кают
@@ -321,7 +324,7 @@ class CruiseController extends Controller
 		}
 		//$dump = $cruise;
 		
-		return array('cruise' => $cruise, 'cabins' => $cabins,'dump'=>$dump );
+		return array('cruise' => $cruise, 'cabins' => $cabins,'tariff_arr'=>$tariff_arr );
 	}
 
     /**

@@ -297,7 +297,7 @@ h5{
 }
  
 .table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: #E6E6E6;
+  background-color: #eee;
 }
 
 .table-cruises th {

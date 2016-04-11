@@ -3,6 +3,8 @@
 {% block title %}Описание речного круиза {{cruise.route}}{% endblock %}
 
 {% block body %}
+
+
 <h1>Описание речного круиза  «{{cruise.route}}»</h1>
 
 
@@ -18,13 +20,15 @@
 <hr>
 <h3>Программа круиза</h3>
 
-<table class="table  table-hover">
+<table class="table table-striped ">
+<thead>
 	<tr>
 		<th>Дата</th>
 		<th style="    width: 110px;">Время</th>
 		<th>Стоянка	</th>
 		<th>Программа дня</th>
 	</tr>
+</thead>	
 {% for item in cruise.programItems %}
 
 
@@ -41,7 +45,6 @@
 		</td>
 		<td>{{item.description | raw}}</td>
 	</tr>
-	
 
 	
 {% endfor %}	
@@ -50,104 +53,98 @@
 
 
 <hr>
-<h3>Стоимость тура на 1 человека *</h3><br>
-<div class="table-responsive">
+<h3>Стоимость тура на 1 человека * <a href="http://booking.rech-agent.ru/cruise/{{cruise.code.code}}" style="float: right;" class="btn btn-danger btn-lg ">Купить онлайн</a></h3>
 
-{% if (cruise.code.specialOffer == 1) %}
-	<span style="color:red; font-weight:700;">* На некоторые каюты распространяется специальный тариф -10% от указанной стоимости</span><br><br>
+
+<div style="clear:both;"></div>
+<br>
+
+{#% if (cruise.code.specialOffer == 1) %}
+	<span style="color:red; font-weight:700;">* На выделенные каюты распространяется специальный тариф -10% от указанной стоимости</span><br><br>
 {% endif %}
 
 {% if (cruise.code.burningCruise == 1) %}
-	<span style="color:red; font-weight:700;">* На некоторые каюты распространяется специальный тариф -20% от указанной стоимости</span><br><br>
-{% endif %}
+	<span style="color:red; font-weight:700;">* На выделенные каюты распространяется специальный тариф -20% от указанной стоимости</span><br><br>
+{% endif %#}
 
 
-
-
-<table class="table-details">
-{% for  deckName, deck in cabins %}
-
+<table class="table table-striped  ">
+<thead>
 	<tr>
-		<td  style="width:100px;">{{deckName}}</td>
-		<td>
-			<table class="" style="width: 100%;" >
-				{% for type in deck %}
-				<tr>
-					<td style="width:30%;">{{type.cabinName}}<br>
-					
+		<th>Палуба</th>
+		<th>Тип каюты</th>
+		<th>Размещение</th>
+		<th>
+		<table style="width:100%;">
+			<tr>
+				{% for tariff,one in tariff_arr %}	
+					<td style="width:33%; text-align:center;">
+						{{tariff}}
+					</td>
+				{% endfor %}
+			</tr>
+		</table>
+		
+		</th>
+	</tr>
+</thead>
+
+
+{% for  deckName, deck in cabins %}
+	{% for type in deck %}
+		{% for rpName, rp in type.rpPrices  %}
+			<tr>
+				<td>{{deckName}}</td>
+				<td>{{type.cabinName}}<br>
+					{% if (type.rooms|length > 0) %}
+					№№ 
+					{% endif %}
 					{% for room in type.rooms %}
 						<span style="color:red; font-weight:700;" >{{room}} </span>
 						
-					{% endfor %}
+					{% endfor %}</td>
+				<td>{{rpName}}</td>
+				<td>
+				<table style="width:100%; ">
+					<tr>
 					
-					</td>
-					<td>
-						<table class="">
-						{% for rpName, rp in type.rpPrices  %}
-							<tr>
-								<td>
-									{{rpName}}
-								</td>
-								{% for tariff,price in rp.prices %}
-								<td>
-								{{tariff}}<br>
-			
-									<b>{{price.price|number_format(0, '.', ' ')}}  руб.</b>
+						{% for tariff,one in tariff_arr %}
 
-								</td>
-								{% endfor %}
-							</tr>
-						{% endfor %}	
-						</table>
-					</td>
-				</tr>
-				{% endfor %}
-				
+						
+						<td style="width:33%; text-align:center;">
+						
+						{% if (rp.prices[tariff]) is defined %}	
+						
+								
+								{% if (type.rooms|length > 0) %}
+									{% if (cruise.code.specialOffer == 1) %}
+										<span style=" text-decoration:line-through;">{{(rp.prices[tariff]).price|number_format(0, '.', ' ')}}  руб.</span><br>
+										<span style="color:red; "><b>{{((rp.prices[tariff]).price*0.9) | round|number_format(0, '.', ' ')}} руб.</b></span>			
+									{% endif %}
+									{% if (cruise.code.burningCruise == 1) %}
+										<span style=" text-decoration:line-through;">{{(rp.prices[tariff]).price|number_format(0, '.', ' ')}}  руб.</span><br>
+										<span style="color:red; "><b>{{((rp.prices[tariff]).price*0.8) | round |number_format(0, '.', ' ')}} руб.</b></span>		
+									{% endif %}
+									
+								{% else %}	
+									<b>{{(rp.prices[tariff]).price|number_format(0, '.', ' ')}}  руб.</b>
+								{% endif %}
+		
+						{% endif %}
+						</td>						
+						
+						{% endfor %}					
 
-			</table>
-		</td>
-	</tr>
-
-{% endfor %}
-</table>
-</div>
-{#
-
-<table class="table  table-hover">
-	<tr>
-		<th>Палуба</th>
-		<th>Каюта</th>
-		<th>Размещение</th>
-		<th>Тариф</th>
-		<th>Стоимость</th>
-	</tr>
-{% for item in cruise.prices %}
-	<tr>
-		<td>{{item.cabin.deckId.name}}</td>
-		<td>{{item.cabin.rtId.rtComment}}<br>
-
-		{% for room in item.cabin.rooms%}
-			<span {% if (room.roomId.specialOffer == 1) %} style="color:red;" {% endif %}>{{room.roomnumber}} </span>
+					</tr>
+				</table>
+				</td>
+			</tr>
 		{% endfor %}
-		</td>
-		<td>{{ item.rpId.rpName}}</td>
-		<td>{{ item.tariff.name}}</td>
-		<td>
-		{% if cruise.code.burningCruise %}
-			<span style=" text-decoration:line-through;">{{item.price}}  руб.</span><br>
-			<span style="color:red; ">{{(item.price*0.75) | round}} руб.</span>			
-			
-			
-		{% else %}
-		{{item.price}}  руб.
-		{% endif %}
-		</td>
-	</tr>
+	{% endfor %}
 {% endfor %}
-
-
 </table>
-#}
+
+
 <p>* Цены действительны на момент публикации и могут незначительно измениться до полной оплаты рейса.</p>
 
 

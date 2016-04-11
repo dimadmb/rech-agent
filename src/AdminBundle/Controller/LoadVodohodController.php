@@ -110,6 +110,7 @@ class LoadVodohodController extends Controller
 		$decks_url = $base_url."decks.php";
 		$decks_json = $this->curl_get_file_contents($decks_url);
 		$decks_v = json_decode($decks_json,true);
+
 		foreach($decks_v as $deck_v)
 		{
 			$deck = $decksRepos->findOneByDeckId($deck_v['deck_id']);
@@ -760,9 +761,16 @@ class LoadVodohodController extends Controller
 						
 						$price = new CruiseShipCabinCruisePrice();
 						
-						//print_r();
+							if(isset($cabins[$rt_name->getRtId()][$deck->getDeckId()]))
+							{
+								$cabin = $cabins[$rt_name->getRtId()][$deck->getDeckId()];
+							}
+							else 
+							{
+								continue;
+							}	
 						
-						$cabin = $cabins[$rt_name->getRtId()][$deck->getDeckId()];
+
 						
 						$price	
 								->setRpId($rp_id)  // а тут можно разрешить запись значения вместо объекта ( -1 запрос) 

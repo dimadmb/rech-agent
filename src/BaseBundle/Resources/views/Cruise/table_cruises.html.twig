@@ -14,7 +14,7 @@
     <tbody>
 	
 	{% for cruise in cruises %}	
-	
+
       <tr>
         <td><a href="{{path('homepage')}}cruise/cruisedetails/{{cruise.cruiseUrl.shipCode}}_{{cruise.cruiseUrl.code}}.html">{{cruise.route}}</a></td>
         <td><a href="{{path('page',{'first':'cruise','second':'ship','name':cruise.cruiseUrl.shipCode})}}">{{cruise.ship}}</a></td>
@@ -27,7 +27,7 @@
 
         {% if (cruise.specialoffer) %} <span class="table-special-span color-st">Специальный тариф</span> {% endif %}</td>
 
-        <td><a href="{{path('cruiseorder_code',{'code':cruise.cruiseUrl.code}) }}">Забронировать</a></td>
+        <td><a href="http://booking.rech-agent.ru/cruise/{{cruise.cruiseUrl.code}}">Забронировать</a></td>
 		
       </tr>					
 					

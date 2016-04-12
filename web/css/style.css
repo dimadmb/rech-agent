@@ -17,9 +17,9 @@ hr {
 }
 
 
-.container {
-	/*width: 970px !important;*/
-}
+	.container {
+		min-width: 900px !important;
+	}
 
 
 .footer {
@@ -336,3 +336,5 @@ h5{
 .table-details  table table td {
 	padding:5px 5px 10px;
 }
+
+

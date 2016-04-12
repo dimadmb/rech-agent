@@ -317,7 +317,7 @@ class CruiseController extends Controller
 				'cabin' => $cabinsItem,
 				'rpPrices' => $price,
 				'rooms' => $rooms_in_cabin
-				
+				// тут можно посчитать количество rowspan
 				)
 				;
 			unset($price);	

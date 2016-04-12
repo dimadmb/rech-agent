@@ -171,7 +171,9 @@ class CruiseController extends Controller
 		// теплоход 
 		$repository = $this->getDoctrine()->getRepository('BaseBundle:CruiseShip');
 		$sh = $repository->findOneByCode($ship);
-		
+		if ($sh == null) {
+			throw $this->createNotFoundException("Страница не найдена.");
+		}
 		$result = $this->searchCruise(array('ship'=>$sh->getId()));
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);

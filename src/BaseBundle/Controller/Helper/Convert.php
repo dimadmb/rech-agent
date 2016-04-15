@@ -16,7 +16,7 @@ class Convert
 			}
 		}
 		$str = self::string_translit($str);
-		$translit=array(" "=>"-", "."=>"_");
+		$translit=array(" "=>"-", "."=>"_","/"=>"_" , );
 		$str = strtr($str, $translit);
 		return strtolower(trim($str));
 	}

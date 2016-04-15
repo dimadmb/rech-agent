@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use BaseBundle\Entity\CruiseCruise;
+use BaseBundle\Entity\CruiseCruiseCategory;
 use BaseBundle\Entity\CruiseShip;
 use BaseBundle\Entity\Document;
 use BaseBundle\Entity\Photo;
@@ -26,6 +27,8 @@ use BaseBundle\Entity\CruiseCruiseSpec;
 use BaseBundle\Entity\CruiseShipRoom;
 use BaseBundle\Entity\CruiseShipRoomProp;
 
+
+use BaseBundle\Controller\Helper as Helper;
 
 class LoadVodohodController extends Controller
 {
@@ -200,7 +203,7 @@ class LoadVodohodController extends Controller
 			$places[$placesAllItem->getTitle()] = $placesAllItem;
 		}
 		
-		
+		/*
 		$excursions_url = $base_url."excursions.php";
 		$excursions_json =  $this->curl_get_file_contents($excursions_url);
 		$excursions_v = json_decode($excursions_json,true);
@@ -221,6 +224,10 @@ class LoadVodohodController extends Controller
 			$em->persist($excursion);
 		}
 		$em->flush();
+		
+		
+		
+		*/
 		/*
 		$cruise_days_url = $base_url."cruise_days.php";
 		$cruise_days_json =  $this->curl_get_file_contents($cruise_days_url);
@@ -281,10 +288,38 @@ class LoadVodohodController extends Controller
 			{
 				$roomProp[$roomPropitem->getRoomId()] = $roomPropitem;
 			}
+			/*
+			$categoryCruises_arr = array(
+				"Круизы в/из Санкт-Петербурга" => 'spb',
+				"Круизы по Волге" => 'vol',
+				"Круизы выходных дней" => 'vdn',
+				"Круизы по Каме" => 'kam',
+				"Санкт-Петербург — Валаам и/или Кижи" => 'svk',
+				"Круизы в Москву" => 'mos',
+				"Санкт-Петербург — Валаам" => 'spv',
+				"Санкт-Петербург — Кижи" => 'spk',
+				"Карелия" => 'kar',
 			
-
-
-
+			);*/
+		$categoryCruisesAll = array();
+		$crCategory_all = $categoryRepos->findAll();
+		foreach($crCategory_all as  $categoryCruises)
+		{
+			/*
+			$crCategory = $categoryRepos->findOneByCode($categoryCruises_code);
+			if($crCategory == null)
+			{
+				$crCategory = new CruiseCruiseCategory();
+				$crCategory
+					->setCode($categoryCruises_code)
+					->setTitle($categoryTitle)
+				;
+				$em->persist($crCategory);
+				$em->flush();
+			}
+			*/
+			$categoryCruisesAll[$categoryCruises->getTitle()] = $categoryCruises;
+		}
 
 			
 		
@@ -649,6 +684,22 @@ class LoadVodohodController extends Controller
 					$specialOffer =         0;
 					
 					$categoriesToAdd = new ArrayCollection();
+					
+					foreach($cruise_v["directions"] as $direct)
+					{
+						if(!isset($categoryCruisesAll[$direct]))
+						{
+							$category = new CruiseCruiseCategory();
+							$category 
+								->setCode(Helper\Convert::translit($direct))
+								->setTitle($direct)
+							;
+							$em->persist($category);
+							$categoryCruisesAll[$direct] = $category;
+						}
+						$categoriesToAdd->add($categoryCruisesAll[$direct]);
+					}
+					
 					
 					$cruise = $ship->addCruise($code,$categoriesToAdd);
 					

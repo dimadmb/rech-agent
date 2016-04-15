@@ -32,7 +32,14 @@ class CruiseCruiseCategory
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=255, nullable=false)
+     * @ORM\Column(name="code", type="string", length=255, nullable=false)
+     */
+	private $code;
+	
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255, nullable=true)
      */
     private $description;
 
@@ -172,5 +179,28 @@ class CruiseCruiseCategory
     public function getCruise()
     {
         return $this->cruise;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     * @return CruiseCruiseCategory
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string 
+     */
+    public function getCode()
+    {
+        return $this->code;
     }
 }

@@ -12,15 +12,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class CruiseCruiseCategoryRepository extends EntityRepository
 {
-	public function findWithCruises($categoryId) {
+	public function findWithCruises($categoryCode) {
 		$q = "SELECT cc, c, s, p 
 			FROM BaseBundle\Entity\CruiseCruiseCategory cc 
 			JOIN cc.cruise c
 			LEFT JOIN c.prices p
 			JOIN c.ship s
-			WHERE cc.id = ?1";
+			WHERE cc.code = ?1";
 		$query = $this->_em->createQuery($q);
-		$query->setParameter(1, $categoryId);
+		$query->setParameter(1, $categoryCode);
    		return $query->getSingleResult();
 	}	
 	

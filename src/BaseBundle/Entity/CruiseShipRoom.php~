@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CruiseShipRoom
  *
- * @ORM\Table()
+ * @ORM\Table(name="cruise_ship_room")
  * @ORM\Entity
  */
 class CruiseShipRoom
@@ -102,5 +102,28 @@ class CruiseShipRoom
     public function getRoomId()
     {
         return $this->roomId;
+    }
+
+    /**
+     * Set cabin
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabin $cabin
+     * @return CruiseShipRoom
+     */
+    public function setCabin(\BaseBundle\Entity\CruiseShipCabin $cabin = null)
+    {
+        $this->cabin = $cabin;
+
+        return $this;
+    }
+
+    /**
+     * Get cabin
+     *
+     * @return \BaseBundle\Entity\CruiseShipCabin 
+     */
+    public function getCabin()
+    {
+        return $this->cabin;
     }
 }

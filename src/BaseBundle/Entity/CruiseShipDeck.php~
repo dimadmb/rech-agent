@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * CruiseShipDeck
  *
- * @ORM\Table()
+ * @ORM\Table(name="cruise_ship_deck")
  * @ORM\Entity
  */
 class CruiseShipDeck

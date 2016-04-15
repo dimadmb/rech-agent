@@ -14,13 +14,16 @@ class DocumentController extends Controller
 	public function indexAction() {		
 		return $this->pageAction("index");
 	}
-	
+
+    /**
+	 * @Template()     
+	 */	
 	public function routesAction()
 	{
-		$repository = $this->getDoctrine()->getRepository('BaseBundle:Document');
-		$url = "/cruise/routes";
-		$doc = $repository->findOneByUrl($url);
-		return $this->render('BaseBundle:Document:page.html.twig', array("document" => $doc));
+		$repository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseCategory');
+		$categories = $repository->findAll();
+		
+		return array('categories'=>$categories);
 	}
 	
 	public function pageAction($first, $second = null, $name = null) {

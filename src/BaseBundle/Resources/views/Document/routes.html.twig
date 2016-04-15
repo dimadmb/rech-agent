@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Маршруты речных круизов{% endblock %}
+
+{% block body %}
+<h1>Маршруты речных круизов</h1> 
+<br>
+<br>
+	{% for category in categories %}
+		<a href="{{path('categoryroutes',{'category':category.code})}}">{{category.title}}</a>
+		<p>{{category.description | raw}}</p>
+		<br>
+	{% endfor %}
+
+
+
+{% endblock %}

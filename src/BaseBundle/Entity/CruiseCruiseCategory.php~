@@ -32,7 +32,14 @@ class CruiseCruiseCategory
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=255, nullable=false)
+     * @ORM\Column(name="code", type="string", length=3, nullable=false)
+     */
+	private $code;
+	
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255)
      */
     private $description;
 

@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * CruiseShip
  *
  * @ORM\Table(name="cruise_ship", uniqueConstraints={@ORM\UniqueConstraint(name="cruise_ship_code_uniq", columns={"code"})}, indexes={@ORM\Index(name="cruise_ship_class_idx", columns={"class"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="BaseBundle\Entity\Repository\CruiseShipRepository")
  */
 class CruiseShip
 {

@@ -7,7 +7,7 @@ html {
 body {
 	/* Отступ снизу, по высоте футера */
 	margin-bottom: 120px !important;
-	/*min-width:970px;*/
+	min-width:900px;
 }
 
 /* FOOTER */
@@ -87,6 +87,12 @@ h4 {
 h5{
 	font-size: 14px !important;
 }
+
+
+ul,ol {
+	padding-left:20px;
+}
+
 
 .navbar-inverse {
   background-image: -webkit-linear-gradient(top, #463180 0%, #4D3884 100%);

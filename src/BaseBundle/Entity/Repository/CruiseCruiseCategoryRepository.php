@@ -18,7 +18,10 @@ class CruiseCruiseCategoryRepository extends EntityRepository
 			JOIN cc.cruise c
 			LEFT JOIN c.prices p
 			JOIN c.ship s
-			WHERE cc.code = ?1";
+			WHERE cc.code = ?1
+			AND p.tariff = 1
+			ORDER BY c.startdate
+			";
 		$query = $this->_em->createQuery($q);
 		$query->setParameter(1, $categoryCode);
    		return $query->getSingleResult();

@@ -13,7 +13,7 @@ body {
 /* FOOTER */
 
 hr {
-	border-top: 2px solid #483381;
+	border-top: 2px solid #333;
 }
 
 
@@ -23,7 +23,7 @@ hr {
 
 
 .footer {
-	background:#483381;
+	background:#C58941;
 	padding:20px 0 0 ;
 	color:#fff;
 	position: absolute;
@@ -33,7 +33,7 @@ hr {
 	height: 120px;
 }
 .footer .container .row {
-	background:#483381;
+	/*background:#483381;*/
 	padding: 0 0 10px;
 }
 .footer a {
@@ -67,7 +67,8 @@ hr {
 }
 
 h1,h2,h3,h4,h5,h6 {
-	color:#483381;
+	/*color:#483381;*/
+	color:#333;
 }
 
 h1 {
@@ -94,13 +95,17 @@ ul,ol {
 }
 
 
+
 .navbar-inverse {
+	background:#EAA145;
+	/*
   background-image: -webkit-linear-gradient(top, #463180 0%, #4D3884 100%);
   background-image:      -o-linear-gradient(top, #463180 0%, #4D3884 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#463180), to(#4D3884));
   background-image:         linear-gradient(to bottom, #463180 0%, #4D3884 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#463180', endColorstr='#4D3884', GradientType=0);
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  */
 }
 
 .navbar .container.header-volna {
@@ -139,7 +144,7 @@ ul,ol {
 .navbar-inverse .navbar-nav > .open > a:hover,
 .navbar-inverse .navbar-nav > .open > a:focus {
     color: #fff;
-    background-color: #483381;
+    background-color: #EAA145;
     background-image: none;
 }
 
@@ -155,12 +160,26 @@ ul,ol {
 	background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(255,255,255,0.3) 50%, rgba(0,0,0,0) 100%);
 }
 
+.navbar {
+	border: none;
+}
+
 .nav > li > a {
     position: relative;
     display: block;
-    padding: 10px 10px;
+    padding: 10px 10px 10px ;
+	font-size: 16px;
 }
-
+.nav > li:not(:first-child):before {
+    content: "";
+    height: 20px;
+    /* margin-left: 10px; */
+    border: 1px solid #eee;
+    float: left;
+    margin-top: 10px;
+    }
+	
+	
 .dropdown-submenu {
   position: relative;
 }
@@ -307,7 +326,8 @@ ul,ol {
 }
 
 .table-cruises th {
-	background:#483D9B;
+	/*background:#483D9B;*/
+	background:#EAA145;
 	color:#E4E7FA;
 }
 .table-details td {

@@ -85,7 +85,7 @@ class OrderController extends Controller
 				->setSubject('Заказ')
 				->setFrom(array('test-rech-agent@yandex.ru'=>'Речное агентство'))
 				->setTo('dkochetkov@vodohod.ru')
-				->setBody($body)
+				->setBody($body,'text/html')
 			;
 			$mailer->send($message);
 

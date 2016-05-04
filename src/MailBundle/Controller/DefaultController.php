@@ -25,7 +25,8 @@ class DefaultController extends Controller
     {
 			$mailer = $this->get('mailer');
 			
-
+$headers= "MIME-Version: 1.0\r\n";
+$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 			
 			
 			$body = $this->render('MailBundle:Default:index.html.twig',array()); 
@@ -39,6 +40,8 @@ class DefaultController extends Controller
 			;
 			$mailer->send($message);
 
+			//mail('dkochetkov@vodohod.ru','Заказ',$body,$headers);
+			
 		return new Response('OK');
     }	
 	

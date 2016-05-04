@@ -1,5 +1,7 @@
 RewriteEngine On
 
-
+#RewriteRule ^(.*)$ http://rech-agent.ru/$1 [R=301,L]
 RewriteCond %{REQUEST_URI} !^web/.*$
 RewriteRule ^(.*)$ web/$1 [QSA,L]
+
+

@@ -58,7 +58,7 @@ class CruiseCruiseRepository extends EntityRepository
    		$q = $this->_em->createQuery($str);
    		$q->setParameter(1, $url->getShipCode());
    		$q->setParameter(2, $url->getCode());
-   		return $q->getSingleResult();
+   		return $q->getOneOrNullResult();
 	}	
 
 	public function findByUrlPrice(\BaseBundle\Controller\Helper\CruiseUrl $url) {
@@ -83,7 +83,7 @@ class CruiseCruiseRepository extends EntityRepository
    		$q = $this->_em->createQuery($str);
    		$q->setParameter(1, $url->getShipCode());
    		$q->setParameter(2, $url->getCode());
-   		return $q->getSingleResult();
+   		return $q->getOneOrNullResult();
 	}
 
 /*

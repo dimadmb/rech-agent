@@ -38,7 +38,7 @@
 		<td>{{item.date | date("H:i")}} - {{item.dateStop | date("H:i")}}</td>
 		<td>
 		{% if (item.place != null) and (item.place.url != '')  %}
-			<a href="{{path('page',{'first':'cruise','second':'settlement','name':item.place.url})}}"></a>{{item.place.title}}
+			{#<a href="{{path('page',{'first':'cruise','second':'settlement','name':item.place.url})}}"></a>#}{{item.place.title}}
 		{% else %}
 			{{item.placetitle}}
 		{% endif %}	

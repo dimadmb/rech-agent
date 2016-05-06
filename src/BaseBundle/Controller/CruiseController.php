@@ -286,6 +286,11 @@ class CruiseController extends Controller
 		
 		$cruise = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrl(Helper\CruiseUrl::parse($url));
 		
+		if($cruise == null)
+		{
+			throw $this->createNotFoundException("Страница не найдена.");
+		}	
+		
 		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrlPrice(Helper\CruiseUrl::parse($url));
 		
 		$tariff_arr = array();
@@ -324,6 +329,7 @@ class CruiseController extends Controller
 				;
 			unset($price);	
 		}
+		
 		//$dump = $cruise;
 		
 		return array('cruise' => $cruise, 'cabins' => $cabins,'tariff_arr'=>$tariff_arr );

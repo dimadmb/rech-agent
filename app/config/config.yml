@@ -66,6 +66,7 @@ doctrine:
             password: "%database_password%"
             charset:  UTF8
 
+
           booking:
             driver: pdo_mysql
             host:     "%database_host%"

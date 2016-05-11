@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use BaseBundle\Controller\Helper as Helper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Doctrine\ORM\Query\ResultSetMapping;
 
@@ -364,6 +365,11 @@ class CruiseController extends Controller
 		$repository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
 		$minDate = $repository->findMinStartDate();
 		$maxDate = $repository->findMaxStartDate();
+		
+		if($minDate == null) 
+		{
+			return new Response('');
+		}
 		
 		// понадобятся для фильтра по дням
 		$minDays = $repository->findMinDays()->getDaycount();

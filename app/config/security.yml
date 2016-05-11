@@ -13,6 +13,9 @@ security:
             form_login:
                 check_path: _security_check
                 login_path: _security_login
+            logout:
+                path: /logout
+                target: /
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
 

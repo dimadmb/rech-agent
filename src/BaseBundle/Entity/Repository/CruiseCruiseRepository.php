@@ -166,26 +166,26 @@ class CruiseCruiseRepository extends EntityRepository
 	{
         return $this->getEntityManager()
             ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.startdate ASC ')->setMaxResults(1)
-            ->getSingleResult();		
+            ->getOneOrNullResult();		
 	}	
 	public function findMaxStartDate()
 	{
         return $this->getEntityManager()
             ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.enddate DESC ')->setMaxResults(1)
-            ->getSingleResult();		
+            ->getOneOrNullResult();		
 	}
 	
 	public function findMinDays()
 	{
         return $this->getEntityManager()
             ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.daycount ASC ')->setMaxResults(1)
-            ->getSingleResult();		
+            ->getOneOrNullResult();		
 	}		
 	public function findMaxDays()
 	{
         return $this->getEntityManager()
             ->createQuery('SELECT c FROM BaseBundle:CruiseCruise c ORDER BY c.daycount DESC ')->setMaxResults(1)
-            ->getSingleResult();		
+            ->getOneOrNullResult();		
 	}		
 	
 }

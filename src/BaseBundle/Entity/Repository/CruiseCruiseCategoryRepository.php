@@ -24,7 +24,7 @@ class CruiseCruiseCategoryRepository extends EntityRepository
 			";
 		$query = $this->_em->createQuery($q);
 		$query->setParameter(1, $categoryCode);
-   		return $query->getSingleResult();
+   		return $query->getOneOrNullResult();
 	}	
 	
 }

@@ -445,6 +445,12 @@ class CruiseController extends Controller
 	{
 		$repository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruiseCategory');
 		$category = $repository->findWithCruises($category);
+		
+		if(null == $category )
+		{
+			throw $this->createNotFoundException("Страница не найдена.");
+		}	
+		
 		$cruises_months= $this->monthsSchedule($category->getCruise());
 		
 		return array('cruises_months' => $cruises_months, 'category' => $category  );

@@ -86,7 +86,10 @@ class DocumentCategory
      */
     private $parent;
 
-
+	public function __toString()
+	{
+		return $this->getTitle();
+	}
 
     /**
      * Get id

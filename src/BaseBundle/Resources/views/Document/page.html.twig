@@ -11,5 +11,9 @@
 	
 	{{ render(controller('BaseBundle:Photo:getPhotos',{doc_id : document.id, path:document.url }))  }}
 	
+	{% if is_granted('ROLE_ADMIN') %}
+		<a class="btn btn-success" href="{{path('page_edit',{'id':document.id})}}">Редактировать</a>
+	{% endif %}	
+	
 {% endblock %}
 

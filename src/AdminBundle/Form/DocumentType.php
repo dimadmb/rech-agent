@@ -20,8 +20,9 @@ class DocumentType extends AbstractType
             ->add('description')
             ->add('url')
             ->add('body', null, array(
-                'attr' => array('rows' => 20),
+                'attr' => array('rows' => 20, 'class' => 'tinymce'),
                 'label' => 'label.body',
+				
             ))
             ->add('isactive')
             ->add('deletable')

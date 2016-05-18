@@ -127,8 +127,8 @@ swiftmailer:
     host:       "%mailer_host%"
     username:   "%mailer_user%"
     password:   "%mailer_password%"
-    port:       "%mailer_port%"
-    encryption: "%mailer_encryption%"
+    #port:       "%mailer_port%"
+    #encryption: "%mailer_encryption%"
     spool:     { type: memory }
 
 #sonata_admin:
@@ -143,3 +143,13 @@ swiftmailer:
 #       sonata.block.service.text:
 #       sonata.block.service.action:
 #       sonata.block.service.rss:
+
+stfalcon_tinymce:
+    include_jquery: true
+    tinymce_jquery: true
+    selector: ".tinymce"
+    external_plugins:
+#        filemanager:
+#            url: "asset[bundles/acmedemo/js/tinymce-plugin/filemanager/editor_plugin.js]"
+        imagemanager:
+            url: "asset[bundles/stfalcontinymce/vendor/tinymce/plugins/image/plugin.min.js]"

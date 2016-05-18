@@ -2,7 +2,7 @@
 
 {% block body -%}
     <h1>Document edit</h1>
-
+{{ tinymce_init() }}
     {{ form(edit_form) }}
 
         <ul class="record_actions">

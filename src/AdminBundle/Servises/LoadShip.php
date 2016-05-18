@@ -278,7 +278,7 @@ class LoadShip  extends Controller
 			$dir = (__DIR__).'/../../../web'.self::PATH_IMG.$shipCode;
 
 			if(!is_dir($dir)) mkdir($dir,0777,true) ;
-			$img_main = "http://vodohod.com/cruises/vodohod/".$shipCode."/".$shipCode."-main.jpg";
+			$img_main = "https://vodohod.com/cruises/vodohod/".$shipCode."/".$shipCode."-main.jpg";
 			$newfile = $dir.'/'.$shipCode.'-main.jpg';
 			$file_content = $this->curl_get_file_contents($img_main);
 			$fp = fopen($newfile, "w");
@@ -287,7 +287,7 @@ class LoadShip  extends Controller
 			//else echo 'Ошибка при записи в файл.';
 			fclose($fp); //Закрытие файла	
 
-			$img_decks = "http://vodohod.com/cruises/vodohod/".$shipCode."/".$shipCode."-decks.gif";
+			$img_decks = "https://vodohod.com/cruises/vodohod/".$shipCode."/".$shipCode."-decks.gif";
 			$newfile = $dir.'/'.$shipCode.'-decks.gif';
 			$file_content = $this->curl_get_file_contents($img_decks);
 			$fp = fopen($newfile, "w");
@@ -412,14 +412,14 @@ class LoadShip  extends Controller
 
 			# ФОТОГРАФИИ
 			
-			$base_url_vodohod = "http://vodohod.com";
+			$base_url_vodohod = "https://vodohod.com";
 			$parser = $this->simple_html_dom;
-			$htmlFoto = $this->curl_get_file_contents("http://vodohod.com/cruises/vodohod/".$shipCode."/foto.htm");
+			$htmlFoto = $this->curl_get_file_contents("https://vodohod.com/cruises/vodohod/".$shipCode."/foto.htm");
 			$parser->load($htmlFoto);
 			
 			if ( !$htmlFoto || isset($parser->getElementByTagName('h2')->attr['title']) && $parser->getElementByTagName('h2')->attr['title'] == "error 404")
 			{
-			$htmlFoto = $this->curl_get_file_contents("http://vodohod.com/cruises/vodohod/".$shipCode."/photo.htm");
+			$htmlFoto = $this->curl_get_file_contents("https://vodohod.com/cruises/vodohod/".$shipCode."/photo.htm");
 				$parser->load($htmlFoto);				
 			}
 

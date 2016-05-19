@@ -24,6 +24,7 @@ use BaseBundle\Entity\CruiseCruiseSpec;
 
 use BaseBundle\Entity\CruiseShipRoom;
 use BaseBundle\Entity\CruiseShipRoomProp;
+use BaseBundle\Entity\CruiseTariff;
 
 
 use BaseBundle\Controller\Helper as Helper;
@@ -569,7 +570,23 @@ class LoadShip  extends Controller
 				foreach($prices_v['tariffs'] as $p_t)
 				{
 					
-					$cruiseTariff = $tariffs[$p_t['tariff_name']];
+					//$cruiseTariff = $tariffs[$p_t['tariff_name']];
+					
+					if(isset($tariffs[$p_t['tariff_name']]))
+					{
+						$cruiseTariff = $tariffs[$p_t['tariff_name']];
+					}
+					else
+					{
+						$cruiseTariff = new CruiseTariff();
+						$cruiseTariff
+							->setName($p_t['tariff_name'])
+							;
+						$em->persist($cruiseTariff);
+						$em->flush();
+						$tariffs[$p_t['tariff_name']] = $cruiseTariff; 
+					}
+					
 					
 					// сделать проверку на существование тарифа, если нет, то дописать в базу его
 					

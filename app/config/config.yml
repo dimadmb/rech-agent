@@ -159,7 +159,8 @@ ivory_ck_editor:
     configs: 
         #contentsCss: 'sdf'
         default:
-            contentsCss: [ 'css/bootstrap.css', 'css/bootstrap-theme.css', 'css/style.css', ]		
+            contentsCss: [ 'css/bootstrap.css', 'css/bootstrap-theme.css', 'css/style.css', ]
+            allowedContent: true			
             filebrowserBrowseRoute:  elfinder 
  #           filebrowserBrowseRouteParameters:
  #               homeFolder: "%kernel.root_dir%/upload"

@@ -157,7 +157,9 @@ swiftmailer:
 ivory_ck_editor: 
     default_config:  default 
     configs: 
-        default: 
+        #contentsCss: 'sdf'
+        default:
+            contentsCss: [ 'css/bootstrap.css', 'css/bootstrap-theme.css', 'css/style.css', ]		
             filebrowserBrowseRoute:  elfinder 
  #           filebrowserBrowseRouteParameters:
  #               homeFolder: "%kernel.root_dir%/upload"

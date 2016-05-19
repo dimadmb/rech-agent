@@ -12,6 +12,11 @@ body {
 
 /* FOOTER */
 
+.placeimg {
+	float:right;
+	margin:5px 5px 5px 15px;
+}
+
 hr {
 	border-top: 2px solid #333;
 }

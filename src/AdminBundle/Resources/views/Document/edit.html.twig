@@ -5,12 +5,15 @@
 
     {{ form(edit_form) }}
 
-        <ul class="record_actions">
+<!--        <ul class="record_actions">
     <li>
         <a href="{{ path('page_admin') }}">
             Back to the list
         </a>
     </li>
     <li>{{ form(delete_form) }}</li>
-</ul>
+</ul>-->
+
+<a class="btn btn-success" href="{{entity.url}}.html">Перейти на эту страницу</a>
+
 {% endblock %}

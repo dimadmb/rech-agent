@@ -19,11 +19,7 @@ class DocumentType extends AbstractType
             ->add('keywords')
             ->add('description')
             ->add('url')
-            ->add('body', null, array(
-                'attr' => array('rows' => 20, 'class' => 'tinymce'),
-                'label' => 'label.body',
-				
-            ))
+            ->add('body', 'ckeditor' , array('attr' => array('rows' => 20) ))
             ->add('isactive')
             ->add('deletable')
             ->add('archieved')
@@ -31,7 +27,7 @@ class DocumentType extends AbstractType
             ->add('category_id')
         ;
     }
-    
+ 
     /**
      * @param OptionsResolverInterface $resolver
      */

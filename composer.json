@@ -19,7 +19,8 @@
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
 		"erivello/simple-html-dom-bundle": "dev-master",
-        "stfalcon/tinymce-bundle": "1.0"
+        "egeloen/ckeditor-bundle": "^4.0",
+        "helios-ag/fm-elfinder-bundle": "^6.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
@@ -48,7 +49,8 @@
         ]
     },
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "component-dir": "web/assets"
     },
     "extra": {
         "symfony-app-dir": "app",

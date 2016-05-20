@@ -71,7 +71,7 @@ class CruiseController extends Controller
 		if(isset($parameters['ship']) && ($parameters['ship'] > 0) )
 		{
 			$where .= "
-			AND s.id = ".$parameters['ship'];
+			AND s.motorship_id = ".$parameters['ship'];
 		}
 		
 		
@@ -101,7 +101,7 @@ class CruiseController extends Controller
 			LEFT JOIN cruise_place cp ON pi.place_id = cp.id
 			";
 			$where .= "
-			AND cp.id IN (".implode(',',$parameters['places']).")";	
+			AND cp.place_id IN (".implode(',',$parameters['places']).")";	
 			
 		}
 
@@ -394,11 +394,25 @@ class CruiseController extends Controller
 			
 			->add('days','text',array('attr'=>array('data-slider-min'=>$minDays,'data-slider-max'=>$maxDays,'data-slider-value'=>'['.$days.']' )))
 			
-			->add('places','entity',array('class' => 'BaseBundle:CruisePlace','choices' =>  $this->getActivePlaces(), 'choice_label' => 'title','multiple'      => true,'expanded'      => true,))
+			->add('places','entity',array(
+							'class' => 'BaseBundle:CruisePlace',
+							'choices' =>  $this->getActivePlaces(),
+							'choice_label' => 'title',
+							'choice_value' => 'placeId',
+							'multiple'      => true,
+							'expanded'      => true,
+							)
+					)
 			
-			->add('ship','entity',array('class' => 'BaseBundle:CruiseShip',
-					'choices' =>  $this->getActiveShip()
-					,'choice_label' => 'title','placeholder'=>'Все теплоходы','required' => false))
+			->add('ship','entity',array(
+						'class' => 'BaseBundle:CruiseShip',
+						'choices' =>  $this->getActiveShip(),
+						'choice_label' => 'title',
+						'choice_value' => 'motorshipId',
+						'placeholder'=>'Все теплоходы',
+						'required' => false
+						)
+					)
 			->add('specialoffer','checkbox',array('required'=> false,'label' => 'Специальный тариф'))
 			->add('burningCruise','checkbox',array('required'=> false,'label' => '«Счастливый» круиз'))
 			->add('button', 'submit',array('label' => 'Поиск'))

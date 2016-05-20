@@ -416,11 +416,17 @@ class CruiseController extends Controller
 			->add('specialoffer','checkbox',array('required'=> false,'label' => 'Специальный тариф'))
 			->add('burningCruise','checkbox',array('required'=> false,'label' => '«Счастливый» круиз'))
 			->add('button', 'submit',array('label' => 'Поиск'))
-            ->getForm(); 
+			
+			->setMethod('GET')
+            
+			->getForm()
+			
+			; 
 
-		if ($request->getMethod() == 'POST') {  
+		//if ($request->getMethod() == 'GET') {
+			
 			$form_search->handleRequest($request);
-		}
+		//}
 	return array('form_search' => $form_search->createView() );
 	}
 

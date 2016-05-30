@@ -86,6 +86,17 @@ class CruiseCruiseRepository extends EntityRepository
    		return $q->getOneOrNullResult();
 	}
 
+	public function findApiAll()
+	{
+		$str = "SELECT c, s, code
+			FROM BaseBundle\Entity\CruiseCruise c 
+			JOIN c.ship s
+			LEFT JOIN c.code code
+			";
+   		$q = $this->_em->createQuery($str);
+   		return $q->getResult();
+	}
+	
 /*
 	
 	public function findByUrl(\BaseBundle\Controller\Helper\CruiseUrl $url) {

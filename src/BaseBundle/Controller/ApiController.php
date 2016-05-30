@@ -16,7 +16,7 @@ class ApiController extends Controller
 	{
 		$cruisesRepository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
 		
-		$cruises = $cruisesRepository->findAll();
+		$cruises = $cruisesRepository->findApiAll();
 		
 		foreach($cruises as $cruise)
 		{

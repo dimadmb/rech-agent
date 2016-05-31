@@ -10,13 +10,14 @@ class ApiController extends Controller
 {
     /**
 	 * @Template()
-	 * @Route("/api/json/cruises", name="api_json_cruises" )
+	 * @Route("/api/json/cruises/{pre}", name="api_json_cruises" )
      */			
-	public function cruisesAction()
+	public function cruisesAction($pre = false)
 	{
 
 		$cruises_json = $this->getCruises();
 		
+		if($pre) return array('cruises_json'=> '<pre>'.print_r($cruises_json,1).'</pre>');
 		return array('cruises_json'=> json_encode($cruises_json));
 	}
 	
@@ -44,9 +45,9 @@ class ApiController extends Controller
 	
     /**
 	 * @Template()
-	 * @Route("/api/json/kauta/{cruise_code}", name="api_json_kauta" )
+	 * @Route("/api/json/kauta/{cruise_code}/{pre}", name="api_json_kauta" )
      */			
-	public function kautaAction($cruise_code)
+	public function kautaAction($cruise_code, $pre = false)
 	{
 
 		$sql="
@@ -131,7 +132,7 @@ class ApiController extends Controller
 		}
 		
 		
-
+		if($pre) return array('array' => '<pre>'.print_r(array('cruise' => $cruise_description ,'programm' => $cruise_programm , 'prices' => $rooms,),1).'</pre>');
 		
 		return array('array' => json_encode(array('cruise' => $cruise_description ,'programm' => $cruise_programm , 'prices' => $rooms,)));
 	}

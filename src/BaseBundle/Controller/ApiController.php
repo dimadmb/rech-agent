@@ -124,6 +124,7 @@ class ApiController extends Controller
 						'name_place' => $price->getRpId()->getRpName(),
 						'tariff_name' => $price->getTariff()->getName(),
 						'tariff_id' => $price->getTariff()->getId(),
+						'price_old' =>$price->getPrice(),
 						'price' => $price_koeff,
 						);
 			}

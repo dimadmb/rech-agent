@@ -285,14 +285,14 @@ class CruiseController extends Controller
 		}
 		
 		
-		$cruise = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrl(Helper\CruiseUrl::parse($url));
+		$cruise = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrl($cruise_code);
 		
 		if($cruise == null)
 		{
 			throw $this->createNotFoundException("Страница не найдена.");
 		}	
 		
-		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrlPrice(Helper\CruiseUrl::parse($url));
+		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrlPrice($cruise_code);
 		
 		$tariff_arr = array();
 		

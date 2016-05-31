@@ -42,7 +42,7 @@ class CruiseCruiseRepository extends EntityRepository
    		return $this->_em->createQuery($q)->/*setHint(Query::HINT_FORCE_PARTIAL_LOAD, true)->*/getResult();
 	}	
 	
-	public function findByUrl(\BaseBundle\Controller\Helper\CruiseUrl $url) {
+	public function findByUrl($cruise_code) {
 		$str = "SELECT c, s, pi, pr,   pl 
 			FROM BaseBundle\Entity\CruiseCruise c 
 			JOIN c.ship s
@@ -51,17 +51,15 @@ class CruiseCruiseRepository extends EntityRepository
 			LEFT JOIN pi.place pl
 			
 			
-			WHERE s.code = ?1 
-			AND c.code = ?2
+			WHERE c.code = ?2
 			
 			ORDER BY  pi.date, pr.price";
    		$q = $this->_em->createQuery($str);
-   		$q->setParameter(1, $url->getShipCode());
-   		$q->setParameter(2, $url->getCode());
+   		$q->setParameter(2, $cruise_code);
    		return $q->getOneOrNullResult();
 	}	
 
-	public function findByUrlPrice(\BaseBundle\Controller\Helper\CruiseUrl $url) {
+	public function findByUrlPrice($cruise_code) {
 		$str = "SELECT c, s, pr, cab, room, roomProp,   rt, deck, rp, tariff
 			FROM BaseBundle\Entity\CruiseCruise c 
 			JOIN c.ship s
@@ -73,16 +71,14 @@ class CruiseCruiseRepository extends EntityRepository
 			LEFT JOIN pr.tariff tariff
 			LEFT JOIN cab.rtId rt
 			LEFT JOIN cab.deckId deck
-			WHERE s.code = ?1 
-			AND c.code = ?2
+			WHERE c.code = ?2
 			AND pr.cruise = c.id
 			
 
 			
 			ORDER BY deck.deckId , room.roomNumber*1 , tariff.id , pr.price";
    		$q = $this->_em->createQuery($str);
-   		$q->setParameter(1, $url->getShipCode());
-   		$q->setParameter(2, $url->getCode());
+   		$q->setParameter(2, $cruise_code);
    		return $q->getOneOrNullResult();
 	}
 
@@ -92,9 +88,59 @@ class CruiseCruiseRepository extends EntityRepository
 			FROM BaseBundle\Entity\CruiseCruise c 
 			JOIN c.ship s
 			LEFT JOIN c.code code
+
 			";
    		$q = $this->_em->createQuery($str);
    		return $q->getResult();
+	}
+
+
+
+/*
+		$str = "SELECT c, s, code, pr, cab, room,  rt, deck, rp, tariff
+			FROM BaseBundle\Entity\CruiseCruise c 
+			LEFT JOIN c.ship s
+			LEFT JOIN c.code code
+			LEFT JOIN s.cabins cab
+			LEFT JOIN cab.prices pr
+			LEFT JOIN cab.rooms room
+			LEFT JOIN pr.rp_id rp
+			LEFT JOIN pr.tariff tariff
+			LEFT JOIN cab.rtId rt
+			LEFT JOIN cab.deckId deck
+			WHERE c.code = ?1 
+			";
+
+*/
+
+
+
+	
+	public function findOneApiByCode($code)
+	{
+		$str = "SELECT c, s, code, cab, pr, rp, room, tariff, rt, deck
+			FROM BaseBundle\Entity\CruiseCruise c 
+			LEFT JOIN c.ship s
+			LEFT JOIN c.code code
+			
+			LEFT JOIN c.prices pr
+			
+			LEFT JOIN pr.cabin cab
+			LEFT JOIN cab.rooms room
+			
+			LEFT JOIN pr.rp_id rp
+			
+			LEFT JOIN pr.tariff tariff
+			
+			LEFT JOIN cab.rtId rt
+			LEFT JOIN cab.deckId deck			
+
+			WHERE c.code = ?1
+			AND pr.cruise = c
+			";
+   		$q = $this->_em->createQuery($str);
+		$q->setParameter(1, $code);
+   		return $q->getOneOrNullResult();
 	}
 	
 /*

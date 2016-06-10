@@ -1,6 +1,6 @@
 <?php
 
-namespace AdminBundle\Servises;
+namespace AdminBundle\Services;
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,7 +23,6 @@ use BaseBundle\Entity\CruiseCruiseProgramItem;
 use BaseBundle\Entity\CruiseCruiseSpec;
 
 use BaseBundle\Entity\CruiseShipRoom;
-use BaseBundle\Entity\CruiseShipRoomProp;
 use BaseBundle\Entity\CruiseTariff;
 
 
@@ -82,7 +81,6 @@ class LoadShip  extends Controller
 		$tariffRepos = $this->doctrine->getRepository('BaseBundle:CruiseTariff');		
 		$cruiseRepos = $this->doctrine->getRepository('BaseBundle:CruiseCruise');
 		$categoryRepos = $this->doctrine->getRepository('BaseBundle:CruiseCruiseCategory');
-		$roomPropRepos = $this->doctrine->getRepository('BaseBundle:CruiseShipRoomProp');
 		
 		
 		
@@ -220,11 +218,6 @@ class LoadShip  extends Controller
 			}
 			
 			
-			$roomPropAll = $roomPropRepos->findAll();
-			foreach($roomPropAll as $roomPropitem)
-			{
-				$roomProp[$roomPropitem->getRoomId()] = $roomPropitem;
-			}
 
 		$categoryCruisesAll = array();
 		$crCategory_all = $categoryRepos->findAll();
@@ -343,20 +336,9 @@ class LoadShip  extends Controller
 				foreach($rooms[$cabin_v['deck_id']][$cabin_v['rt_id']] as $roomItem)
 				{
 
-					if(!isset($roomProp[$roomItem['room_id']]))
-					{
-						$roomPr = new CruiseShipRoomProp();
-						$roomPr
-							->setRoomId($roomItem['room_id'])
-							->setSpecialOffer(0)
-						;	
-						$em->persist($roomPr);
-						$roomProp[$roomItem['room_id']] = $roomPr;
-					}
 				
 					$room = new CruiseShipRoom();
 					$room
-						->setRoomId($roomProp[$roomItem['room_id']])
 						->setRoomNumber($roomItem['room_number'])
 					;
 					$em->persist($room);
@@ -517,6 +499,8 @@ class LoadShip  extends Controller
 					$cruise->setRoute($route);
 					$cruise->setDayCount($dayCount);
 					$cruise->setDescription("");
+					$cruise->setTurOperator("vodohod");
+					
 
 
 					

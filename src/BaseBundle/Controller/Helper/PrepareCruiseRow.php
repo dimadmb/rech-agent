@@ -14,6 +14,7 @@ class PrepareCruiseRow {
 		$wrap->startFull = date("d.m.Y", $cruise->getStartdate());
 		$wrap->endFull = date("d.m.Y", $cruise->getEnddate());
 		$wrap->days = $cruise->getDaycount();
+		$wrap->turOperator = $cruise->getTurOperator();
 		$wrap->shipUrl = ShipUrl::create($cruise->getShip());
 		$minprice = $cruise->getMinprice();
 		$wrap->minprice = $minprice < 1 ? "-" : $minprice . "&nbsp;руб.";

@@ -71,7 +71,14 @@ class ApiController extends Controller
 			
 		$cruise_programm = array(); 
 		
-		foreach($cruisesRepository->findByUrl($cruise_code)->getProgramItems() as $programmItem)
+		$cruise =  $cruisesRepository->findByUrl($cruise_code);
+		
+		if($cruise == null)
+		{
+			return array('array' => json_encode(array('error' => "Продажи путевок на выбранный тур завершены")));
+		}
+		
+		foreach($cruise->getProgramItems() as $programmItem)
 		{
 			$cruise_programm[] = array(
 					

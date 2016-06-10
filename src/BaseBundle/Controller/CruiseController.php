@@ -38,6 +38,7 @@ class CruiseController extends Controller
 		$rsm->addFieldResult('c', 'c_description', 'description');
 		$rsm->addFieldResult('c', 'c_route', 'route');
 		$rsm->addMetaResult('c', 'c_code', 'code');
+		$rsm->addMetaResult('c', 'c_tur_operator', 'turOperator');
 		$rsm->addJoinedEntityResult('BaseBundle:CruiseShip', 's','c', 'ship');
 		$rsm->addFieldResult('s', 's_id', 'id');
 		$rsm->addFieldResult('s', 's_title', 'title');
@@ -58,6 +59,20 @@ class CruiseController extends Controller
 		$where = "";
 		$join = "";
 		
+		
+		// даты unix окончание - последняя дата начала // для моиска по месяцам
+		if(isset($parameters['startdate']))
+		{
+			$where .= "
+			AND c.startdate >= ".$parameters['startdate'];
+		}		
+		if(isset($parameters['enddate']))
+		{
+			$where .= "
+			AND c.startdate <= ".$parameters['enddate'];
+		}	
+
+		// даты человеческие
 		if(isset($parameters['startDate']))
 		{
 			$where .= "
@@ -118,7 +133,7 @@ class CruiseController extends Controller
 		
 		$sql = "
 		SELECT 
-			c.id c_id , c.ship_id c_ship, c.startDate c_startdate, c.endDate c_enddate, c.dayCount c_daycount, c.description c_description, c.route c_route, c.code c_code
+			c.id c_id , c.ship_id c_ship, c.startDate c_startdate, c.endDate c_enddate, c.dayCount c_daycount, c.description c_description, c.route c_route, c.code c_code, c.tur_operator c_tur_operator
 			,
 			s.id s_id, s.title s_title, s.code s_code, s.motorship_id s_m_id , s.imgUrl s_img
 			,
@@ -175,11 +190,11 @@ class CruiseController extends Controller
 		if ($sh == null) {
 			throw $this->createNotFoundException("Страница не найдена.");
 		}
-		$result = $this->searchCruise(array('ship'=>$sh->getId()));
+		$dump = $result = $this->searchCruise(array('ship'=>$sh->getMotorshipId()));
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
 		
-		return array("document" => $doc,'cruises_months' => $result, 'ship' => $sh); 
+		return array("document" => $doc,'cruises_months' => $result, 'ship' => $sh, ); 
 	}
 	
 	# выводит список ссылок на месяцы
@@ -218,7 +233,8 @@ class CruiseController extends Controller
 	 */	
 	# выводит список круизов на конкретный месяц
 	public function monthAction($month) {
-		$cruises = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findForMonth($month);
+		//$cruises = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findForMonth($month);
+		$cruises = $this->searchCruise(array('startdate'=> $month , 'enddate' => mktime(0,0,0,date("m", $month) + 1, 1, date("Y", $month))));
 		$title = Helper\Convert::month_ru($month);
 		foreach ($cruises as $cruise) {
 			$wrap = Helper\PrepareCruiseRow::prepare($cruise);
@@ -234,7 +250,8 @@ class CruiseController extends Controller
 	# список всех круизов по месяцам
 	public function scheduleAction()
 	{
-		$cruises = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findAllOrdered();
+		//$cruises = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findAllOrdered();
+		$cruises = $this->searchCruise();
 		$result = $this->monthsSchedule($cruises);
 		return array('cruises_months' => $result);
 	}
@@ -295,41 +312,52 @@ class CruiseController extends Controller
 		$cruiseShipPrice = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findByUrlPrice($cruise_code);
 		
 		$tariff_arr = array();
+		$cabins = array();
 		
-		$cabinsAll = $cruiseShipPrice->getShip()->getCabins();
-		foreach($cabinsAll as $cabinsItem)
+		if($cruiseShipPrice != null)
 		{
 			
-			$rooms_in_cabin = array();
-			foreach($cabinsItem->getRooms() as $room)
+			
+			$cabinsAll = $cruiseShipPrice->getShip()->getCabins();
+			foreach($cabinsAll as $cabinsItem)
 			{
-				if(in_array($room->getRoomNumber(),$active_rooms))
+				
+				$rooms_in_cabin = array();
+				foreach($cabinsItem->getRooms() as $room)
 				{
-					$rooms_in_cabin[] = $room->getRoomNumber();
+					if(in_array($room->getRoomNumber(),$active_rooms))
+					{
+						$rooms_in_cabin[] = $room->getRoomNumber();
+					}
 				}
-			}
 
-		    foreach($cabinsItem->getPrices() as $prices)
-			{
+				foreach($cabinsItem->getPrices() as $prices)
+				{
 
-				$tariff_arr[$prices->getTariff()->getname()]=1;
-				
-				$price[$prices->getRpId()->getRpName()]['prices'][$prices->getTariff()->getname()] = $prices;
-				//$price[$prices->getRpId()->getRpName()]['rooms'] = $rooms_in_cabin;//список кают
-				// сюда добавить свободные каюты
-				//$rooms => 
-				
-			}
-			$cabins[$cabinsItem->getDeckId()->getName()][] = array(
-				'cabinName' =>$cabinsItem->getRtId()->getRtComment(),
-				'cabin' => $cabinsItem,
-				'rpPrices' => $price,
-				'rooms' => $rooms_in_cabin
-				// тут можно посчитать количество rowspan
-				)
-				;
-			unset($price);	
+					$tariff_arr[$prices->getTariff()->getname()]=1;
+					
+					$price[$prices->getRpId()->getRpName()]['prices'][$prices->getTariff()->getname()] = $prices;
+					//$price[$prices->getRpId()->getRpName()]['rooms'] = $rooms_in_cabin;//список кают
+					// сюда добавить свободные каюты
+					//$rooms => 
+					
+				}
+				$cabins[$cabinsItem->getDeckId()->getName()][] = array(
+					'cabinName' =>$cabinsItem->getRtId()->getRtComment(),
+					'cabin' => $cabinsItem,
+					'rpPrices' => $price,
+					'rooms' => $rooms_in_cabin
+					// тут можно посчитать количество rowspan
+					)
+					;
+				unset($price);	
+			}	
 		}
+		else
+		{
+			return array('cruise' => $cruise, 'cabins' => null,'tariff_arr'=>null );
+		}
+		
 		
 		//$dump = $cruise;
 		

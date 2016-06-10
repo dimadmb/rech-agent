@@ -84,7 +84,7 @@ class OrderController extends Controller
 			$message = \Swift_Message::newInstance()
 				->setSubject('Заказ')
 				->setFrom(array('test-rech-agent@yandex.ru'=>'Речное агентство'))
-				->setTo('dkochetkov@vodohod.ru')
+				->setTo(array('dkochetkov@vodohod.ru','12nas24@mail.ru'))
 				->setBody($body,'text/html')
 			;
 			$mailer->send($message);

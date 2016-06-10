@@ -60,13 +60,12 @@ class CruiseCruiseRepository extends EntityRepository
 	}	
 
 	public function findByUrlPrice($cruise_code) {
-		$str = "SELECT c, s, pr, cab, room, roomProp,   rt, deck, rp, tariff
+		$str = "SELECT c, s, pr, cab, room,   rt, deck, rp, tariff
 			FROM BaseBundle\Entity\CruiseCruise c 
 			JOIN c.ship s
 			LEFT JOIN s.cabins cab
 			LEFT JOIN cab.prices pr
 			LEFT JOIN cab.rooms room
-			LEFT JOIN room.roomId roomProp
 			LEFT JOIN pr.rp_id rp
 			LEFT JOIN pr.tariff tariff
 			LEFT JOIN cab.rtId rt

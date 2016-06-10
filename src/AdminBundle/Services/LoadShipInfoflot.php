@@ -553,7 +553,7 @@ class LoadShipInfoflot  extends Controller
 					$cruise->setDayCount($dayCount);
 					$cruise->setDescription("");
 					$cruise->setTurOperator("infoflot");
-
+					$em->persist($cruise);
 					
 					
 					foreach($cruise_i['prices'] as $priceItem)
@@ -665,7 +665,7 @@ class LoadShipInfoflot  extends Controller
 			
 
 		//return array();
-		return array($programm);
+		return array('ship' => $ship->getTitle());
 		
 	}
 	

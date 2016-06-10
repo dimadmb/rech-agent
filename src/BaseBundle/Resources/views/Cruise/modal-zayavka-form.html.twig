@@ -4,7 +4,7 @@ $(document).ready(function(){
 
   $(".modal-zayavka").click(function() {
     $("#modal-zayavka").modal('show');
-	var text = '<b>'+$(this).parent().parent().children().filter(':nth-child(3)').text()+'</b>';
+	var text = '';//'<b>'+$(this).parent().parent().children().filter(':nth-child(3)').text()+'</b>';
 	text +='  ('+ $(this).parent().parent().children().filter(':nth-child(2)').text()+') ';
 	text +=' <b>'+ $(this).parent().parent().children().filter(':nth-child(1)').text()+'</b>';
     $("#modal-zayavka .modal-body p.cruise").html(text);

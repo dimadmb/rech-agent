@@ -14,6 +14,8 @@ use BaseBundle\Entity\CruiseShipRoom;
 use BaseBundle\Entity\CruiseCruiseSpec;
 use BaseBundle\Entity\CruiseShipCabinCruisePrice;
 
+use BaseBundle\Entity\CruiseShipDeck;
+
 use BaseBundle\Entity\CruisePlace;
 use BaseBundle\Entity\CruiseCruiseProgramItem;
 

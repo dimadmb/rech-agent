@@ -73,6 +73,8 @@ class CruiseShipCabinCruisePrice
 	}
 	
 	
+	
+	
 	/**
      * Get id
      *

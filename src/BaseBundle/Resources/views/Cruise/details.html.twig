@@ -124,7 +124,7 @@
 						
 						{% if (rp.prices[tariff]) is defined %}	
 						
-								
+								{#
 								{% if (type.rooms|length > 0) %}
 									{% if (cruise.code.specialOffer == 1) %}
 										<span style=" text-decoration:line-through;">{{(rp.prices[tariff]).price|number_format(0, '.', ' ')}}  руб.</span><br>
@@ -138,6 +138,31 @@
 								{% else %}	
 									<b>{{(rp.prices[tariff]).price|number_format(0, '.', ' ')}}  руб.</b>
 								{% endif %}
+								
+								#}
+								
+								
+								
+								{% for mealName,meal in rp.prices[tariff] %}
+
+									
+								{% if (type.rooms|length > 0) %}
+									{% if (cruise.code.specialOffer == 1) %}
+										<span style=" text-decoration:line-through;">{{meal.price|number_format(0, '.', ' ')}}  руб.</span><br>
+										<span style="color:red; "><b>{{(meal.price*0.9) | round|number_format(0, '.', ' ')}} руб.</b></span>			
+									{% endif %}
+									{% if (cruise.code.burningCruise == 1) %}
+										<span style=" text-decoration:line-through;">{{meal.price|number_format(0, '.', ' ')}}  руб.</span><br>
+										<span style="color:red; "><b>{{(meal.price*0.8) | round |number_format(0, '.', ' ')}} руб.</b></span>		
+									{% endif %}
+									
+								{% else %}	
+									<p style=""><span >{{mealName}}</span> <b>{{meal.price|number_format(0, '.', ' ')}}  руб.</b></p>
+								{% endif %}
+									
+									
+									
+								{% endfor %}
 		
 						{% endif %}
 						</td>						

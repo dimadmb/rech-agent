@@ -72,7 +72,12 @@ class CruiseShipCabinCruisePrice
 		$this->cruise = $cruise;
 	}
 	
-	
+	/**
+	* @var \CruiseMeals
+	* @ORM\ManyToOne(targetEntity="CruiseMeals", inversedBy="prices")
+	* @ORM\JoinColumn(name="meals_id", referencedColumnName="id")
+	*/
+	private $meals;
 	
 	
 	/**
@@ -204,5 +209,28 @@ class CruiseShipCabinCruisePrice
     public function getRpId()
     {
         return $this->rp_id;
+    }
+
+    /**
+     * Set meals
+     *
+     * @param \BaseBundle\Entity\CruiseMeals $meals
+     * @return CruiseShipCabinCruisePrice
+     */
+    public function setMeals(\BaseBundle\Entity\CruiseMeals $meals = null)
+    {
+        $this->meals = $meals;
+
+        return $this;
+    }
+
+    /**
+     * Get meals
+     *
+     * @return \BaseBundle\Entity\CruiseMeals 
+     */
+    public function getMeals()
+    {
+        return $this->meals;
     }
 }

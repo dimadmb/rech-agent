@@ -22,6 +22,9 @@ use BaseBundle\Entity\CruiseCruiseProgramItem;
 use BaseBundle\Entity\Document;
 use BaseBundle\Entity\Photo;
 
+use BaseBundle\Entity\CruiseTariff;
+use BaseBundle\Entity\CruiseMeals;
+
 
 use BaseBundle\Controller\Helper as Helper;
 
@@ -89,9 +92,17 @@ class LoadShipMosturflot  extends Controller
 		return $this->URL2XML( $url );
 	}
 	
+	// ПОЛУЧИТЬ СПИСОК КРУИЗОВ ТЕПЛОХОДА
 	public function getCruises($ship_id)
 	{
 		$url = self::BASE_URL_KEY."request=tours&routedetail=true&shipid=".$ship_id."&tariffs=true";
+		return $this->URL2XML( $url );
+	}	
+	
+	// ПОЛУЧИТЬ СПИСОК ИНФОРМАЦИЮ О КРУИЗЕ
+	public function getCruiseDetail($cruise_id)
+	{
+		$url = self::BASE_URL_KEY."request=tour&tourid=".$cruise_id."&routedetail=1";
 		return $this->URL2XML( $url );
 	}
 
@@ -127,6 +138,7 @@ class LoadShipMosturflot  extends Controller
 		$cabinPlaceRepos = $this->doctrine->getRepository('BaseBundle:CruiseShipCabinPlace');
 		$cruiseSpecRepos = $this->doctrine->getRepository('BaseBundle:CruiseCruiseSpec');
 		$tariffRepos = $this->doctrine->getRepository('BaseBundle:CruiseTariff');
+		$mealsRepos = $this->doctrine->getRepository('BaseBundle:CruiseMeals');	
 		$placeRepos = $this->doctrine->getRepository('BaseBundle:CruisePlace');
 		$progItemRepos = $this->doctrine->getRepository('BaseBundle:CruiseCruiseProgramItem');
 		
@@ -281,12 +293,20 @@ class LoadShipMosturflot  extends Controller
 			$cabinsArray = array();
 			foreach($shipXML->answer->shipcabins->item as $item)
 			{
+				$deck = "Неопределена";
+				
 				if(strpos((string)$item->cabindesc, "средней")) $deck = "Средняя";
 				if(strpos((string)$item->cabindesc, "нижней")) $deck = "Нижняя";
 				if(strpos((string)$item->cabindesc, "главной")) $deck = "Главная";
-				//if(strpos((string)$item->cabindesc, "средней")) $deck = "Средняя";
+				if(strpos((string)$item->cabindesc, "солнечной")) $deck = "Солнечная";
+				if(strpos((string)$item->cabindesc, "шлюпочной")) $deck = "Шлюпочная";
+				if(strpos((string)$item->cabindesc, "Нева")) $deck = "Шлюпочная";
 				
-				if(!(isset($cabinsArray[$deck][(string)$item->cabincategoryname]) && $cabinsArray[$deck][(string)$item->cabincategoryname]["place_count"] >= (int)$item->cabinmainpass ))
+				//return array('ship' => (string)$item->cabindesc);
+				
+				if(!(
+					isset($cabinsArray[$deck][(string)$item->cabincategoryname]) &&
+					$cabinsArray[$deck][(string)$item->cabincategoryname]["place_count"] >= (int)$item->cabinmainpass ))
 				{
 					$cabinsArray[$deck][(string)$item->cabincategoryname] = array(
 						"place_count" => (int)$item->cabinmainpass,
@@ -364,8 +384,15 @@ class LoadShipMosturflot  extends Controller
 			$cruiseTariffs = $tariffRepos->findAll();  
 			foreach($cruiseTariffs as $tariff)
 			{
-				$tariffs[$tariff->getId()]  = $tariff;
-			}		
+				$tariffs[$tariff->getName()]  = $tariff;
+			}
+			
+			$meals = array();
+			$cruiseMeals = $mealsRepos->findAll();  
+			foreach($cruiseMeals as $meals)
+			{
+				$mealss[$meals->getName()]  = $meals;
+			}				
 			
 			$placesAll = $placeRepos->findAll();
 			foreach($placesAll as $placesAllItem)
@@ -412,8 +439,167 @@ class LoadShipMosturflot  extends Controller
 				$cruise->setTurOperator("infoflot");
 				$em->persist($cruise);
 				
+				// ЦЕНЫ 
+				foreach($cruiseItem->tourtariffs->item as $tourtariffsItem)
+				{
+					$categoryname = (string)$tourtariffsItem->categoryname;
+					
+					// проверим есть ли такой тип каюты, нет - добавим
+					if(!isset($room_types[$categoryname]))
+					{
+						$cabinType = new CruiseShipCabinType();
+						$cabinType 
+							->setRtName($categoryname)
+							->setRtComment($categoryname)
+							
+						;
+						$em->persist($cabinType);
+						$em->flush();
+						$room_types[$cabinType->getRtComment()] = $cabinType;
+						$room_typesById[$cabinType->getId()] = $cabinType;					
+					}
+					
+					$rt_name = $room_types[$categoryname];
+					
+					if(isset($cabins[$rt_name->getId()]))
+					{
+						$cabin = $cabins[$rt_name->getId()];
+					}
+					else 
+					{
+						continue;
+					}	
+						
+					$rp_id = $room_places_count[$rt_name->getPlaceCountMax()];	
+					
+					
+					
+					foreach($tourtariffsItem->categorytariffs->item as $tarriffType)
+					{
+						
+						
+						
+						if(isset($tariffs[(string)$tarriffType->tariffname]))
+						{
+							$cruiseTariff = $tariffs[(string)$tarriffType->tariffname];
+						}
+						else
+						{
+							$cruiseTariff = new CruiseTariff();
+							$cruiseTariff
+								->setName((string)$tarriffType->tariffname)
+								;
+							$em->persist($cruiseTariff);
+							$em->flush();
+							$tariffs[(string)$tarriffType->tariffname] = $cruiseTariff; 
+						};
+						
+						$tarriff = $tariffs[(string)$tarriffType->tariffname];
+						
+						if($tarriff->getId() == 8) continue;
+						
+						foreach($tarriffType->meals->item as $meals)
+						{
+							if(isset($mealss[(string)$meals->mealname]))
+							{
+								$meal = $mealss[(string)$meals->mealname];
+							}
+							else
+							{
+								$meal = new CruiseMeals();
+								$meal
+									->setName((string)$meals->mealname)
+								;
+								$em->persist($meal);
+								$em->flush();
+								$mealss[(string)$meals->mealname] = $meal;
+								
+							}
+							
+							// теперь грузим сами цены
+							foreach($cabin as $cab)
+							{
+															
+								$price = new CruiseShipCabinCruisePrice();
+								$price	
+										->setRpId($rp_id)  
+										->setTariff( $tarriff )
+										->setCruise($cruise)
+										->setCabin($cab)    
+										->setPrice($meals->mainprice)
+										->setMeals($meal)
+								;
+								$em->persist($price);
+							}
+							
+
+						
+						}
+						
+					}
+						
+						
+				} // КОНЕЦ ЦЕН
 				
-				
+				// ПОГРАММЫ КРУИЗОВ
+				$cruiseDetailXML = $this->getCruiseDetail($code_mos);
+
+				foreach($cruiseDetailXML->answer->tourroutedetail->item as $tourProgrammItem)
+				{
+					// сделать проверку на прогрузку программы
+					$cruise_program_item = new CruiseCruiseProgramItem();
+					
+					$startDate = (string)$tourProgrammItem->arrival == "" ? strtotime($tourProgrammItem->date) : strtotime($tourProgrammItem->arrival);
+					
+					$endDate = (string)$tourProgrammItem->departure == "" ? strtotime($tourProgrammItem->date) : strtotime($tourProgrammItem->departure);
+
+					
+					//$startDate = strtotime($tourProgrammItem->arrival);
+					//$endDate = strtotime($tourProgrammItem->departure);
+					
+					
+					$description = $tourProgrammItem->note == "" ? "" : $tourProgrammItem->note;
+					
+										
+					if(isset($tourProgrammItem->excursions['items']) && $tourProgrammItem->excursions['items'] > 1  )
+					{
+						foreach($tourProgrammItem->excursions->item as $excursion)
+						{
+							$desc = preg_replace("!<a[^>]*>(.*)</a>!isU","<b>\$1</b>", (string)$excursion->desc);
+							$description .= (int)$excursion->type == 1 ? "<b>Дополнительная экскурсия</b>" : "";
+							$description .= $desc."<br>";
+							
+							
+							//$description .= (string)$excursion->desc;
+						}
+					}
+					elseif(isset($tourProgrammItem->excursions['items']) && $tourProgrammItem->excursions['items'] = 1 && isset($tourProgrammItem->excursions->item->desc) )
+					{
+						
+						$desc = preg_replace("!<a[^>]*>(.*)</a>!isU","<b>\$1</b>", $tourProgrammItem->excursions->item->desc);
+						$description .= (int)$tourProgrammItem->excursions->item->type == 1 ? "<b>Дополнительная экскурсия</b>" : "";
+						$description .= $desc."";
+					}
+					
+					$placeName = (string)$tourProgrammItem->cityname;
+
+					$port = isset($places[$placeName]) ? $places[$placeName] : null;
+
+					
+
+					
+					$cruise_program_item
+									->setCruise($cruise)
+									->setPlace($port)
+									->setOrd(500)
+									->setDate($startDate)
+									->setDateStop($endDate)
+									->setDescription($description)
+									->setPlacetitle($placeName)
+									
+						;	
+					$em->persist($cruise_program_item);
+				}
 				
 
 			}
@@ -428,7 +614,8 @@ class LoadShipMosturflot  extends Controller
 			
 		
 		
-		return array($cruisesXML->answer->item,);
+		return array('ship' => $cruisesXML->answer->item);
+		return array('ship' => $ship->getTitle());
 	}
 	
 	

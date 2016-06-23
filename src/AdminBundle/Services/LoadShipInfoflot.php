@@ -271,6 +271,7 @@ class LoadShipInfoflot  extends Controller
 		$cabinPlaceRepos = $this->doctrine->getRepository('BaseBundle:CruiseShipCabinPlace');
 		$cruiseSpecRepos = $this->doctrine->getRepository('BaseBundle:CruiseCruiseSpec');
 		$tariffRepos = $this->doctrine->getRepository('BaseBundle:CruiseTariff');
+		$mealsRepos = $this->doctrine->getRepository('BaseBundle:CruiseMeals');	
 		$placeRepos = $this->doctrine->getRepository('BaseBundle:CruisePlace');
 		$progItemRepos = $this->doctrine->getRepository('BaseBundle:CruiseCruiseProgramItem');
 		
@@ -509,7 +510,14 @@ class LoadShipInfoflot  extends Controller
 			foreach($cruiseTariffs as $tariff)
 			{
 				$tariffs[$tariff->getId()]  = $tariff;
-			}		
+			}	
+			
+			$meals = array();
+			$cruiseMeals = $mealsRepos->findAll();  
+			foreach($cruiseMeals as $meals)
+			{
+				$mealss[$meals->getName()]  = $meals;
+			}			
 			
 			$placesAll = $placeRepos->findAll();
 			foreach($placesAll as $placesAllItem)
@@ -597,6 +605,7 @@ class LoadShipInfoflot  extends Controller
 									->setCruise($cruise)
 									->setCabin($cab)
 									->setPrice($priceItem['price'])
+									->setMeals($mealss[""])
 							;
 							$em->persist($price);
 							
@@ -609,6 +618,7 @@ class LoadShipInfoflot  extends Controller
 										->setCruise($cruise)
 										->setCabin($cab)
 										->setPrice((int)$priceItem['price']*0.85)
+										->setMeals($mealss[""])
 								;
 								$em->persist($price);
 								

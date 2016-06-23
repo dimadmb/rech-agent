@@ -148,7 +148,7 @@ class CruiseController extends Controller
 			(
 				SELECT p2.id , MIN(p2.price) price, p2.cruise_id
 				FROM cruise_ship_cabin_cruise_price p2
-				WHERE p2.tariff_id = 1
+				WHERE p2.tariff_id IN (1,6,11)
 				GROUP BY p2.cruise_id
 				
 			) p ON c.id = p.cruise_id
@@ -336,7 +336,7 @@ class CruiseController extends Controller
 
 					$tariff_arr[$prices->getTariff()->getname()]=1;
 					
-					$price[$prices->getRpId()->getRpName()]['prices'][$prices->getTariff()->getname()] = $prices;
+					$price[$prices->getRpId()->getRpName()]['prices'][$prices->getTariff()->getname()][$prices->getMeals()->getName()] = $prices;
 					//$price[$prices->getRpId()->getRpName()]['rooms'] = $rooms_in_cabin;//список кают
 					// сюда добавить свободные каюты
 					//$rooms => 

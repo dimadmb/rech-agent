@@ -420,4 +420,27 @@ class CruiseCruise
 
 
 
+
+    /**
+     * Set turOperator
+     *
+     * @param string $turOperator
+     * @return CruiseCruise
+     */
+    public function setTurOperator($turOperator)
+    {
+        $this->turOperator = $turOperator;
+
+        return $this;
+    }
+
+    /**
+     * Get turOperator
+     *
+     * @return string 
+     */
+    public function getTurOperator()
+    {
+        return $this->turOperator;
+    }
 }

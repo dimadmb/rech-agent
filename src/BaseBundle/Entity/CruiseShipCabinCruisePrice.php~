@@ -72,6 +72,13 @@ class CruiseShipCabinCruisePrice
 		$this->cruise = $cruise;
 	}
 	
+	/**
+	* @var \CruiseMeals
+	* @ORM\ManyToOne(targetEntity="CruiseMeals", inversedBy="prices")
+	* @ORM\JoinColumn(name="meals_id", referencedColumnName="id")
+	*/
+	private $meals;
+	
 	
 	/**
      * Get id

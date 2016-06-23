@@ -79,6 +79,7 @@ class LoadShip  extends Controller
 		$shipRepos = $this->doctrine->getRepository('BaseBundle:CruiseShip');
 		$classRepos = $this->doctrine->getRepository('BaseBundle:CruiseShipClass');
 		$tariffRepos = $this->doctrine->getRepository('BaseBundle:CruiseTariff');		
+		$mealsRepos = $this->doctrine->getRepository('BaseBundle:CruiseMeals');		
 		$cruiseRepos = $this->doctrine->getRepository('BaseBundle:CruiseCruise');
 		$categoryRepos = $this->doctrine->getRepository('BaseBundle:CruiseCruiseCategory');
 		
@@ -191,6 +192,13 @@ class LoadShip  extends Controller
 			foreach($cruiseTariffs as $tariff)
 			{
 				$tariffs[$tariff->getName()]  = $tariff;
+			}	
+			
+			$meals = array();
+			$cruiseMeals = $mealsRepos->findAll();  
+			foreach($cruiseMeals as $meals)
+			{
+				$mealss[$meals->getName()]  = $meals;
 			}
 			
 			$decks = array();
@@ -606,6 +614,7 @@ class LoadShip  extends Controller
 								->setCruise($cruise)
 								->setCabin($cabin)
 								->setPrice($price_value)
+								->setMeals($mealss[""])
 						;
 						$em->persist($price);
 						

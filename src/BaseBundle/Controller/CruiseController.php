@@ -459,7 +459,7 @@ class CruiseController extends Controller
 	}
 
 	/**
-	 * @Template("BaseBundle:Cruise:schedule.html.twig")
+	 * @Template("BaseBundle:Cruise:scheduleSpecial.html.twig")
 	*/
 	public function specialofferAction($offer)
 	{
@@ -482,7 +482,7 @@ class CruiseController extends Controller
 
 		$result = $this->searchCruise($parameters);
 		$result = $this->monthsSchedule($result);
-		return array('cruises_months' => $result);;
+		return array('cruises_months' => $result,'offer' => $offer);;
 	}
 	
 

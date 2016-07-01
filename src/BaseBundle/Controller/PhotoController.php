@@ -50,19 +50,23 @@ class PhotoController extends Controller
 		return array('photos'=>$photos);
 		
 	}
-
+//  /bundles/base/files/cruise/ship/aleksandr-benua/aleksandr-benua-main.jpg
 	/**
 	* Вывод фоток на лету
-	* @Route("/image", name="image_resize" )
+	* @Route("/images/ship/{ship_name}/{ship_image}", name="image_resizer" )
 	*/
-	public function imageAction()
+	public function imageAction($ship_name, $ship_image)
 	{
+		
+		$initial_path = "/bundles/base/files/cruise/ship/"; //aleksandr-benua/aleksandr-benua-main.jpg
+		
 		$ir = new ImageResizer();
 		$request = Request::createFromGlobals();
 		$path = $request->query-> get ('path');
 		return $ir->resizeImage(
-			$request->server->get('DOCUMENT_ROOT').'/web/'.$path,
-			null,
+			$request->server->get('DOCUMENT_ROOT').'/web'.$initial_path.$ship_name.'/'.$ship_image,
+			$request->server->get('DOCUMENT_ROOT').'/web/images/ship/'.$ship_name.'/',
+
 			450,
 			260
 		);

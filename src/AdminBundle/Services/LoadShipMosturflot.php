@@ -436,7 +436,7 @@ class LoadShipMosturflot  extends Controller
 				$cruise->setEndDate($endDate);
 				$cruise->setDayCount($dayCount);
 				$cruise->setDescription("");
-				$cruise->setTurOperator("infoflot");
+				$cruise->setTurOperator("mosturflot");
 				$em->persist($cruise);
 				
 				// ЦЕНЫ 
@@ -614,7 +614,7 @@ class LoadShipMosturflot  extends Controller
 			
 		
 		
-		return array('ship' => $cruisesXML->answer->item);
+		//return array('ship' => $cruisesXML->answer->item);
 		return array('ship' => $ship->getTitle());
 	}
 	

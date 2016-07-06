@@ -74,17 +74,19 @@ class ApiController extends Controller
 		AND aa_schet.status = 1
 		";
 
-		$statement = $connection->prepare($sql);
-		$statement->execute();
-		$results = $statement->fetchAll();
-
 		
 		// нужно получить активные каюты
 		$active_rooms = array();	
 		foreach($results as $item)
 		{
 			$active_rooms[] = $item['num'];
-		}
+		}		
+		
+		$statement = $connection->prepare($sql);
+		$statement->execute();
+		$results = $statement->fetchAll();
+
+
 		
 		// нужно получить занятые каюты
 		$no_available_rooms = array();		

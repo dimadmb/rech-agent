@@ -14,28 +14,44 @@
     <tbody>
 	
 	{% for cruise in cruises %}	
-
-      <tr>
-        <td><a href="{{path('homepage')}}cruise/cruisedetails/{{cruise.cruiseUrl.shipCode}}_{{cruise.cruiseUrl.code}}.html">{{cruise.route}}</a></td>
-        <td><a href="{{path('page',{'first':'cruise','second':'ship','name':cruise.cruiseUrl.shipCode})}}">{{cruise.ship}}</a></td>
-        <td>{{cruise.start}}</td>
-        <td>{{cruise.days}}</td>
+	
+	  <tr>
+        <td><a href="{{path('homepage')}}cruise/cruisedetails/{{cruise.ship.code}}_{{cruise.code.code}}.html">{{cruise.route}}</a></td>
+        <td><a href="{{path('page',{'first':'cruise','second':'ship','name':cruise.ship.code})}}">{{cruise.ship}}</a></td>
+        <td>{{cruise.startdate | date("d.m.Y")}}</td>
+        <td>{{cruise.daycount}}</td>
         <td>
-			{{cruise.minprice| raw}}
-		</td>
-        <td style="min-width:153px;">{% if (cruise.burningCruise) %}<span class="table-special-span color-gk">«Счастливый» круиз</span>{% endif %}
+			
+			
+		{% if cruise.discount_price is defined %}
+			
+			<span style=" text-decoration:line-through;">{{cruise.discount_price_old | raw}}&nbsp;руб.</span>
+			<br>
+			<span style="color:red;">{{cruise.discount_price | raw}}&nbsp;руб.</span>
+		
+		{% else %}
+			{{cruise.minprice| raw}}&nbsp;руб.
+		{% endif %}	
 
-        {% if (cruise.specialoffer) %} <span class="table-special-span color-st">Специальный тариф</span> {% endif %}</td>
+		
+		{#{dump(cruise.dump)}#}	
+		</td>
+        <td style="min-width:153px;">{% if (cruise.code.burningCruise) %}<span class="table-special-span color-gk">«Счастливый» круиз</span>{% endif %}
+
+        {% if (cruise.code.specialoffer) %} <span class="table-special-span color-st">Специальный тариф</span> {% endif %}</td>
 
         {% if(cruise.turOperator == "vodohod") %}
-		<td><a href="http://booking.rech-agent.ru/cruise/{{cruise.cruiseUrl.code}}">Забронировать</a></td>
+		<td><a href="http://booking.rech-agent.ru/cruise/{{cruise.code.code}}">Забронировать</a></td>
 		{% else %}
-		<td><a data-code="{{cruise.cruiseUrl.code}}" class="modal-zayavka" href="javascript://">Подать заявку</a></td>
+		<td><a data-code="{{cruise.code.code}}" class="modal-zayavka" href="javascript://">Подать заявку</a></td>
 		{% endif %}
 		
 		
 		
-      </tr>					
+      </tr>	
+	  
+	  
+				
 					
 	{% endfor %}
 	

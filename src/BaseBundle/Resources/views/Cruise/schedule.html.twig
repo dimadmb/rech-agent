@@ -4,6 +4,11 @@
 
 {% block body %}
 <h1>Расписание по месяцам</h1>
+{% if count is defined %}
+<p>Найдено {{count}} круизов </p>
+
+{% endif %}
+
 <br>
 
 {% for cruises_month in cruises_months %}

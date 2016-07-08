@@ -14,7 +14,7 @@
     <tbody>
 	
 	{% for cruise in cruises %}	
-	
+	{#{dump(cruise.dump)}#}
 	  <tr>
         <td><a href="{{path('homepage')}}cruise/cruisedetails/{{cruise.ship.code}}_{{cruise.code.code}}.html">{{cruise.route}}</a></td>
         <td><a href="{{path('page',{'first':'cruise','second':'ship','name':cruise.ship.code})}}">{{cruise.ship}}</a></td>
@@ -34,7 +34,7 @@
 		{% endif %}	
 
 		
-		{#{dump(cruise.dump)}#}	
+			
 		</td>
         <td style="min-width:153px;">{% if (cruise.code.burningCruise) %}<span class="table-special-span color-gk">«Счастливый» круиз</span>{% endif %}
 

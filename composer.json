@@ -20,7 +20,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
 		"erivello/simple-html-dom-bundle": "dev-master",
         "egeloen/ckeditor-bundle": "^4.0",
-        "helios-ag/fm-elfinder-bundle": "^6.1"
+        "helios-ag/fm-elfinder-bundle": "^6.1",
+        "leaseweb/memcache-bundle": "*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

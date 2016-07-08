@@ -108,9 +108,21 @@ doctrine:
         entity_managers:
             default:
                 naming_strategy: doctrine.orm.naming_strategy.underscore
-#                metadata_cache_driver: apc
-#                query_cache_driver: apc
-#                result_cache_driver: apc
+                metadata_cache_driver: 
+                    type: memcache
+                    host: localhost
+                    port: 11211
+                    instance_class: Memcache
+                query_cache_driver: 
+                    type: memcache
+                    host: localhost
+                    port: 11211
+                    instance_class: Memcache
+                result_cache_driver:
+                    type: memcache
+                    host: localhost
+                    port: 11211
+                    instance_class: Memcache				
 
                 connection:       default
                 mappings:
@@ -192,3 +204,26 @@ fm_elfinder:
                         upload_max_size: 8M # also file upload sizes restricted in php.ini
                         #attributes: example of setting attributes permission
                         #    - { pattern: '/(.*?)/', read: true, write: false, locked: true }
+
+lsw_memcache:
+    session:
+        pool: default
+    pools:
+        default:
+            servers:
+              - { host: "127.0.0.1", tcp_port: 11211 }
+
+lsw_memcache:
+    doctrine:
+        metadata_cache:
+            pool: default
+            entity_manager: default          # the name of your entity_manager connection
+            document_manager: default        # the name of your document_manager connection
+        result_cache:
+            pool: default
+            entity_manager: [default, read]  # you may specify multiple entity_managers
+            prefix: "result_"                # you may specify a prefix for the entries
+        query_cache:
+            pool: default
+            entity_manager: default
+    # pools

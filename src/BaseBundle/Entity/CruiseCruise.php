@@ -374,6 +374,7 @@ class CruiseCruise
         $this->prices->removeElement($prices);
     }
 
+	
     /**
      * Get prices
      *

@@ -17,70 +17,56 @@ class CruiseController extends Controller
 
 	public function prepareCruise( $cruise, $cat = false) {
 
+
 		$cruise->minprice = $cruise->getMinprice();
-				
+		//$cruise->dump = array();		
 		if( $cruise->getCode()->getSpecialoffer() == 1  || $cruise->getCode()->getBurningCruise() == 1)
-		{
-			//$wrap->prices = get_class_methods($cruise->getPrices());
-			//$cruise->getPrices()->setInitialized(false);
-			//$cruise->getPrices()->initialize(false);
-			
-			
-			$cruise_code = $cruise->getCode()->getCode();
-			$cruise_id = $cruise->getId();
-			
-			//  ДОСТАТЬ ВСЕ ПРАЙСЫ С TARIFF_ID = 1 B ПО ЭТОМУ КРУИЗУ
-			
-			$prices = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinCruisePrice')->findByCruiseWithTariff( $cruise_id, 1);
-			
-			$sql="
-			SELECT * FROM `aa_discount`
-			WHERE id_tur = $cruise_code
-			";
-			
-			$em_booking = $this->getDoctrine()->getManager('booking');
-			$connection = $em_booking->getConnection();
-			$statement = $connection->prepare($sql);
-			$statement->execute();
-			$results = $statement->fetchAll();
-			// нужно получить активные каюты
-			$active_rooms = array();
-			foreach($results as &$item)
-			{
-				$active_rooms[] = &$item['num'];
-			}
-			
-
-			$discountPrices = array();
-
-			foreach($prices as &$price)
-			{
-
-				$discount = false;
-
-				foreach($price->getCabin()->getRooms() as $room)
-				{
-					if(in_array($room->getRoomNumber(),$active_rooms))
-					{
-						$rooms_in_cabin[] = $room->getRoomNumber();
-						$discount = true;
-					}
-				}
-				if($discount)
-				{
-					$discountPrices[] = $price->getPrice();
-				}
-
+		{			
 				
-			}
+			if($cruiseMemory = $this->get('memcache.default')->get('cruise'.$cruise->getId()) )
+			{$cruise = $cruiseMemory ;}
+			else 
+			{
 				
-				/*
-				foreach($cabinsAll as $cabinsItem)
+				$cruise_code = $cruise->getCode()->getCode();
+				$cruise_id = $cruise->getId();
+				
+				//  ДОСТАТЬ ВСЕ ПРАЙСЫ С TARIFF_ID = 1 B ПО ЭТОМУ КРУИЗУ
+                //$cruise->getPrices()->setInitialized(false);
+                //$cruise->getPrices()->initialize(false);
+                //$cruise->getPrices()->clear();
+                //$cruise->getPrices()->remove(1);
+                //$cruise->clearPrices();
+				//$cruise->prices = array();
+				$prices = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinCruisePrice')->findByCruiseWithTariff( $cruise_id, 1);
+				//$prices = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinCruisePrice')->findByCruise($cruise);
+				//$cruise->dump = $prices;
+				$sql="
+				SELECT * FROM `aa_discount`
+				WHERE id_tur = $cruise_code
+				";
+				
+				$em_booking = $this->getDoctrine()->getManager('booking');
+				$connection = $em_booking->getConnection();
+				$statement = $connection->prepare($sql);
+				$statement->execute();
+				$results = $statement->fetchAll();
+				// нужно получить активные каюты
+				$active_rooms = array();
+				foreach($results as $item)
 				{
-					
+					$active_rooms[] = $item['num'];
+				}
+				
+
+				$discountPrices = array();
+
+				foreach($prices as $price)
+				{
+
 					$discount = false;
-					$rooms_in_cabin = array();
-					foreach($cabinsItem->getRooms() as $room)
+
+					foreach($price->getCabin()->getRooms() as $room)
 					{
 						if(in_array($room->getRoomNumber(),$active_rooms))
 						{
@@ -90,44 +76,38 @@ class CruiseController extends Controller
 					}
 					if($discount)
 					{
-						
-						foreach($cabinsItem->getPrices() as $price)
-						{
-							$cruise->dump[] =  $price->getTariff()->getId() ; 
-							//if($price->getTariff()->getId() == 1) 
-							//{
-							//	$discountPrices[] = $price->getPrice();
-							//}
-							
-							
-						}
-	
+						$discountPrices[] = $price->getPrice();
 					}
-					
 
-				}	
-			
-*/
-			
-			if(count($discountPrices)>0)
-			{
-				$min_discount_price_old = min($discountPrices);
-				$koef = ($cruise->getCode()->getSpecialoffer() == 1) ?  0.9 : ($cruise->getCode()->getBurningCruise() == 1) ? 0.8 : 1;
-				$min_discount_price = $min_discount_price_old*$koef; 
-				if($min_discount_price < $cruise->minprice )
-				{
-				$cruise->discount_price_old = $min_discount_price_old;
-				$cruise->discount_price = $min_discount_price;
 				}
+				
+				if(count($discountPrices)>0)
+				{
+					$min_discount_price_old = min($discountPrices);
+					$koef = 1;
+					if ($cruise->getCode()->getSpecialOffer() == 1) $koef = 0.9;
+					if ($cruise->getCode()->getBurningCruise() == 1) $koef = 0.8;
+					
+					
+					$min_discount_price = $min_discount_price_old*$koef; 
+					if($min_discount_price < $cruise->minprice )
+					{
+					$cruise->discount_price_old = $min_discount_price_old;
+					$cruise->discount_price = $min_discount_price;
+					}
+				}
+			
+				$this->get('memcache.default')->set('cruise'.$cruise->getId(),$cruise,0,60*60*4);
 			}
+			
+			
+		}
 		
 			
-		}			
 		
 		
 		return $cruise;
 	}
-
 
 
     /**
@@ -263,10 +243,9 @@ class CruiseController extends Controller
 		
 			(
 				SELECT p2.id , MIN(p2.price) price, p2.cruise_id
-				FROM cruise_ship_cabin_cruise_price p2
+				FROM (SELECT * FROM cruise_ship_cabin_cruise_price ORDER BY price) p2
 				WHERE p2.tariff_id IN (1,6,11)
 				GROUP BY p2.cruise_id
-				
 			) p ON c.id = p.cruise_id
 		
 		
@@ -490,14 +469,11 @@ class CruiseController extends Controller
 		
 		$form = $request->get('form');
 		
-		
-		
 		$result = $this->searchCruise($form);
-		$count = count($result);
 		$result = new ArrayCollection($result);
 		$result = $this->monthsSchedule($result);
-		
-		return array('cruises_months' => $result,'count'=> $count);		
+			
+		return array('cruises_months' => $result,);	 	
 		
 	}
 

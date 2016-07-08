@@ -35,6 +35,9 @@ class AppKernel extends Kernel
 			
 			new Erivello\SimpleHtmlDomBundle\ErivelloSimpleHtmlDomBundle(),
             new MailBundle\MailBundle(),
+			
+			
+			new Lsw\MemcacheBundle\LswMemcacheBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

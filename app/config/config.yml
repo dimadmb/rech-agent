@@ -55,6 +55,7 @@ assetic:
 doctrine:
     dbal:
         default_connection: default
+
         #base_connection: base
         connections:
           default:
@@ -65,6 +66,8 @@ doctrine:
             user:     "%database_user%"
             password: "%database_password%"
             charset:  UTF8
+            options:
+                1002: "SET session wait_timeout=300"
 
 
           booking:

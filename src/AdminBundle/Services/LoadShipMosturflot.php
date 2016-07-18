@@ -601,13 +601,13 @@ class LoadShipMosturflot  extends Controller
 					$em->persist($cruise_program_item);
 				}
 				
-
+			$em->persist($cruise);
 			}
 			
 			
 			
 			
-			$em->persist($cruise); 
+			 
 			$em->persist($ship); 
 			$em->flush(); 
 			

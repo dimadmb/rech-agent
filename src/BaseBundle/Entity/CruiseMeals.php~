@@ -3,6 +3,7 @@
 namespace BaseBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * CruiseMeals
@@ -93,5 +94,28 @@ class CruiseMeals
     public function getPrices()
     {
         return $this->prices;
+    }
+
+    /**
+     * Add prices
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinCruisePrice $prices
+     * @return CruiseMeals
+     */
+    public function addPrice(\BaseBundle\Entity\CruiseShipCabinCruisePrice $prices)
+    {
+        $this->prices[] = $prices;
+
+        return $this;
+    }
+
+    /**
+     * Remove prices
+     *
+     * @param \BaseBundle\Entity\CruiseShipCabinCruisePrice $prices
+     */
+    public function removePrice(\BaseBundle\Entity\CruiseShipCabinCruisePrice $prices)
+    {
+        $this->prices->removeElement($prices);
     }
 }

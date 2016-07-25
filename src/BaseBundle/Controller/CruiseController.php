@@ -10,7 +10,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+
 use Doctrine\ORM\Query\ResultSetMapping;
+
 
 class CruiseController extends Controller
 {
@@ -293,7 +296,7 @@ class CruiseController extends Controller
 	}
 	
 	# выводит список ссылок на месяцы
-	private function months() {
+	public function months() {
 		$months = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise')->findMonths();
 		$result = array();
 		$current = "";
@@ -461,7 +464,7 @@ class CruiseController extends Controller
 
     /**
 	 * @Template("BaseBundle:Cruise:schedule.html.twig")
-	
+
 	 */		
 	public function searchAction() {
 		

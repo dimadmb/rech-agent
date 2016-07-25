@@ -7,7 +7,6 @@ if (!isset($_SERVER['HTTP_HOST'])) {
 if (!in_array(@$_SERVER['REMOTE_ADDR'], array(
     '127.0.0.1',
     '::1',
-	'62.117.111.84'
 ))) {
     header('HTTP/1.0 403 Forbidden');
     exit('This script is only accessible from localhost.');
@@ -75,7 +74,9 @@ $minorProblems = $symfonyRequirements->getFailedRecommendations();
                             <p>Major problems have been detected and <strong>must</strong> be fixed before continuing:</p>
                             <ol>
                                 <?php foreach ($majorProblems as $problem): ?>
-                                    <li><?php echo $problem->getHelpHtml() ?></li>
+                                    <li><?php echo $problem->getTestMessage() ?>
+                                        <p class="help"><em><?php echo $problem->getHelpHtml() ?></em></p>
+                                    </li>
                                 <?php endforeach; ?>
                             </ol>
                         <?php endif; ?>
@@ -88,7 +89,9 @@ $minorProblems = $symfonyRequirements->getFailedRecommendations();
                             </p>
                             <ol>
                                 <?php foreach ($minorProblems as $problem): ?>
-                                    <li><?php echo $problem->getHelpHtml() ?></li>
+                                    <li><?php echo $problem->getTestMessage() ?>
+                                        <p class="help"><em><?php echo $problem->getHelpHtml() ?></em></p>
+                                    </li>
                                 <?php endforeach; ?>
                             </ol>
                         <?php endif; ?>

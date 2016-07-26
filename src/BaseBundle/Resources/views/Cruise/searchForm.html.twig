@@ -19,9 +19,9 @@
 		{{ form_widget(form_search.ship) }}
 	</div>				
 	<div class="col-sm-3">
-		
-
-		
+		{{ form_label(form_search.placeStart, 'Город отправления') }}
+		{{ form_errors(form_search.placeStart) }}
+		{{ form_widget(form_search.placeStart) }}
 	</div>
 </div>
 <div class="row">
@@ -62,7 +62,7 @@
 		</div>	
 	</div>	
 	
-	<div class="col-sm-3" style="padding:0px 15px  0 30px;">
+	<div class="col-sm-3" style="padding:0px 15px  0 15px;">
 		{{ form_widget(form_search.button) }}	
 		
 		{{ form_rest(form_search) }}

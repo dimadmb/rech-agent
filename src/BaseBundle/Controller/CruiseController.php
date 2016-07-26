@@ -18,11 +18,23 @@ use Doctrine\ORM\Query\ResultSetMapping;
 class CruiseController extends Controller
 {
 
+	private	$assocPlace = 
+		[
+		"moscow" => ["inf" => "Москва", "gen" => "Москвы"],
+		"nnovgorod" =>  ["inf" => "Нижний Новгород", "gen" => "Нижнего Новгорода"],
+		"volgograd" => ["inf" => "Волгоград", "gen" => "Волгограда"],
+		"saratov" => ["inf" => "Саратов", "gen" => "Саратова"],
+		"yaroslavl" => ["inf" => "Ярославль", "gen" => "Ярославля"],
+		"spb" => ["inf" => "Санкт-Петербург", "gen" => "Санкт-Петербурга"],
+		"kazan" => ["inf" => "Казань", "gen" => "Казани"],
+		"samara" => ["inf" => "Самара", "gen" => "Самары"],
+		"astrahan" => ["inf" => "Астрахань", "gen" => "Астрахани"],
+		];
+
 	public function prepareCruise( $cruise, $cat = false) {
 
-
 		$cruise->minprice = $cruise->getMinprice();
-		//$cruise->dump = array();		
+		
 		if( $cruise->getCode()->getSpecialoffer() == 1  || $cruise->getCode()->getBurningCruise() == 1)
 		{			
 				
@@ -34,16 +46,8 @@ class CruiseController extends Controller
 				$cruise_code = $cruise->getCode()->getCode();
 				$cruise_id = $cruise->getId();
 				
-				//  ДОСТАТЬ ВСЕ ПРАЙСЫ С TARIFF_ID = 1 B ПО ЭТОМУ КРУИЗУ
-                //$cruise->getPrices()->setInitialized(false);
-                //$cruise->getPrices()->initialize(false);
-                //$cruise->getPrices()->clear();
-                //$cruise->getPrices()->remove(1);
-                //$cruise->clearPrices();
-				//$cruise->prices = array();
 				$prices = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinCruisePrice')->findByCruiseWithTariff( $cruise_id, 1);
-				//$prices = $this->getDoctrine()->getRepository('BaseBundle:CruiseShipCabinCruisePrice')->findByCruise($cruise);
-				//$cruise->dump = $prices;
+
 				$sql="
 				SELECT * FROM `aa_discount`
 				WHERE id_tur = $cruise_code
@@ -228,7 +232,13 @@ class CruiseController extends Controller
 			AND c.daycount >=".$mindays;
 			$where .= "
 			AND c.daycount <=".$maxdays;			
-		}			
+		}	
+
+		if(isset($parameters['placeStart']) && ($parameters['placeStart'] != "all" ) )
+		{
+			$where .= "
+			AND c.route LIKE '".$parameters['placeStart']."%'";
+		}
 		
 		$sql = "
 		SELECT 
@@ -269,7 +279,7 @@ class CruiseController extends Controller
 		return $result;
 	}
 
-	
+	// Вывод рейсов на заданный теплоход
     /**
 	 * @Template()
      */		
@@ -313,6 +323,11 @@ class CruiseController extends Controller
 		$model->title = "Все круизы";
 		$model->url = $this->generateUrl("monthschedule");
 		$result[] = $model;
+		
+		
+
+		
+		
 		return $result;
 	}
 
@@ -323,6 +338,22 @@ class CruiseController extends Controller
 	{
 		
 		return array('monthMenu'=>$this->months());
+	}
+	
+	/**
+	* @Template("BaseBundle:Cruise:monthMenu.html.twig")
+	*/
+	public function routeStartAction() 
+	{
+		asort($this->assocPlace);
+		foreach($this->assocPlace as $url=>$placeStart)
+		{
+		$model = new \stdClass();
+		$model->title = "".$placeStart["gen"];
+		$model->url = $this->generateUrl("cruiseplacestart",["place"=>$url]);
+		$result[] = $model;
+		}
+		return array('monthMenu'=>$result);
 	}
 	
 	
@@ -511,7 +542,11 @@ class CruiseController extends Controller
 		{
 			$days = $minDays.','.$maxDays;
 		}
-		
+		$ps['all'] = 'Все города';
+		foreach($this->assocPlace as $placeStart)
+		{
+			$ps[$placeStart['inf']] = $placeStart['inf'];
+		}
 		
 		$form_search = $this->createFormBuilder()
             ->add('startDate', 'date',array('widget' => 'single_text','data'=> new \DateTime(date("Y-m-d",$minDate->getStartdate())) ))
@@ -541,6 +576,8 @@ class CruiseController extends Controller
 			->add('specialoffer','checkbox',array('required'=> false,'label' => 'Специальный тариф'))
 			->add('burningCruise','checkbox',array('required'=> false,'label' => '«Счастливый» круиз'))
 			->add('button', 'submit',array('label' => 'Поиск'))
+			
+			->add('placeStart', 'choice', ['choices'=>$ps]) 
 			
 			->setMethod('GET')
             
@@ -581,7 +618,29 @@ class CruiseController extends Controller
 		$result = $this->monthsSchedule($result);
 		return array('cruises_months' => $result,'offer' => $offer);;
 	}
-	
+
+
+	/**
+	* @Route("/cruise/placestart/{place}.html", name="cruiseplacestart" )
+	* @Template("BaseBundle:Cruise:schedulePlaceStart.html.twig")
+	*/
+	public function cruisePlaceStartAction($place)
+	{
+		$parameters = array();
+		if(isset($this->assocPlace[$place]))
+		{
+			$parameters['placeStart'] = $this->assocPlace[$place]["inf"];
+		}
+
+		else
+		{
+			throw $this->createNotFoundException("Страница не найдена.");
+		}	
+
+		$result = $this->searchCruise($parameters);
+		$result = $this->monthsSchedule($result);
+		return array('cruises_months' => $result,'placeStart'=>$this->assocPlace[$place]["gen"]);;
+	}	
 
 	/**
 	 * @Template() 

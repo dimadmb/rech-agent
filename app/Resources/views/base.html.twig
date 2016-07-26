@@ -84,6 +84,10 @@
                         <a href="{{path('cruise')}}" class="dropdown-toggle" data-toggle="dropdown">Поиск круиза<b class="caret"></b></a>
 						{{ render(controller('BaseBundle:Cruise:monthMenu')) }}
                     </li>
+                    <li>
+                        <a href="{{path('cruise')}}" class="dropdown-toggle" data-toggle="dropdown">Отправление из<b class="caret"></b></a>
+						{{ render(controller('BaseBundle:Cruise:routeStart')) }}
+                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Спецпредложения<b class="caret"></b></a>
                         <ul class="dropdown-menu">

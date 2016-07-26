@@ -1,14 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Расписание и цены речных круизов по месяцам на 2016 - 2017 год{% endblock %}
+{% block title %}Круизы и речные туры из {{placeStart}}{% endblock %}
 
 {% block body %}
-<h1>Расписание по месяцам</h1>
-{% if count is defined %}
-<p>Найдено {{count}} круизов </p>
-
-{% endif %}
-{#{dump(dump)}#}
+<h1>Круизы из {{placeStart}}</h1>
 <br>
 
 {% for cruises_month in cruises_months %}

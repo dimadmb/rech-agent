@@ -17,9 +17,7 @@ class DocumentRepository extends EntityRepository
 	public function findForSiteMap() {
 		$str = "SELECT d
 			FROM BaseBundle\Entity\Document d
-			WHERE d.deletable = 0
-			
-			AND d.archieved = 0
+			WHERE  d.archieved = 0
 			";
    		$q = $this->_em->createQuery($str);
    		return $q->getResult();

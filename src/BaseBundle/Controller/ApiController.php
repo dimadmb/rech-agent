@@ -42,14 +42,57 @@ class ApiController extends Controller
 		return $cruises_json;
 	}
 	
-	
-    /**
-	 * @Template()
-	 * @Route("/api/json/kauta/{cruise_code}/{pre}", name="api_json_kauta" )
-     */			
-	public function kautaAction($cruise_code, $pre = false)
-	{
 
+
+	private function getDescription($cruise_code)
+	{
+		
+		$cruisesRepository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
+		$cruise_prices = $cruisesRepository->findOneApiByCode($cruise_code);
+		
+		$cruise_description  = array(
+				'date_start' => $cruise_prices->getStartdate(),
+				'date_stop' => $cruise_prices->getEnddate(),
+				'route' => $cruise_prices->getRoute(),
+				'ship' => $cruise_prices->getShip()->getTitle(),
+				'ship_img' => $cruise_prices->getShip()->getImgurl(),
+				
+		);
+		return $cruise_description;
+	}
+	
+	private function getProgramm($cruise_code)
+	{
+		$cruisesRepository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
+			
+		$cruise_programm = array(); 
+		
+		$cruise =  $cruisesRepository->findByUrl($cruise_code);
+		
+		if($cruise == null)
+		{
+			return array('array' => json_encode(array('error' => "Продажи путевок на выбранный тур завершены")));
+		}
+		
+		foreach($cruise->getProgramItems() as $programmItem)
+		{
+			$cruise_programm[] = array(
+					
+					'date_start' => $programmItem->getDate(),
+					'date_stop' => $programmItem->getDateStop(),
+					'place' => $programmItem->getPlace()->getTitle(),
+					'description' => $programmItem->getDescription(),
+					
+					);
+			
+		}
+		
+		return $cruise_programm;
+	}
+	
+	
+	private function getPrices($cruise_code)
+	{
 		$sql="
 		SELECT * FROM `aa_discount`
 		WHERE id_tur = $cruise_code
@@ -99,37 +142,12 @@ class ApiController extends Controller
 			
 		$cruise_programm = array(); 
 		
-		$cruise =  $cruisesRepository->findByUrl($cruise_code);
+		$cruise_prices = $cruisesRepository->findOneApiByCode($cruise_code);
 		
-		if($cruise == null)
+		if($cruise_prices == null)
 		{
 			return array('array' => json_encode(array('error' => "Продажи путевок на выбранный тур завершены")));
 		}
-		
-		foreach($cruise->getProgramItems() as $programmItem)
-		{
-			$cruise_programm[] = array(
-					
-					'date_start' => $programmItem->getDate(),
-					'date_stop' => $programmItem->getDateStop(),
-					'place' => $programmItem->getPlace()->getTitle(),
-					'description' => $programmItem->getDescription(),
-					
-					);
-			
-		}
-		
-		$cruise_prices = $cruisesRepository->findOneApiByCode($cruise_code);
-		
-
-		$cruise_description  = array(
-				'date_start' => $cruise_prices->getStartdate(),
-				'date_stop' => $cruise_prices->getEnddate(),
-				'route' => $cruise_prices->getRoute(),
-				'ship' => $cruise_prices->getShip()->getTitle(),
-				'ship_img' => $cruise_prices->getShip()->getImgurl(),
-				
-		);
 		
 		$koeff = $cruise_prices->getCode()->getBurningCruise() == 1 ? 0.8 : ($cruise_prices->getCode()->getSpecialOffer() == 1 ? 0.9 : 1);
 		
@@ -181,13 +199,43 @@ class ApiController extends Controller
 			
 		}
 		
+		return $rooms;
 		
-		if($pre) return array('array' => '<pre>'.print_r(array('cruise' => $cruise_description ,'programm' => $cruise_programm , 'prices' => $rooms,),1).'</pre>');
-		
-		return array('array' => json_encode(array('cruise' => $cruise_description ,'programm' => $cruise_programm , 'prices' => $rooms,)));
 	}
 	
 	
+    /**
+	 * @Template()
+	 * @Route("/api/json/kauta/{cruise_code}/{pre}", name="api_json_kauta" )
+     */			
+	public function kautaAction($cruise_code, $pre = false)
+	{
+		if($pre) return array('array' => '<pre>'.print_r(array('cruise' => $this->getDescription($cruise_code) ,'programm' => $this->getProgramm($cruise_code) , 'prices' => $this->getPrices($cruise_code),),1).'</pre>');
+		
+		return array('array' => json_encode(array('cruise' => $this->getDescription($cruise_code) ,'programm' => $this->getProgramm($cruise_code) , 'prices' => $this->getPrices($cruise_code),)));
+	}
+	
+    /**
+	 * @Template("BaseBundle:Api:kauta.html.twig")
+	 * @Route("/api/json/prices/{cruise_code}/{pre}", name="api_json_prices" )
+     */			
+	public function pricesAction($cruise_code, $pre = false)
+	{
+		if($pre) return array('array' => '<pre>'.print_r(  $this->getPrices($cruise_code) ,1).'</pre>');
+		
+		return array('array' => json_encode($this->getPrices($cruise_code)));
+	}
+	
+    /**
+	 * @Template("BaseBundle:Api:kauta.html.twig")
+	 * @Route("/api/json/timetable/{cruise_code}/{pre}", name="api_json_timetable" )
+     */			
+	public function timetableAction($cruise_code, $pre = false)
+	{
+		if($pre) return array('array' => '<pre>'.print_r(  $this->getProgramm($cruise_code) ,1).'</pre>');
+		
+		return array('array' => json_encode($this->getProgramm($cruise_code)));
+	}
 	
 	
 	

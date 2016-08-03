@@ -8,7 +8,17 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class ApiController extends Controller
 {
-    /**
+    
+	/**
+	 * @Template()
+	 * @Route("/api/json", name="api_json" )
+     */	
+	public function jsonAction()
+	{
+		return [];
+	}
+	
+	/**
 	 * @Template()
 	 * @Route("/api/json/cruises/{pre}", name="api_json_cruises" )
      */			

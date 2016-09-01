@@ -27,7 +27,14 @@ class ApiInController extends Controller
 			return new Response('Значение 0 или 1');
 		}
 		//$not_val = $val == 1 ? 0 : 1;
-
+		
+		
+        try {
+			$this->get('memcache.default')->flush();
+        } catch (ServiceNotFoundException $e) {
+            
+        }
+		
 		
 		switch ($type)
 		{

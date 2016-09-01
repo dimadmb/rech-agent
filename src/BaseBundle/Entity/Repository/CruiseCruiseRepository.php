@@ -89,7 +89,7 @@ class CruiseCruiseRepository extends EntityRepository
 			FROM BaseBundle\Entity\CruiseCruise c 
 			JOIN c.ship s
 			LEFT JOIN c.code code
-
+			ORDER BY c.startdate
 			";
    		$q = $this->_em->createQuery($str);
    		return $q->getResult();

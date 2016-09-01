@@ -119,6 +119,15 @@ class CruiseController extends Controller
 
     /**
 	 * @Template()
+	 * @Route("/cacheclear", name="cacheclear" )
+     */		
+	public function cacheClearAction()
+	{
+		$dump = $this->get('memcache.default')->flush();
+		return array("dump"=>$dump);
+	}
+    /**
+	 * @Template()
 	 * @Route("/cruise", name="cruise" )
      */		
 	public function indexAction()

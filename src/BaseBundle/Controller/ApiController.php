@@ -59,6 +59,12 @@ class ApiController extends Controller
 		
 		$cruisesRepository = $this->getDoctrine()->getRepository('BaseBundle:CruiseCruise');
 		$cruise_prices = $cruisesRepository->findOneApiByCode($cruise_code);
+
+		
+		if($cruise_prices == null)
+		{
+			return array('array' => json_encode(array('error' => "Продажи путевок на выбранный тур завершены")));
+		}		
 		
 		$cruise_description  = array(
 				'date_start' => $cruise_prices->getStartdate(),

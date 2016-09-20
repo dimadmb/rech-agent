@@ -11,4 +11,5 @@
 /vendor/
 /build/
 /bin/
+/backup/
 /composer.phar

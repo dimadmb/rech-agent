@@ -198,35 +198,8 @@
 </div>
 
 
-{% stylesheets 'css/*' filter='yui_css' %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-{% endstylesheets %}
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-	
-	
-	
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
 
-{% javascripts 'js/*' filter='yui_js' %}
-    <script src="{{ asset_url }}"></script>
-{% endjavascripts %}
-    <!-- Script to Activate the Carousel -->
-    <script>
-	$(document).ready(function(){
-		$('.carousel').carousel({
-			interval: 5000 //changes the speed
-		})
-		$("#form_days").slider({});
-		$('.photo').fancybox();
-	});
-	 
-    </script>
+
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function (d, w, c) {
@@ -267,8 +240,54 @@
 
 </script>
 
-{% include 'BaseBundle:Cruise:modal-zayavka-form.html.twig' %}
 
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+	 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+	 <link rel="stylesheet" href="{{ asset('css/bootstrap-theme.css') }}">
+	 <link rel="stylesheet" href="{{ asset('css/bootstrap-slider.css') }}">
+	 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+	 <link rel="stylesheet" href="{{ asset('css/fancybox/jquery.fancybox.css') }}">
+{#% stylesheets 'css/*'  %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %#}
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+	
+	
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+
+{% javascripts 'js/bootstrap-slider.js' 'js/jquery.fancybox.js' filter='yui_js' %}
+    <script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+    <!-- Script to Activate the Carousel -->
+    <script>
+	$(document).ready(function(){
+		$('.carousel').carousel({
+			interval: 5000 //changes the speed
+		})
+		$("#form_days").slider({});
+		$('.photo').fancybox();
+	});
+	 
+    </script>	
+{% include 'BaseBundle:Cruise:modal-zayavka-form.html.twig' %}
 </body>
 
 </html>

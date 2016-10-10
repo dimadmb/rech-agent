@@ -10,6 +10,8 @@
     <meta name="keywords" content="{% block keywords %}речные круизы, Москва, туры на теплоходе, круизы выходного дня, круизы по Волге, круизы по рекам, отдых на теплоходах{% endblock %}">
     <meta name="author" content="">
 
+	<meta content="width=device-width,initial-scale=1" name=viewport>
+	
     <title>{% block title %}Дефолтный тайтл{% endblock %}</title>
 
 
@@ -24,7 +26,7 @@
         <div class="container header-volna" style="padding-top:30px; position:relative;">
             <a  href="{{path('homepage')}}"><img style=" margin-top:-25px; max-width:100%" src="{{asset('images/template/logo.png')}}" alt="Речное агентство"></a>
 
-			<div style="position:absolute; right:400px; top:30px; " >
+			<div class="hidden-sm" style="position:absolute; right:400px; top:30px; " >
 			<a class="navbar-brand navbar-right hidden-xs" style="font-size: 24px;" href="{{path('page_small',{'first':'contacts'})}}">Контакты:</a>
 			</div>
 			
@@ -34,7 +36,7 @@
 			<a class="navbar-brand" href="tel:84956982967">8 (495) <span style="font-size:150%">698-29-67</span></a>
 			</div>
 			
-			<div style="position:absolute; right:30px; top:15px; "  >
+			<div class="hidden-xs" style="position:absolute; right:30px; top:15px; "  >
 			<a target="_blank" href="https://vk.com/rechagent"><img style="width:32px; margin-right:10px;" src="{{asset('images/template/VK.png')}}"  alt="Вконтакте"></a>
 			<a target="_blank" href="https://www.facebook.com/rechagent/"><img style="width:32px; margin-right:10px;     position: absolute;    top: 40px;    left: 0;" src="{{asset('images/template/facebook.png')}}"  alt="Facebook"></a>
 			<a target="_blank" href="http://instagram.com/rechagent"><img style="width:32px; margin-right:0px;" src="{{asset('images/template/inst.png')}}"  alt="instagram"></a>
@@ -248,15 +250,10 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-	
-	 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-	 <link rel="stylesheet" href="{{ asset('css/bootstrap-theme.css') }}">
-	 <link rel="stylesheet" href="{{ asset('css/bootstrap-slider.css') }}">
-	 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-	 <link rel="stylesheet" href="{{ asset('css/fancybox/jquery.fancybox.css') }}">
-{#% stylesheets 'css/*'  %}
+
+{% stylesheets output="css/styles.css" 'css/bootstrap.min.css'  'css/bootstrap-slider.css' 'css/style.css' 'css/fancybox/jquery.fancybox.css'  filter='yui_css' %}
     <link rel="stylesheet" href="{{ asset_url }}" />
-{% endstylesheets %#}
+{% endstylesheets %}
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

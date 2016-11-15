@@ -15,7 +15,9 @@
     <title>{% block title %}Дефолтный тайтл{% endblock %}</title>
 
 
-
+{% stylesheets output="css/styles.css" 'css/bootstrap.min.css'  'css/bootstrap-slider.css' 'css/style.css' 'css/fancybox/jquery.fancybox.css'  filter='yui_css' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
 
 </head>
 
@@ -251,9 +253,7 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-{% stylesheets output="css/styles.css" 'css/bootstrap.min.css'  'css/bootstrap-slider.css' 'css/style.css' 'css/fancybox/jquery.fancybox.css'  filter='yui_css' %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-{% endstylesheets %}
+
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

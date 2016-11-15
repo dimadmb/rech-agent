@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Document
  *
  * @ORM\Table(name="document", uniqueConstraints={@ORM\UniqueConstraint(name="document_url_uniq", columns={"url"})}, indexes={@ORM\Index(name="document_category_id_idx", columns={"category_id"})})
+ 
  * @ORM\Entity(repositoryClass="BaseBundle\Entity\Repository\DocumentRepository")
  */
  

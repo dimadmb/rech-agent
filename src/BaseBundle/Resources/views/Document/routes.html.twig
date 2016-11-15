@@ -8,7 +8,7 @@
 <br>
 	{% for category in categories %}
 		<a href="{{path('categoryroutes',{'category':category.code})}}">{{category.title}}</a>
-		<p>{{category.description | raw}}</p>
+		<p>{#{category.description | raw}#}</p>
 		<br>
 	{% endfor %}
 

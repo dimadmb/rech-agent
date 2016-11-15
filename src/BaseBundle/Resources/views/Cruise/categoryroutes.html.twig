@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{category.title}}{% endblock %}
+{% block title %}
+	{% if (category.description is defined)  %}
+		{{category.description}}
+	{% else %}	
+		{{category.title}}
+	{% endif %}
+{% endblock %}
 
 {% block body %}
 <h1>{{category.title}}</h1>

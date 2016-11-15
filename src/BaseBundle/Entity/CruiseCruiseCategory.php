@@ -28,13 +28,20 @@ class CruiseCruiseCategory
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
      */
     private $title;
-
+		
     /**
      * @var string
      *
      * @ORM\Column(name="code", type="string", length=255, nullable=false)
      */
-	private $code;
+	private $code;	
+	
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
 	
     /**
      * @var string
@@ -42,6 +49,7 @@ class CruiseCruiseCategory
      * @ORM\Column(name="description", type="string", length=255, nullable=true)
      */
     private $description;
+
 
     /**
      * @var \CruiseCruiseCategory
@@ -59,6 +67,8 @@ class CruiseCruiseCategory
      * @ORM\ManyToMany(targetEntity="CruiseCruise", mappedBy="category")
      */
     private $cruise;
+
+	
 
     /**
      * Constructor
@@ -202,5 +212,29 @@ class CruiseCruiseCategory
     public function getCode()
     {
         return $this->code;
+    }
+
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return CruiseCruiseCategory
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }

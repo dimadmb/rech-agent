@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Описание речного круиза {{cruise.route}}{% endblock %}
+{% block title %}Описание речного круиза {{cruise.route}} {{cruise.startdate | date("d.m.Y")}} - {{cruise.enddate | date("d.m.Y")}}{% endblock %}
+{% block description %}Описание речного круиза {{cruise.route}}. Отправление на теплоходе {{cruise.ship.title}} {{cruise.startdate | date("d.m.Y")}}, прибытие {{cruise.enddate | date("d.m.Y")}}. Длительность круиза {{cruise.daycount}} дней. {% endblock %}
 
 {% block body %}
 
